@@ -599,6 +599,55 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .rrow.tvrow .rn { font-size: clamp(17px, 2.2vw, 32px); }
 .rrow.tvrow .rv { font-size: clamp(22px, 3vw, 44px); }
 .rrow.tvrow .tu-per { font-size: clamp(11px, 1.2vw, 16px); }
+
+/* ---------- Tablet / kleiner Laptop ---------- */
+@media (min-width: 760px) and (max-width: 1099.98px) {
+  #app { max-width: 940px; padding-left: 28px; padding-right: 28px; }
+  #menu .feature { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  #menu .feature > #goCareer { grid-column: 1 / -1; padding: 22px 24px; }
+  #goCareer .wide-title { font-size: 34px; }
+  #goSocial:not([hidden]) ~ #goTour { grid-column: 1 / -1; }
+  .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tile-name { font-size: 20px; }
+  .banner { align-self: center; width: 728px; max-width: 100%; box-sizing: border-box; }
+  .lv { aspect-ratio: auto; min-height: 84px; }
+}
+
+/* ---------- Desktop: ganze Bildschirmbreite nutzen ---------- */
+@media (min-width: 1100px) {
+  body { font-size: 16px; }
+  #app { max-width: 1680px; padding-left: 40px; padding-right: 40px; padding-block: 22px; }
+  .screen { gap: 16px; }
+  .logo h1 { font-size: 108px; }
+  .tagline { font-size: 19px; margin-top: -2px; }
+  .wallet { gap: 12px; }
+  #menu .feature { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  #menu .feature > .wide { min-height: 124px; padding: 18px 20px; gap: 5px; }
+  #menu .feature > #goCareer { grid-column: span 2; grid-row: span 2; justify-content: center; padding: 30px 34px; }
+  #goCareer .eyebrow { font-size: 14px; }
+  #goCareer .wide-title { font-size: 48px; line-height: 1; }
+  #goCareer .wide-sub { font-size: 18px; }
+  #goCareer .prog { height: 10px; border-radius: 5px; margin-top: 16px; }
+  #goSocial:not([hidden]) ~ #goTour { grid-column: 1 / -1; }
+  .wide.skincard .sk-prev { top: auto; bottom: 14px; right: 14px; transform: none; }
+  .wide.skincard .sk-prev img { width: 40px; height: 40px; margin-left: -12px; }
+  .wide.skincard .wide-sub { padding-right: 96px; }
+  .wide-title { font-size: 26px; }
+  .wide-sub { font-size: 15px; }
+  .sec { font-size: 17px; margin-top: 10px; }
+  .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .tile { padding: 18px 20px; min-height: 160px; gap: 6px; }
+  .tile-name { font-size: 24px; }
+  .tile-desc { font-size: 14px; }
+  .banner { align-self: center; width: 728px; max-width: 100%; box-sizing: border-box; }
+  .subhead h2 { font-size: 32px; }
+  .levels { gap: 12px; }
+  .lv { aspect-ratio: auto; min-height: 96px; }
+  .lv b { font-size: 28px; }
+  .lv small { font-size: 11px; }
+  #play { width: 100%; max-width: 1120px; margin: 0 auto; }
+  .sheet { max-width: 440px; }
+}
 </style>
 </head>
 <body>
