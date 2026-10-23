@@ -59,12 +59,12 @@
   };
 
   // ---------- room: Echtzeit über Firestore (rooms/{name}/peers und rooms/{name}/msgs) ----------
-  var ALIVE = 40000;
+  var ALIVE = 75000;
   function makeRoom(name) {
     var base = fs.collection("rooms").doc(name), peersCol = base.collection("peers"), msgsCol = base.collection("msgs");
     var mine = {}, hb = null, unsubs = [], peerCbs = [], last = new Map(), topicCbs = {}, msgUnsub = null, t0 = Date.now(), left = false;
     function writeMe() { if (left) return Promise.resolve(); return peersCol.doc(TAB_PEER).set({ peer: TAB_PEER, by: user.uid, presence: clean(mine), at: Date.now() }); }
-    function startHb() { if (hb) return; hb = setInterval(function () { writeMe().catch(function () {}); }, 15000); }
+    function startHb() { if (hb) return; hb = setInterval(function () { writeMe().catch(function () {}); }, 30000); }
     var latest = [];
     function recompute() {
       var now = Date.now(), next = new Map();
