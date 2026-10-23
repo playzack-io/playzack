@@ -494,6 +494,29 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .lang { border: 1px solid var(--line); background: var(--housing); border-radius: 12px; padding: 12px; font-family: var(--font-num); font-weight: 800; font-size: 17px; text-transform: uppercase; color: var(--muted); }
 .lang.on { border-color: var(--volt); color: var(--volt); }
 .wide.online .eyebrow { color: var(--go); }
+/* Skins */
+.wide.skincard { position: relative; border-color: rgba(255, 210, 63, .55); background: linear-gradient(120deg, rgba(255, 210, 63, .14), var(--asphalt-2) 65%); padding-right: 150px; }
+.wide.skincard .eyebrow { color: var(--volt); }
+.sk-prev { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); display: flex; }
+.sk-prev img { width: 54px; height: 54px; border-radius: 50%; margin-left: -14px; box-shadow: 0 0 0 3px var(--asphalt-2); }
+.sheet.wide-sheet { max-width: 520px; }
+.sk-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 4px 2px; }
+.sk-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: none; overflow: visible; }
+.sk-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px 10px; border-radius: 16px; border: 2px solid color-mix(in srgb, var(--rc) 55%, transparent); background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--rc) 22%, transparent), var(--housing) 70%); color: var(--chalk); min-width: 0; }
+.sk-card.on { box-shadow: 0 0 0 3px var(--rc), 0 0 18px color-mix(in srgb, var(--rc) 60%, transparent); }
+.sk-card img { width: 72%; max-width: 86px; aspect-ratio: 1; border-radius: 50%; }
+.sk-card b { font-family: var(--font-num); font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: .02em; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sk-card small { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-num); font-weight: 800; font-size: 14px; color: var(--muted); }
+.sk-card small .coin { width: 13px; height: 13px; }
+.sk-tag { position: absolute; top: 6px; left: 6px; font-family: var(--font-num); font-weight: 800; font-size: 11px; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; }
+.sk-tag.deal { background: var(--signal); color: #fff; }
+.sk-tag.hot { background: var(--volt); color: var(--volt-ink); }
+.sk-tag.new { background: var(--go); color: #062b14; }
+.sk-deals { padding: 10px; border-radius: 16px; border: 1px dashed var(--signal); background: rgba(255, 70, 50, .07); display: flex; flex-direction: column; gap: 8px; }
+.sk-big { display: grid; place-items: center; padding: 14px; border-radius: 50%; width: 190px; height: 190px; margin: 0 auto; background: radial-gradient(circle, color-mix(in srgb, var(--rc) 40%, transparent), transparent 70%); }
+.sk-big img { width: 160px; height: 160px; border-radius: 50%; }
+.sk-big.pop { animation: skpop .5s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes skpop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 /* Konto */
 .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .acct-form { display: flex; flex-direction: column; gap: 6px; text-align: left; }
@@ -590,6 +613,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         <span class="eyebrow" data-en="Invite friends">Freunde einladen</span>
         <span class="wide-title" data-en="100 free coins">100 Münzen gratis</span>
         <span class="wide-sub" id="invSub"></span>
+      </button>
+      <button class="wide skincard" id="goSkins" type="button">
+        <span class="sk-prev" aria-hidden="true"><img id="skPrev1" alt=""><img id="skPrev2" alt=""><img id="skPrev3" alt=""></span>
+        <span class="eyebrow" data-en="Skin shop · new">Skin-Shop · neu</span>
+        <span class="wide-title" data-en="Make your profile legendary">Mach dein Profil legendär</span>
+        <span class="wide-sub" data-en="Gold, neon, galaxy and helmets in your country's colors.">Gold, Neon, Galaxie und Helme in deinen Landesfarben.</span>
       </button>
       <button class="wide tourcard" id="goTour" type="button">
         <span class="eyebrow" data-en="Tournament · for groups & streams">Turnier · für Gruppen & Streams</span>
@@ -963,6 +992,178 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const avatarURL = (i) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(avatarSVG(i));
   const profile = () => store.get("profile", null);
   const profileImg = (pr) => (pr && pr.photo) || avatarURL(pr ? pr.av || 0 : 0);
+  // =====================================================
+  // SKINS — Helm-Designs fürs Profilbild: Spezial-Skins (Seltenheit) und Länder-Helme
+  // =====================================================
+  const RAR = { r: ["Selten", "Rare", "#4f7dff"], e: ["Episch", "Epic", "#a855f7"], l: ["Legendär", "Legendary", "#ffd23f"], c: ["Länder-Helm", "Country helmet", "#3ee27a"] };
+  const SPECIALS = [
+    { id: "racing", n: ["Zielflagge", "Checkered"], r: "r", p: 900, tag: "hot" },
+    { id: "carbon", n: ["Carbon", "Carbon"], r: "r", p: 900 },
+    { id: "camo", n: ["Camo", "Camo"], r: "r", p: 900 },
+    { id: "chrome", n: ["Chrom", "Chrome"], r: "r", p: 1200 },
+    { id: "neon", n: ["Neon", "Neon"], r: "e", p: 2500, tag: "hot" },
+    { id: "fire", n: ["Feuer", "Fire"], r: "e", p: 2500 },
+    { id: "ice", n: ["Eis", "Ice"], r: "e", p: 2500 },
+    { id: "pixel", n: ["Retro-Pixel", "Retro pixel"], r: "e", p: 2500, tag: "new" },
+    { id: "gold", n: ["Gold", "Gold"], r: "l", p: 6000, tag: "hot" },
+    { id: "galaxy", n: ["Galaxie", "Galaxy"], r: "l", p: 6000 },
+    { id: "lava", n: ["Lava", "Lava"], r: "l", p: 6000, tag: "new" },
+    { id: "holo", n: ["Holo", "Holo"], r: "l", p: 7500 },
+    { id: "diamond", n: ["Diamant", "Diamond"], r: "l", p: 8000 }
+  ];
+  const COUNTRY_PRICE = 600, DEAL_OFF = 0.3;
+  const SHELL = "M12 40 C12 22 24 11 37 11 C50 11 57 21 57 33 L57 43 C57 47 54 50 50 50 L20 50 C15 50 12 46 12 40 Z";
+  const VISOR = "M31 25 L57 25 L57 36 L35 36 C32 36 30 34 30 31 Z";
+  const special = (id) => SPECIALS.find((x) => x.id === id);
+  function skinValid(s) {
+    if (typeof s !== "string") return false;
+    if (s.startsWith("s:")) return !!special(s.slice(2));
+    if (s.startsWith("c:")) return isFlag(s.slice(2));
+    return false;
+  }
+  const skinName = (s) => (s.startsWith("s:") ? L(special(s.slice(2)).n) : countryName(s.slice(2)));
+  const skinRarity = (s) => (s.startsWith("s:") ? special(s.slice(2)).r : "c");
+  function skinPrice(s) {
+    const base = s.startsWith("s:") ? special(s.slice(2)).p : COUNTRY_PRICE;
+    const d = dailyDeals();
+    return d.includes(s) ? Math.round((base * (1 - DEAL_OFF)) / 10) * 10 : base;
+  }
+  // Angebote des Tages: ein Spezial-Skin und ein Länder-Helm, für alle gleich
+  function dailyDeals() {
+    const n = dayNum(), all = Object.keys(CUSTOM).concat(ISO);
+    return ["s:" + SPECIALS[(n * 7) % SPECIALS.length].id, "c:" + all[(n * 31) % all.length]];
+  }
+  function helmetSVG(o) {
+    // o: defs, bg, shell, overlay (über der Schale, auf Schale beschnitten), visor, ring, after
+    return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="sh"><path d="' + SHELL + '"/></clipPath>' +
+      '<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>' + (o.defs || "") + "</defs>" +
+      '<circle cx="32" cy="32" r="32" fill="' + (o.bg || "#17151b") + '"/>' + (o.ring ? '<circle cx="32" cy="32" r="30.5" fill="none" stroke="' + o.ring + '" stroke-width="3"/>' : "") +
+      '<path d="' + SHELL + '" fill="' + (o.shell || "#17151b") + '"/>' +
+      '<g clip-path="url(#sh)">' + (o.overlay || "") + '<rect width="64" height="64" fill="url(#shade)"/></g>' +
+      '<path d="' + SHELL + '" fill="none" stroke="' + (o.edge || "rgba(255,255,255,.35)") + '" stroke-width="1"/>' +
+      '<path d="' + VISOR + '" fill="' + (o.visor || "#17151b") + '"/>' +
+      '<path d="M33 27 L46 27" stroke="#ffffff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>' +
+      '<rect x="18" y="50" width="32" height="5" rx="2.5" fill="#0e0d12"/>' + (o.after || "") + "</svg>";
+  }
+  const shine = (dur) => '<rect x="-30" y="0" width="14" height="64" fill="#fff" opacity=".45" transform="skewX(-20)"><animate attributeName="x" values="-30;80;80" dur="' + dur + 's" repeatCount="indefinite"/></rect>';
+  const SPECIAL_SVG = {
+    racing: () => helmetSVG({ defs: '<pattern id="ck" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f3efe6"/><rect width="4" height="4" fill="#111"/><rect x="4" y="4" width="4" height="4" fill="#111"/></pattern>', bg: "#ff4632", shell: "url(#ck)", visor: "#ffd23f" }),
+    carbon: () => helmetSVG({ defs: '<pattern id="cb" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#202024"/><rect width="2" height="2" fill="#34343a"/><rect x="2" y="2" width="2" height="2" fill="#34343a"/></pattern>', bg: "#2b2731", shell: "url(#cb)", visor: "#ff4632", overlay: '<path d="M14 44 L57 39 L57 42 L14 47 Z" fill="#ff4632"/>' }),
+    camo: () => helmetSVG({ bg: "#3a4a2a", shell: "#556b2f", visor: "#1b1f14", overlay: '<g fill="#3b4a20"><ellipse cx="20" cy="22" rx="7" ry="4"/><ellipse cx="45" cy="16" rx="8" ry="4"/><ellipse cx="25" cy="40" rx="9" ry="5"/></g><g fill="#8a7d4f"><ellipse cx="36" cy="44" rx="6" ry="3"/><ellipse cx="18" cy="31" rx="4" ry="3"/></g><g fill="#1f2614"><ellipse cx="50" cy="45" rx="5" ry="3"/><ellipse cx="30" cy="20" rx="4" ry="2.5"/></g>' }),
+    chrome: () => helmetSVG({ defs: '<linearGradient id="cr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5f7fa"/><stop offset=".45" stop-color="#9aa3ad"/><stop offset=".55" stop-color="#e9edf2"/><stop offset="1" stop-color="#5e6670"/></linearGradient>', bg: "#1c2a3a", shell: "url(#cr)", visor: "#1e3a8a", overlay: shine(3.2) }),
+    neon: () => helmetSVG({ defs: '<filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.2"/></filter>', bg: "#0b0b1a", shell: "#0e0d16", visor: "#0b0b1a", edge: "#ff3df2",
+      overlay: '<path d="M14 38 C20 30 30 26 56 28" stroke="#22e8ff" stroke-width="2.2" fill="none" filter="url(#gl)"/><path d="M14 38 C20 30 30 26 56 28" stroke="#bff8ff" stroke-width=".9" fill="none"/><path d="M16 45 L56 41" stroke="#ff3df2" stroke-width="2" filter="url(#gl)"/><path d="M16 45 L56 41" stroke="#ffd0fb" stroke-width=".8"/>',
+      after: '<path d="' + VISOR + '" fill="none" stroke="#22e8ff" stroke-width="1"><animate attributeName="stroke-opacity" values="1;.3;1" dur="1.6s" repeatCount="indefinite"/></path>' }),
+    fire: () => helmetSVG({ defs: '<linearGradient id="fg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd23f"/><stop offset=".45" stop-color="#ff7a1a"/><stop offset="1" stop-color="#c3150f"/></linearGradient>', bg: "#2a0b07", shell: "url(#fg)", visor: "#1a0603",
+      overlay: '<path d="M10 52 C14 40 18 46 20 36 C24 44 26 34 30 30 C31 40 36 38 37 30 C41 38 44 34 46 28 C48 38 54 36 58 30 L58 52 Z" fill="#ff3b10" opacity=".75"><animateTransform attributeName="transform" type="translate" values="0 0;0 -1.5;0 0" dur="0.9s" repeatCount="indefinite"/></path>' }),
+    ice: () => helmetSVG({ defs: '<linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eafcff"/><stop offset=".5" stop-color="#8fe3ff"/><stop offset="1" stop-color="#3a8ed8"/></linearGradient>', bg: "#0c2340", shell: "url(#ig)", visor: "#0a2a4a",
+      overlay: '<g stroke="#ffffff" stroke-width=".9" opacity=".85" fill="none"><path d="M18 20 L26 30 L22 40"/><path d="M26 30 L36 32 L44 44"/><path d="M36 32 L40 18"/><path d="M44 44 L52 40"/></g>' }),
+    pixel: () => helmetSVG({ defs: '<pattern id="px" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#3a2ff0"/><rect width="4" height="4" fill="#ff3df2"/><rect x="4" y="4" width="4" height="4" fill="#22e8ff"/><rect x="4" width="4" height="4" fill="#5b4bff"/></pattern>', bg: "#120a2a", shell: "url(#px)", visor: "#ffd23f", edge: "#ffd23f" }),
+    gold: () => helmetSVG({ defs: '<linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".35" stop-color="#ffd23f"/><stop offset=".7" stop-color="#c8920e"/><stop offset="1" stop-color="#8a5a00"/></linearGradient>', bg: "#2a1f00", ring: "#ffd23f", shell: "url(#gd)", visor: "#17151b", edge: "#fff3b0", overlay: shine(2.6) }),
+    galaxy: () => helmetSVG({ defs: '<radialGradient id="gx" cx=".35" cy=".35" r=".9"><stop offset="0" stop-color="#7b5cff"/><stop offset=".5" stop-color="#2a1a6e"/><stop offset="1" stop-color="#0a0820"/></radialGradient>', bg: "#06051a", ring: "#a855f7", shell: "url(#gx)", visor: "#0a0820",
+      overlay: [[20, 20], [30, 15], [44, 18], [24, 34], [16, 42], [40, 44], [50, 30], [34, 26]].map(([x, y], i) => '<circle cx="' + x + '" cy="' + y + '" r="' + (i % 3 ? .7 : 1.1) + '" fill="#fff"><animate attributeName="opacity" values="1;.2;1" dur="' + (1.2 + i * .3).toFixed(1) + 's" repeatCount="indefinite"/></circle>').join("") + '<ellipse cx="34" cy="30" rx="16" ry="4" fill="#ff7ac6" opacity=".25" transform="rotate(-20 34 30)"/>' }),
+    lava: () => helmetSVG({ bg: "#1a0806", ring: "#ff4632", shell: "#1c1412", visor: "#2b0b05",
+      overlay: '<g stroke="#ff6a1a" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M14 30 L22 34 L20 42 L28 46"/><path d="M22 34 L32 28 L40 34 L48 30 L56 36"/><path d="M40 34 L38 46"/><path d="M30 14 L32 28"/><animate attributeName="stroke" values="#ff6a1a;#ffd23f;#ff6a1a" dur="1.8s" repeatCount="indefinite"/></g>' }),
+    holo: () => helmetSVG({ defs: '<linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7ac6"/><stop offset=".25" stop-color="#ffd23f"/><stop offset=".5" stop-color="#3ee27a"/><stop offset=".75" stop-color="#63d9ff"/><stop offset="1" stop-color="#a855f7"/><animateTransform attributeName="gradientTransform" type="rotate" values="0 .5 .5;360 .5 .5" dur="4s" repeatCount="indefinite"/></linearGradient>', bg: "#14121c", ring: "url(#hg)", shell: "url(#hg)", visor: "#17151b", overlay: shine(2.2) }),
+    diamond: () => helmetSVG({ defs: '<linearGradient id="dm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#b9f2ff"/><stop offset="1" stop-color="#6cc8ff"/></linearGradient>', bg: "#0b1f33", ring: "#b9f2ff", shell: "url(#dm)", visor: "#0b1f33", edge: "#ffffff",
+      overlay: '<g fill="#ffffff" opacity=".35"><path d="M12 40 L24 12 L30 30 Z"/><path d="M30 30 L37 11 L46 22 Z"/><path d="M20 50 L30 30 L40 50 Z"/></g><g fill="#6cc8ff" opacity=".35"><path d="M46 22 L57 33 L44 40 Z"/><path d="M30 30 L44 40 L40 50 Z"/></g>',
+      after: '<path d="M50 12 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></path>' })
+  };
+  const FLAGTXT = {};
+  function flagText(code) {
+    if (!FLAGTXT[code]) FLAGTXT[code] = fetch("flags/" + code.toLowerCase() + ".svg").then((r) => (r.ok ? r.text() : "")).then((t) => {
+      const m = t.match(/<svg[^>]*>([\s\S]*)<\/svg>/i), vb = (t.match(/viewBox="([^"]+)"/i) || [])[1] || "0 0 640 480";
+      return m ? { inner: m[1], vb } : null;
+    }).catch(() => null);
+    return FLAGTXT[code];
+  }
+  function countrySVG(f) {
+    const flag = f ? '<svg x="11" y="10" width="47" height="41" viewBox="' + f.vb + '" preserveAspectRatio="xMidYMid slice">' + f.inner + "</svg>" : '<rect width="64" height="64" fill="#3ee27a"/>';
+    return helmetSVG({ bg: "#17151b", ring: "#f3efe6", shell: "#17151b", overlay: flag, visor: "#0e0d12", edge: "rgba(255,255,255,.7)" });
+  }
+  const SKINURL = {};
+  const svgURL = (s) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s);
+  function skinURL(sk, f) {
+    if (sk.startsWith("s:")) return SKINURL[sk] || (SKINURL[sk] = svgURL(SPECIAL_SVG[sk.slice(2)]()));
+    return svgURL(countrySVG(f));
+  }
+  // Setzt das Profilbild eines Spielers: Skin > eigenes Foto > Avatar
+  function paintAvatar(img, d) {
+    d = d || {};
+    const photo = typeof d.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(d.photo) && d.photo.length < 60000 ? d.photo : null;
+    const base = photo || avatarURL(Number.isInteger(d.av) ? d.av : 0);
+    if (!skinValid(d.sk)) { img.src = base; return; }
+    if (d.sk.startsWith("s:")) { img.src = skinURL(d.sk); return; }
+    if (SKINURL[d.sk]) { img.src = SKINURL[d.sk]; return; }
+    img.src = base;
+    flagText(d.sk.slice(2)).then((f) => { if (!f) return; const u = SKINURL[d.sk] = skinURL(d.sk, f); img.src = u; });
+  }
+  const ownedSkins = () => { const o = store.get("skins", []); return Array.isArray(o) ? o.filter(skinValid) : []; };
+  function equipSkin(sk) {
+    const pr = profile(); if (!pr) return;
+    pr.sk = sk || null; store.set("profile", pr); renderProfileChip(); pushProfile(); acctAutosave();
+  }
+
+  // ---------- Skin-Shop ----------
+  const SKS = { tab: "special", q: "" };
+  function showSkins(back) {
+    const pr = profile() || {}, own = ownedSkins(), deals = dailyDeals();
+    const card = (sk) => {
+      const r = RAR[skinRarity(sk)], owned = own.includes(sk), isOn = pr.sk === sk, price = skinPrice(sk), deal = deals.includes(sk);
+      const sp = sk.startsWith("s:") ? special(sk.slice(2)) : null;
+      const tag = deal ? '<span class="sk-tag deal">-' + Math.round(DEAL_OFF * 100) + " %</span>" : sp && sp.tag === "hot" ? '<span class="sk-tag hot">' + tr("Beliebt", "Popular") + "</span>" : sp && sp.tag === "new" ? '<span class="sk-tag new">' + tr("Neu", "New") + "</span>" : "";
+      return '<button class="sk-card' + (isOn ? " on" : "") + '" type="button" data-sk="' + esc(sk) + '" style="--rc:' + r[2] + '">' + tag + '<img alt="" data-skimg="' + esc(sk) + '"><b>' + esc(skinName(sk)) + "</b><small>" + (isOn ? tr("Aktiv", "Equipped") : owned ? tr("Besitzt du", "Owned") : '<span class="coin" aria-hidden="true"></span> ' + fmtN(price)) + "</small></button>";
+    };
+    const dealRow = '<div class="sk-deals"><span class="eyebrow">' + tr("Heute im Angebot · nur bis Mitternacht", "Today's deals · until midnight") + '</span><div class="sk-grid two">' + deals.map(card).join("") + "</div></div>";
+    let list = "";
+    if (SKS.tab === "special") list = SPECIALS.map((x) => card("s:" + x.id)).join("");
+    else {
+      const q = SKS.q.trim().toLowerCase();
+      const flags = cleanFlags(pr.flags);
+      const all = Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !q || n.toLowerCase().includes(q) || c.toLowerCase() === q)
+        .sort((a, b) => (flags.includes(b[0]) - flags.includes(a[0])) || a[1].localeCompare(b[1]));
+      list = all.slice(0, q ? 60 : 36).map(([c]) => card("c:" + c)).join("");
+    }
+    openLayer('<span class="eyebrow">' + tr("Skins für dein Profilbild", "Skins for your profile picture") + '</span><h2>Skin-Shop</h2><div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" + dealRow +
+      '<div class="seg two"><button type="button" id="skTabS" class="' + (SKS.tab === "special" ? "on" : "") + '">' + tr("Spezial", "Special") + '</button><button type="button" id="skTabC" class="' + (SKS.tab === "country" ? "on" : "") + '">' + tr("Länder-Helme", "Country helmets") + "</button></div>" +
+      (SKS.tab === "country" ? '<input class="flagq" id="skQ" type="search" autocomplete="off" placeholder="' + esc(tr("Land suchen …", "Search country …")) + '" value="' + esc(SKS.q) + '">' : "") +
+      '<div class="sk-grid" id="skGrid">' + list + "</div>" +
+      (pr.sk ? '<button class="btn ghost" id="skOff" type="button">' + tr("Skin ablegen", "Remove skin") + "</button>" : "") +
+      '<button class="btn ghost" id="skCoins" type="button">' + tr("Münzen holen", "Get coins") + "</button>" +
+      '<button class="link" id="skBack" type="button">' + tr("Zurück", "Back") + "</button>", "wide-sheet");
+    sheet.querySelectorAll("[data-skimg]").forEach((im) => paintAvatar(im, { sk: im.dataset.skimg }));
+    sheet.querySelectorAll("[data-sk]").forEach((b) => b.addEventListener("click", () => skinDetail(b.dataset.sk, back)));
+    on("skTabS", () => { SKS.tab = "special"; showSkins(back); });
+    on("skTabC", () => { SKS.tab = "country"; showSkins(back); });
+    const q = $("skQ"); if (q) { q.addEventListener("input", () => { SKS.q = q.value; clearTimeout(SKS.t); SKS.t = setTimeout(() => { showSkins(back); const n = $("skQ"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 250); }); }
+    on("skOff", () => { equipSkin(null); showSkins(back); });
+    on("skCoins", () => showCoinShop(() => showSkins(back)));
+    on("skBack", () => { if (back) back(); else closeLayer(); });
+  }
+  function skinDetail(sk, back) {
+    const pr = profile() || {}, own = ownedSkins(), owned = own.includes(sk), isOn = pr.sk === sk, price = skinPrice(sk), r = RAR[skinRarity(sk)];
+    const can = W.coins >= price;
+    openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + '</span><h2>' + esc(skinName(sk)) + '</h2><div class="sk-big" style="--rc:' + r[2] + '"><img alt="" id="skBig"></div>' +
+      '<div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" +
+      (isOn ? '<button class="btn" type="button" disabled>' + tr("Aktiv", "Equipped") + "</button>"
+        : owned ? '<button class="btn" id="skEq" type="button">' + tr("Ausrüsten", "Equip") + "</button>"
+        : '<button class="btn" id="skBuy" type="button"' + (can ? "" : " disabled") + ">" + tr("Kaufen für ", "Buy for ") + fmtN(price) + tr(" Münzen", " coins") + "</button>" + (can ? "" : '<button class="btn ghost" id="skGet" type="button">' + tr("Münzen holen", "Get coins") + "<small>" + tr("Dir fehlen ", "You need ") + fmtN(price - W.coins) + tr("", " more") + "</small></button>")) +
+      '<p class="note">' + tr("Alle sehen deinen Skin: in der Rangliste, bei Freunden, im Turnier und bei Online-Duellen.", "Everyone sees your skin: on the leaderboard, with friends, in tournaments and online duels.") + "</p>" +
+      '<button class="link" id="skDBack" type="button">' + tr("Zurück zum Shop", "Back to shop") + "</button>");
+    paintAvatar($("skBig"), { sk });
+    on("skEq", () => { equipSkin(sk); SFX.coin(); showSkins(back); });
+    on("skBuy", () => {
+      if (W.coins < price || ownedSkins().includes(sk)) return;
+      W.coins -= price; store.set("skins", ownedSkins().concat(sk)); renderWallet();
+      equipSkin(sk); SFX.record(); buzz([20, 40, 20]);
+      openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + "</span><h2>" + tr("Neuer Skin!", "New skin!") + '</h2><div class="sk-big pop" style="--rc:' + r[2] + '"><img alt="" id="skNew"></div><p>' + esc(skinName(sk)) + tr(" ist jetzt dein Profilbild.", " is now your profile picture.") + '</p><button class="btn" id="skOk" type="button">' + tr("Stark!", "Nice!") + "</button>");
+      paintAvatar($("skNew"), { sk });
+      on("skOk", () => showSkins(back));
+    });
+    on("skGet", () => showCoinShop(() => skinDetail(sk, back)));
+    on("skDBack", () => showSkins(back));
+  }
+
   const UNAME_RE = /^[a-z][a-z0-9_.]{2,15}$/;
   const BLOCKED = ["admin", "zack", "playzack", "support", "moderator", "mod", "official", "system", "root", "staff", "hitler", "nazi", "fuck", "ficken", "hure", "nigger", "neger", "bitch", "fotze", "wichser", "arsch"];
   function unameProblem(n) {
@@ -996,7 +1197,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function playerDoc() {
     const pr = profile() || {};
-    const d = { seen: Date.now(), uname: pr.uname || null, unameLc: pr.uname || null, av: pr.av || 0, photo: pr.photo || null, flags: cleanFlags(pr.flags) };
+    const d = { seen: Date.now(), uname: pr.uname || null, unameLc: pr.uname || null, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags) };
     ORDER.forEach((id) => { const b = store.get("best:" + id, null); if (typeof b === "number" && isFinite(b)) d["b_" + id] = b; });
     return d;
   }
@@ -1033,7 +1234,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function showProfile(first, after) {
     const pr = profile() || { uname: "", av: Math.floor(Math.random() * AVATARS.length), photo: null };
-    let av = pr.av || 0, photo = pr.photo || null, checkTimer = 0;
+    let av = pr.av || 0, photo = pr.photo || null, sk = skinValid(pr.sk) ? pr.sk : null, checkTimer = 0;
     let flags = cleanFlags(pr.flags); if (first && !flags.length && ISO.includes(AD.country)) flags = [AD.country];
     openLayer('<span class="eyebrow">' + (first ? tr("Willkommen bei ZACK!", "Welcome to ZACK!") : tr("Profil", "Profile")) + "</span><h2>" + (first ? tr("Erstell dein Profil", "Create your profile") : tr("Profil bearbeiten", "Edit profile")) + "</h2>" +
       "<p>" + tr("Mit deinem Benutzernamen finden dich Freunde.", "Friends find you by your username.") + "</p>" +
@@ -1044,6 +1245,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<span class="eyebrow">' + tr("Avatar wählen", "Pick an avatar") + '</span><div class="avgrid" id="pfGrid"></div>' +
       '<span class="eyebrow">' + tr("Länderflaggen · bis zu 2", "Country flags · up to 2") + '</span><div class="flagrow" id="pfFlags"></div>' +
       '<div class="flagpick" id="pfPick" hidden><input class="search" id="pfFlagQ" autocomplete="off" placeholder="' + tr("Land suchen", "Search country") + '"><div class="flaglist" id="pfFlagList"></div></div>' +
+      (first ? "" : '<button class="btn ghost pf-skins" id="pfSkins" type="button">' + tr("Skins ansehen", "Browse skins") + "<small>" + (sk ? tr("Aktiv: ", "Equipped: ") + esc(skinName(sk)) : tr("Gold, Neon, Galaxie, Länder-Helme …", "Gold, neon, galaxy, country helmets …")) + "</small></button>") +
       '<label class="btn ghost pf-photo" for="pfFile">' + tr("Eigenes Foto", "Own photo") + '</label><input id="pfFile" type="file" accept="image/*" hidden>' +
       '<p class="msg-bad" id="pfErr" hidden></p>' +
       '<button class="btn" id="pfSave" type="button">' + (first ? tr("Los geht's", "Let's go") : tr("Speichern", "Save")) + "</button>" +
@@ -1051,13 +1253,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<p class="note">' + (ONLINE ? tr("Jeder Benutzername gibt es nur einmal. Das wird beim Speichern geprüft.", "Every username exists only once. It's checked when you save.") : tr("Ob der Name frei ist, prüft die App, sobald Online aktiv ist.", "The app checks that the name is free once online is active.")) + "</p>");
     const inp = $("pfName"), hint = $("pfHint"), err = $("pfErr"), grid = $("pfGrid");
     inp.value = pr.uname || "";
-    const preview = () => { $("pfImg").src = photo || avatarURL(av); const ps_ = $("pfShow"); ps_.textContent = "@" + (inp.value.trim().toLowerCase() || tr("deinname", "yourname")); if (typeof flags !== "undefined") appendFlags(ps_, flags); };
+    const preview = () => { paintAvatar($("pfImg"), { av, photo, sk }); const ps_ = $("pfShow"); ps_.textContent = "@" + (inp.value.trim().toLowerCase() || tr("deinname", "yourname")); if (typeof flags !== "undefined") appendFlags(ps_, flags); };
     const drawGrid = () => {
       grid.innerHTML = "";
       AVATARS.forEach((_, i) => {
-        const b = h("button", "av" + (!photo && i === av ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", tr("Avatar ", "Avatar ") + (i + 1));
+        const b = h("button", "av" + (!photo && !sk && i === av ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", tr("Avatar ", "Avatar ") + (i + 1));
         const im = h("img"); im.alt = ""; im.src = avatarURL(i); b.appendChild(im);
-        b.addEventListener("click", () => { av = i; photo = null; drawGrid(); preview(); });
+        b.addEventListener("click", () => { av = i; photo = null; sk = null; drawGrid(); preview(); });
         grid.appendChild(b);
       });
     };
@@ -1104,7 +1306,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     });
     $("pfFile").addEventListener("change", async (e) => {
       const f = e.target.files && e.target.files[0]; if (!f) return;
-      try { photo = await photoFromFile(f); drawGrid(); preview(); } catch (x) { err.hidden = false; err.textContent = tr("Das Foto ließ sich nicht laden.", "Couldn't load that photo."); }
+      try { photo = await photoFromFile(f); sk = null; drawGrid(); preview(); } catch (x) { err.hidden = false; err.textContent = tr("Das Foto ließ sich nicht laden.", "Couldn't load that photo."); }
     });
     on("pfCancel", closeLayer);
     on("pfSave", async () => {
@@ -1113,7 +1315,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (prob) { err.hidden = false; err.textContent = prob; return; }
       const btn = $("pfSave"); btn.disabled = true; btn.textContent = tr("Prüfe …", "Checking …");
       const prev = profile();
-      store.set("profile", { uname: v, av, photo, flags: cleanFlags(flags) });
+      store.set("profile", { uname: v, av, photo, sk, flags: cleanFlags(flags) });
       const changed = !prev || prev.uname !== v;
       const ok = changed ? await claimUname(v) : (await pushProfile(), true);
       if (!ok) {
@@ -1128,6 +1330,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     });
     on("pfHave", () => showAccount("in", () => showProfile(true, after)));
     on("pfAcct", () => showAccount(null, () => showProfile(false, after)));
+    on("pfSkins", () => showSkins(() => showProfile(false, after)));
     setTimeout(() => inp.focus({ preventScroll: true }), 50);
   }
   // =====================================================
@@ -1278,7 +1481,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function renderProfileChip() {
     const pr = profile(), im = $("pAv"), nm = $("pName");
     if (!im) return;
-    im.src = profileImg(pr); nm.textContent = pr && pr.uname ? "@" + pr.uname : tr("Profil", "Profile"); if (pr) appendFlags(nm, pr.flags);
+    paintAvatar(im, pr); nm.textContent = pr && pr.uname ? "@" + pr.uname : tr("Profil", "Profile"); if (pr) appendFlags(nm, pr.flags);
   }
 
   // ---------- Münzen, Verlängerungen, Stufen ----------
@@ -2049,7 +2252,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           const x = d.exists ? d.data() : null;
           if (x && typeof x.uname === "string" && UNAME_RE.test(x.uname)) {
             const photo = typeof x.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(x.photo) && x.photo.length < 60000 ? x.photo : null;
-            p = { id, name: "@" + x.uname, avatarUrl: photo || avatarURL(Number.isInteger(x.av) ? x.av : 0), flags: cleanFlags(x.flags) };
+            p = { id, name: "@" + x.uname, avatarUrl: photo || avatarURL(Number.isInteger(x.av) ? x.av : 0), flags: cleanFlags(x.flags), av: Number.isInteger(x.av) ? x.av : 0, photo, sk: skinValid(x.sk) ? x.sk : null };
           }
         }
       } catch (e) {}
@@ -2279,7 +2482,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     for (const id of NET.follows) {
       const p = peerOf(id), st = p && p.presence ? p.presence.st : null;
       const b = h("button", "pick"); b.type = "button";
-      const img = h("img"); img.alt = ""; img.src = ps[id] ? ps[id].avatarUrl : ""; if (!ps[id]) img.hidden = true;
+      const img = h("img"); img.alt = ""; if (ps[id]) paintAvatar(img, ps[id]); else img.hidden = true;
       const tx = h("span", "stext"); const n1 = h("span", "sname"); n1.textContent = nameOf(ps[id]);
       const n2 = h("span", "ssub", '<span class="sdot' + (p ? " on" : "") + '"></span>' + (p ? (st === "menu" ? tr("online · live spielen", "online · play live") : tr("online · gerade beschäftigt", "online · busy right now")) : tr("offline · zeitversetzt", "offline · async")));
       tx.append(n1, n2); b.append(img, tx);
@@ -2372,7 +2575,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const r = {};
     if (d.r && typeof d.r === "object") Object.keys(d.r).forEach((m) => { const x = d.r[m]; if (MODES[m] && x && Number.isInteger(x.n) && x.n >= 0 && (x.v == null || Number.isFinite(x.v))) r[m] = { v: x.v == null ? null : x.v, n: x.n }; });
     const photo = typeof d.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(d.photo) && d.photo.length < 60000 ? d.photo : null;
-    return { id: d.id, t: d.t, uname: d.uname, av: Number.isInteger(d.av) ? d.av : 0, photo, flags: cleanFlags(d.flags), r };
+    return { id: d.id, t: d.t, uname: d.uname, av: Number.isInteger(d.av) ? d.av : 0, photo, sk: skinValid(d.sk) ? d.sk : null, flags: cleanFlags(d.flags), r };
   }
   function tuStandings(t, entries) {
     const rows = entries.map((e) => ({ e, pts: 0, per: {} }));
@@ -2418,7 +2621,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const myEntry = () => TU.entries.find((e) => e.id === NET.me) || null;
   function entryDoc(r) {
     const pr = profile() || {};
-    return { t: tourId(TU.t), code: TU.t.code, uname: pr.uname, av: pr.av || 0, photo: pr.photo || null, flags: cleanFlags(pr.flags), r, at: Date.now() };
+    return { t: tourId(TU.t), code: TU.t.code, uname: pr.uname, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags), r, at: Date.now() };
   }
   async function tuWrite(r) {
     const me = myEntry(), doc = entryDoc(r);
@@ -2584,7 +2787,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function tuRow(t, st, x, i, big) {
     const d = x.e, r = h("div", "rrow" + (d.id === NET.me ? " me" : "") + (i < 3 ? " top" + (i + 1) : "") + (big ? " tvrow" : ""));
     const rk = h("b", "rk"); rk.textContent = i + 1;
-    const img = h("img"); img.alt = ""; img.src = d.photo || avatarURL(d.av);
+    const img = h("img"); img.alt = ""; paintAvatar(img, d);
     const nm = h("span", "rn"); nm.textContent = "@" + d.uname; appendFlags(nm, d.flags);
     if (!st.single) { const sub = h("small", "tu-per"); sub.textContent = t.modes.filter((m) => x.per[m]).map((m) => MODES[m].name + " " + fmtVal(m, x.per[m].v) + " (" + x.per[m].place + ".)").join(" · "); nm.appendChild(sub); }
     const v = h("span", "rv"); v.textContent = st.single ? fmtVal(t.modes[0], x.per[t.modes[0]].v) : x.pts + tr(" Pkt", " pts");
@@ -2688,8 +2891,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const r = h("div", "rrow" + (d.id === NET.me ? " me" : "") + (i < 3 ? " top" + (i + 1) : ""));
       const rk = h("b", "rk"); rk.textContent = i + 1;
       const img = h("img"); img.alt = "";
-      const photo = typeof d.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(d.photo) && d.photo.length < 60000 ? d.photo : null;
-      img.src = photo || avatarURL(Number.isInteger(d.av) ? d.av : 0);
+      paintAvatar(img, d);
       const nm = h("span", "rn"); nm.textContent = "@" + d.uname; appendFlags(nm, d.flags);
       const v = h("span", "rv"); v.textContent = fmtVal(mode, d[field]);
       r.append(rk, img, nm, v); list.appendChild(r);
@@ -2700,7 +2902,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function openSocial() { closeLayer(); stopEngine(); show("social"); renderSocial(); }
   function row(id, p, sub, buttons, online) {
     const r = h("div", "srow");
-    const img = h("img"); img.alt = ""; img.src = p ? p.avatarUrl : ""; if (!p) img.hidden = true;
+    const img = h("img"); img.alt = ""; if (p) paintAvatar(img, p); else img.hidden = true;
     const tx = h("div", "stext"); const n = h("span", "sname"); n.textContent = nameOf(p); appendFlags(n, p && p.flags);
     const s = h("span", "ssub"); s.innerHTML = online != null ? '<span class="sdot' + (online ? " on" : "") + '"></span>' : ""; s.appendChild(document.createTextNode(sub));
     tx.append(n, s);
@@ -2846,6 +3048,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   $("goCareer").addEventListener("click", () => { renderCareer(); show("career"); });
   $("goRanks").addEventListener("click", () => { show("ranks"); renderRanks(); });
   $("goTour").addEventListener("click", openTour);
+  $("goSkins").addEventListener("click", () => showSkins());
+  ["s:gold", "s:neon", "s:galaxy"].forEach((sk, i) => paintAvatar($("skPrev" + (i + 1)), { sk }));
   $("goSocial").addEventListener("click", openSocial);
   $("goInvite").addEventListener("click", showInvite);
   $("socInvite").addEventListener("click", showInvite);
