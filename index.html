@@ -995,7 +995,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     try { if (regionLang !== S.lang) { regionNames = new Intl.DisplayNames([S.lang === "en" ? "en" : "de"], { type: "region" }); regionLang = S.lang; } return regionNames.of(c) || c; } catch (e) { return c; }
   }
   const isFlag = (c) => typeof c === "string" && (ISO.includes(c) || Object.prototype.hasOwnProperty.call(CUSTOM, c));
-  const cleanFlags = (f) => (Array.isArray(f) ? f.filter(isFlag).slice(0, 2) : []);
+  const cleanFlags = (f) => (Array.isArray(f) ? f.filter(isFlag).slice(0, 1) : []);
   const flagsStr = (f) => { const x = cleanFlags(f); return x.length ? " " + x.map(flagEmoji).join(" ") : ""; };
 
   // ---------- Profil: Benutzername + Avatar ----------
@@ -1325,7 +1325,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<div class="uname-row"><span>@</span><input id="pfName" maxlength="16" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="' + tr("deinname", "yourname") + '"></div>' +
       '<p class="note" id="pfHint">' + tr("3–16 Zeichen: a–z, 0–9, _ und Punkt.", "3–16 characters: a–z, 0–9, _ and dot.") + "</p>" +
       '<span class="eyebrow">' + tr("Avatar wählen", "Pick an avatar") + '</span><div class="avgrid" id="pfGrid"></div>' +
-      '<span class="eyebrow">' + tr("Länderflaggen · bis zu 2", "Country flags · up to 2") + '</span><div class="flagrow" id="pfFlags"></div>' +
+      '<span class="eyebrow">' + tr("Dein Land", "Your country") + '</span><div class="flagrow" id="pfFlags"></div>' +
       '<div class="flagpick" id="pfPick" hidden><input class="search" id="pfFlagQ" autocomplete="off" placeholder="' + tr("Land suchen", "Search country") + '"><div class="flaglist" id="pfFlagList"></div></div>' +
       (first ? "" : '<button class="btn ghost pf-skins" id="pfSkins" type="button">' + tr("Skins ansehen", "Browse skins") + "<small>" + (sk ? tr("Aktiv: ", "Equipped: ") + esc(skinName(sk)) : tr("Gold, Neon, Galaxie, Länder-Helme …", "Gold, neon, galaxy, country helmets …")) + "</small></button>") +
       '<label class="btn ghost pf-photo" for="pfFile">' + tr("Eigenes Foto", "Own photo") + '</label><input id="pfFile" type="file" accept="image/*" hidden>' +
@@ -1348,15 +1348,19 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     drawGrid(); preview();
     const drawFlags = () => {
       const box = $("pfFlags"); box.innerHTML = "";
+      const openPick = () => { const pk = $("pfPick"); pk.hidden = !pk.hidden; if (!pk.hidden) { drawList(); $("pfFlagQ").focus(); } };
       flags.forEach((c) => {
         const b = h("button", "flagchip"); b.type = "button";
-        b.append(flagNode(c), document.createTextNode(" " + countryName(c) + "  ×")); b.setAttribute("aria-label", countryName(c) + tr(" entfernen", " remove"));
-        b.addEventListener("click", () => { flags = flags.filter((x) => x !== c); drawFlags(); preview(); });
+        b.append(flagNode(c), document.createTextNode(" " + countryName(c) + " · " + tr("ändern", "change"))); b.setAttribute("aria-label", tr("Land ändern", "Change country"));
+        b.addEventListener("click", openPick);
         box.appendChild(b);
+        const x = h("button", "flagchip"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", tr("Land entfernen", "Remove country"));
+        x.addEventListener("click", () => { flags = []; $("pfPick").hidden = true; drawFlags(); preview(); });
+        box.appendChild(x);
       });
-      if (flags.length < 2) {
-        const add = h("button", "flagchip add"); add.type = "button"; add.textContent = "+ " + tr("Land", "Country");
-        add.addEventListener("click", () => { const pk = $("pfPick"); pk.hidden = !pk.hidden; if (!pk.hidden) { drawList(); $("pfFlagQ").focus(); } });
+      if (!flags.length) {
+        const add = h("button", "flagchip add"); add.type = "button"; add.textContent = "+ " + tr("Land wählen", "Choose country");
+        add.addEventListener("click", openPick);
         box.appendChild(add);
       }
     };
@@ -1365,7 +1369,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !flags.includes(c) && (!q || n.toLowerCase().includes(q) || c.toLowerCase() === q))
         .sort((a, b) => a[1].localeCompare(b[1])).slice(0, 60).forEach(([c, n]) => {
           const b = h("button", "flagitem"); b.type = "button"; b.append(flagNode(c), document.createTextNode("  " + n + (CUSTOM[c] ? tr("  · Region", "  · region") : "")));
-          b.addEventListener("click", () => { if (flags.length < 2) flags.push(c); $("pfPick").hidden = true; $("pfFlagQ").value = ""; drawFlags(); preview(); });
+          b.addEventListener("click", () => { flags = [c]; $("pfPick").hidden = true; $("pfFlagQ").value = ""; drawFlags(); preview(); });
           list.appendChild(b);
         });
     };
