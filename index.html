@@ -910,6 +910,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function buzz(p) {
     if (!S.haptics) return;
     try {
+      // Native App (Expo/WebView): echte Vibration über die App
+      if (window.ReactNativeWebView) { window.ReactNativeWebView.postMessage(JSON.stringify({ t: "haptic", p: p })); return; }
       if (navigator.vibrate && !IOS) { navigator.vibrate(p); return; }
       if (IOS) { iosTap(); if (Array.isArray(p) && p.length > 2) setTimeout(iosTap, 90); else if ((+p || 0) >= 60) setTimeout(iosTap, 70); }
     } catch (e) {}
