@@ -1260,6 +1260,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           const snap = await A.signIn(m, pw);
           if (snap && Object.keys(snap).length) { restore(snap); location.reload(); return; }
           await A.save(snapshot()).catch(() => {});
+          if (A.kind !== "local") { location.reload(); return; } // neue Konto-ID: Online-Teil neu starten
           SFX.coin(); done();
         }
       } catch (e) { b.disabled = false; b.textContent = reg ? tr("Konto erstellen", "Create account") : tr("Anmelden", "Sign in"); err(acctErr(e)); }
@@ -2671,10 +2672,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const field = "b_" + mode;
     let docs = [];
     try {
-      let q = NET.db.collection("players").where(field, ">", 0);
-      if (RK.scope === "country") q = q.where("flags", "array-contains", myFlag);
-      const snap = await q.orderBy(field, m.lower ? "asc" : "desc").limit(RK.scope === "friends" ? 500 : 50).get();
+      // Länder-Filter ohne zusammengesetzten Index: per Flagge laden, dann hier sortieren
+      const snap = RK.scope === "country"
+        ? await NET.db.collection("players").where("flags", "array-contains", myFlag).limit(500).get()
+        : await NET.db.collection("players").where(field, ">", 0).orderBy(field, m.lower ? "asc" : "desc").limit(RK.scope === "friends" ? 500 : 50).get();
       docs = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      if (RK.scope === "country") docs = docs.filter((d) => Number.isFinite(d[field]) && d[field] > 0).sort((a, b) => (m.lower ? a[field] - b[field] : b[field] - a[field]));
     } catch (e) { list.innerHTML = ""; list.appendChild(empty(tr("Rangliste konnte nicht geladen werden.", "Couldn't load the leaderboard."))); return; }
     if (RK.mode !== mode) return;
     if (RK.scope === "friends") docs = docs.filter((d) => d.id === NET.me || NET.follows.includes(d.id));

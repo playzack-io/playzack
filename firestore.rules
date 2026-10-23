@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isMe(uid) { return signedIn() && request.auth.uid == uid; }
+
+    // Profil, Bestwerte, Folgen, Läufe, Spielstand: lesen alle Angemeldeten, schreiben nur der Besitzer
+    match /players/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
+    match /follows/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
+    match /runs/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
+    match /saves/{uid} { allow read, write: if isMe(uid); }
+
+    // Herausforderungen: anlegen nur als Absender, ändern nur Absender oder Empfänger
+    match /challenges/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.from == request.auth.uid;
+      allow update: if signedIn() && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid)
+        && request.resource.data.from == resource.data.from && request.resource.data.to == resource.data.to;
+      allow delete: if signedIn() && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+    }
+
+    // Kurze Sperre beim Benutzernamen-Check
+    match /unames/{name} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.resource.data.holder == request.auth.uid
+        && (resource == null || resource.data.holder == request.auth.uid || resource.data.exp < request.time.toMillis());
+    }
+
+    // Turniere: eins pro Gastgeber, eine Teilnahme pro Spieler
+    match /tourneys/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
+    match /tentries/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
+
+    // Live-Räume: Anwesenheit und kurze Nachrichten
+    match /rooms/{room}/peers/{peer} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.resource.data.by == request.auth.uid;
+      allow delete: if signedIn() && resource.data.by == request.auth.uid;
+    }
+    match /rooms/{room}/msgs/{msg} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.by == request.auth.uid;
+      allow delete: if signedIn() && resource.data.by == request.auth.uid;
+    }
+  }
+}
