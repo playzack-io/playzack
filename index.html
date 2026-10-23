@@ -512,6 +512,23 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .sk-tag.deal { background: var(--signal); color: #fff; }
 .sk-tag.hot { background: var(--volt); color: var(--volt-ink); }
 .sk-tag.new { background: var(--go); color: #062b14; }
+.sk-tag.excl { background: linear-gradient(90deg, var(--cta-a), var(--cta-b)); color: #fff; }
+.sk-card.locked img { filter: grayscale(.85) brightness(.55); }
+.sk-card small.eur { color: #fff; background: linear-gradient(90deg, var(--cta-a), var(--cta-b)); padding: 2px 10px; border-radius: 999px; }
+.sk-sec { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.sk-sec .note { margin: 0; }
+.sk-bundle { display: flex; align-items: center; gap: 10px; padding: 12px; border: 0; border-radius: 18px; background: linear-gradient(110deg, #3b0764, #7c3aed 55%, #e2727e); color: #fff; text-align: left; box-shadow: 0 0 24px var(--cta-glow); }
+.sk-bimgs { display: flex; flex: none; }
+.sk-bimgs img { width: 40px; height: 40px; border-radius: 50%; margin-left: -12px; box-shadow: 0 0 0 2px #3b0764; }
+.sk-bimgs img:first-child { margin-left: 0; }
+.sk-btx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sk-btx b { font-family: var(--font-num); font-weight: 800; font-size: 19px; text-transform: uppercase; }
+.sk-btx small { opacity: .9; font-size: 12.5px; }
+.sk-bprice { flex: none; display: flex; flex-direction: column; align-items: flex-end; font-family: var(--font-num); font-weight: 800; font-size: 20px; }
+.sk-bprice s { font-size: 13px; opacity: .7; }
+.sk-big.dim img { filter: grayscale(.85) brightness(.55); }
+.sk-lock { margin: 0; font-weight: 600; }
+.btn.cashbtn { background: linear-gradient(100deg, var(--cta-a), var(--cta-b)); color: #fff; box-shadow: 0 0 22px var(--cta-glow); }
 .sk-deals { padding: 10px; border-radius: 16px; border: 1px dashed var(--signal); background: rgba(255, 70, 50, .07); display: flex; flex-direction: column; gap: 8px; }
 .sk-big { display: grid; place-items: center; padding: 14px; border-radius: 50%; width: 190px; height: 190px; margin: 0 auto; background: radial-gradient(circle, color-mix(in srgb, var(--rc) 40%, transparent), transparent 70%); }
 .sk-big img { width: 160px; height: 160px; border-radius: 50%; }
@@ -996,21 +1013,28 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // SKINS — Helm-Designs fürs Profilbild: Spezial-Skins (Seltenheit) und Länder-Helme
   // =====================================================
   const RAR = { r: ["Selten", "Rare", "#4f7dff"], e: ["Episch", "Epic", "#a855f7"], l: ["Legendär", "Legendary", "#ffd23f"], c: ["Länder-Helm", "Country helmet", "#3ee27a"] };
+  // how: "lvl" = in der Karriere freischalten, "coin" = mit Münzen, "cash" = nur mit echtem Geld (exklusiv)
   const SPECIALS = [
-    { id: "racing", n: ["Zielflagge", "Checkered"], r: "r", p: 900, tag: "hot" },
-    { id: "carbon", n: ["Carbon", "Carbon"], r: "r", p: 900 },
-    { id: "camo", n: ["Camo", "Camo"], r: "r", p: 900 },
-    { id: "chrome", n: ["Chrom", "Chrome"], r: "r", p: 1200 },
-    { id: "neon", n: ["Neon", "Neon"], r: "e", p: 2500, tag: "hot" },
-    { id: "fire", n: ["Feuer", "Fire"], r: "e", p: 2500 },
-    { id: "ice", n: ["Eis", "Ice"], r: "e", p: 2500 },
-    { id: "pixel", n: ["Retro-Pixel", "Retro pixel"], r: "e", p: 2500, tag: "new" },
-    { id: "gold", n: ["Gold", "Gold"], r: "l", p: 6000, tag: "hot" },
-    { id: "galaxy", n: ["Galaxie", "Galaxy"], r: "l", p: 6000 },
-    { id: "lava", n: ["Lava", "Lava"], r: "l", p: 6000, tag: "new" },
-    { id: "holo", n: ["Holo", "Holo"], r: "l", p: 7500 },
-    { id: "diamond", n: ["Diamant", "Diamond"], r: "l", p: 8000 }
+    { id: "royal", n: ["Royal", "Royal"], r: "l", how: "cash", eur: 4.99, tag: "excl" },
+    { id: "phantom", n: ["Phantom", "Phantom"], r: "l", how: "cash", eur: 2.99, tag: "excl" },
+    { id: "diamond", n: ["Diamant", "Diamond"], r: "l", how: "cash", eur: 2.99, tag: "excl" },
+    { id: "holo", n: ["Holo", "Holo"], r: "l", how: "cash", eur: 1.99, tag: "excl" },
+    { id: "gold", n: ["Gold", "Gold"], r: "l", how: "coin", p: 6000, tag: "hot" },
+    { id: "galaxy", n: ["Galaxie", "Galaxy"], r: "l", how: "coin", p: 6000 },
+    { id: "neon", n: ["Neon", "Neon"], r: "e", how: "coin", p: 2500, tag: "hot" },
+    { id: "fire", n: ["Feuer", "Fire"], r: "e", how: "coin", p: 2500 },
+    { id: "pixel", n: ["Retro-Pixel", "Retro pixel"], r: "e", how: "coin", p: 2500, tag: "new" },
+    { id: "racing", n: ["Zielflagge", "Checkered"], r: "r", how: "lvl", lvl: 5 },
+    { id: "carbon", n: ["Carbon", "Carbon"], r: "r", how: "lvl", lvl: 10 },
+    { id: "camo", n: ["Camo", "Camo"], r: "r", how: "lvl", lvl: 20 },
+    { id: "chrome", n: ["Chrom", "Chrome"], r: "r", how: "lvl", lvl: 30 },
+    { id: "ice", n: ["Eis", "Ice"], r: "e", how: "lvl", lvl: 40 },
+    { id: "lava", n: ["Lava", "Lava"], r: "l", how: "lvl", lvl: 50 }
   ];
+  const BUNDLE = { ids: ["s:royal", "s:phantom", "s:diamond", "s:holo"], eur: 6.99, coins: 5000 };
+  const eur = (v) => (S.lang === "en" ? "€" + v.toFixed(2) : v.toFixed(2).replace(".", ",") + " €");
+  const skinHow = (sk) => (sk.startsWith("s:") ? special(sk.slice(2)).how : "coin");
+  const lvlSkinAt = (n) => SPECIALS.find((x) => x.how === "lvl" && x.lvl === n);
   const COUNTRY_PRICE = 600, DEAL_OFF = 0.3;
   const SHELL = "M12 40 C12 22 24 11 37 11 C50 11 57 21 57 33 L57 43 C57 47 54 50 50 50 L20 50 C15 50 12 46 12 40 Z";
   const VISOR = "M31 25 L57 25 L57 36 L35 36 C32 36 30 34 30 31 Z";
@@ -1024,14 +1048,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const skinName = (s) => (s.startsWith("s:") ? L(special(s.slice(2)).n) : countryName(s.slice(2)));
   const skinRarity = (s) => (s.startsWith("s:") ? special(s.slice(2)).r : "c");
   function skinPrice(s) {
-    const base = s.startsWith("s:") ? special(s.slice(2)).p : COUNTRY_PRICE;
+    const base = s.startsWith("s:") ? special(s.slice(2)).p || 0 : COUNTRY_PRICE;
     const d = dailyDeals();
     return d.includes(s) ? Math.round((base * (1 - DEAL_OFF)) / 10) * 10 : base;
   }
   // Angebote des Tages: ein Spezial-Skin und ein Länder-Helm, für alle gleich
   function dailyDeals() {
     const n = dayNum(), all = Object.keys(CUSTOM).concat(ISO);
-    return ["s:" + SPECIALS[(n * 7) % SPECIALS.length].id, "c:" + all[(n * 31) % all.length]];
+    const coinSkins = SPECIALS.filter((x) => x.how === "coin");
+    return ["s:" + coinSkins[(n * 7) % coinSkins.length].id, "c:" + all[(n * 31) % all.length]];
   }
   function helmetSVG(o) {
     // o: defs, bg, shell, overlay (über der Schale, auf Schale beschnitten), visor, ring, after
@@ -1065,6 +1090,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     lava: () => helmetSVG({ bg: "#1a0806", ring: "#ff4632", shell: "#1c1412", visor: "#2b0b05",
       overlay: '<g stroke="#ff6a1a" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M14 30 L22 34 L20 42 L28 46"/><path d="M22 34 L32 28 L40 34 L48 30 L56 36"/><path d="M40 34 L38 46"/><path d="M30 14 L32 28"/><animate attributeName="stroke" values="#ff6a1a;#ffd23f;#ff6a1a" dur="1.8s" repeatCount="indefinite"/></g>' }),
     holo: () => helmetSVG({ defs: '<linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7ac6"/><stop offset=".25" stop-color="#ffd23f"/><stop offset=".5" stop-color="#3ee27a"/><stop offset=".75" stop-color="#63d9ff"/><stop offset="1" stop-color="#a855f7"/><animateTransform attributeName="gradientTransform" type="rotate" values="0 .5 .5;360 .5 .5" dur="4s" repeatCount="indefinite"/></linearGradient>', bg: "#14121c", ring: "url(#hg)", shell: "url(#hg)", visor: "#17151b", overlay: shine(2.2) }),
+    phantom: () => helmetSVG({ defs: '<radialGradient id="ph" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#7c3aed" stop-opacity=".9"/><stop offset="1" stop-color="#7c3aed" stop-opacity="0"/></radialGradient><filter id="pb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>', bg: "#07060c", ring: "#7c3aed", shell: "#0b0a10", visor: "#05040a", edge: "#a78bfa",
+      overlay: '<circle cx="30" cy="40" r="22" fill="url(#ph)"><animate attributeName="r" values="18;24;18" dur="2.4s" repeatCount="indefinite"/></circle><path d="M14 46 C20 38 26 44 32 36 C38 44 44 38 56 44" stroke="#c4b5fd" stroke-width="1.2" fill="none" opacity=".7" filter="url(#pb)"/>',
+      after: '<g fill="#e9d5ff"><ellipse cx="42" cy="30.5" rx="3" ry="1.4"><animate attributeName="opacity" values="1;.25;1" dur="2s" repeatCount="indefinite"/></ellipse><ellipse cx="51" cy="30.5" rx="3" ry="1.4"><animate attributeName="opacity" values="1;.25;1" dur="2s" repeatCount="indefinite"/></ellipse></g>' }),
+    royal: () => helmetSVG({ defs: '<linearGradient id="rv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b1fa2"/><stop offset="1" stop-color="#2d0a45"/></linearGradient><linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#c8920e"/></linearGradient>', bg: "#1a0826", ring: "url(#rg)", shell: "url(#rv)", visor: "#12051c", edge: "#ffd23f",
+      overlay: '<path d="M12 44 L57 39" stroke="url(#rg)" stroke-width="3"/><g fill="#ffd23f" opacity=".5"><circle cx="22" cy="22" r="1"/><circle cx="30" cy="18" r="1"/><circle cx="20" cy="34" r="1"/><circle cx="46" cy="18" r="1"/></g>' + shine(3),
+      after: '<path d="M26 9 L28 3 L32 7 L36 2 L40 7 L44 3 L46 9 Z" fill="url(#rg)" stroke="#8a5a00" stroke-width=".6"/><circle cx="36" cy="5.5" r="1.3" fill="#ff4632"/>' }),
     diamond: () => helmetSVG({ defs: '<linearGradient id="dm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#b9f2ff"/><stop offset="1" stop-color="#6cc8ff"/></linearGradient>', bg: "#0b1f33", ring: "#b9f2ff", shell: "url(#dm)", visor: "#0b1f33", edge: "#ffffff",
       overlay: '<g fill="#ffffff" opacity=".35"><path d="M12 40 L24 12 L30 30 Z"/><path d="M30 30 L37 11 L46 22 Z"/><path d="M20 50 L30 30 L40 50 Z"/></g><g fill="#6cc8ff" opacity=".35"><path d="M46 22 L57 33 L44 40 Z"/><path d="M30 30 L44 40 L40 50 Z"/></g>',
       after: '<path d="M50 12 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></path>' })
@@ -1099,6 +1130,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     flagText(d.sk.slice(2)).then((f) => { if (!f) return; const u = SKINURL[d.sk] = skinURL(d.sk, f); img.src = u; });
   }
   const ownedSkins = () => { const o = store.get("skins", []); return Array.isArray(o) ? o.filter(skinValid) : []; };
+  const lvlDone = (sp) => (careerData()[sp.lvl] || 0) > 0;
+  const hasSkin = (sk) => ownedSkins().includes(sk) || (sk.startsWith("s:") && special(sk.slice(2)).how === "lvl" && lvlDone(special(sk.slice(2))));
+  function grantSkins(list) { store.set("skins", Array.from(new Set(ownedSkins().concat(list)))); }
   function equipSkin(sk) {
     const pr = profile(); if (!pr) return;
     pr.sk = sk || null; store.set("profile", pr); renderProfileChip(); pushProfile(); acctAutosave();
@@ -1106,28 +1140,40 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   // ---------- Skin-Shop ----------
   const SKS = { tab: "special", q: "" };
+  function priceLabel(sk) {
+    if (hasSkin(sk)) return tr("Besitzt du", "Owned");
+    const how = skinHow(sk);
+    if (how === "lvl") return "🔒 Level " + special(sk.slice(2)).lvl;
+    if (how === "cash") return eur(special(sk.slice(2)).eur);
+    return '<span class="coin" aria-hidden="true"></span> ' + fmtN(skinPrice(sk));
+  }
   function showSkins(back) {
-    const pr = profile() || {}, own = ownedSkins(), deals = dailyDeals();
+    const pr = profile() || {}, deals = dailyDeals();
     const card = (sk) => {
-      const r = RAR[skinRarity(sk)], owned = own.includes(sk), isOn = pr.sk === sk, price = skinPrice(sk), deal = deals.includes(sk);
-      const sp = sk.startsWith("s:") ? special(sk.slice(2)) : null;
-      const tag = deal ? '<span class="sk-tag deal">-' + Math.round(DEAL_OFF * 100) + " %</span>" : sp && sp.tag === "hot" ? '<span class="sk-tag hot">' + tr("Beliebt", "Popular") + "</span>" : sp && sp.tag === "new" ? '<span class="sk-tag new">' + tr("Neu", "New") + "</span>" : "";
-      return '<button class="sk-card' + (isOn ? " on" : "") + '" type="button" data-sk="' + esc(sk) + '" style="--rc:' + r[2] + '">' + tag + '<img alt="" data-skimg="' + esc(sk) + '"><b>' + esc(skinName(sk)) + "</b><small>" + (isOn ? tr("Aktiv", "Equipped") : owned ? tr("Besitzt du", "Owned") : '<span class="coin" aria-hidden="true"></span> ' + fmtN(price)) + "</small></button>";
+      const r = RAR[skinRarity(sk)], isOn = pr.sk === sk, deal = deals.includes(sk), how = skinHow(sk);
+      const sp = sk.startsWith("s:") ? special(sk.slice(2)) : null, locked = how === "lvl" && !hasSkin(sk);
+      const tag = deal && !hasSkin(sk) ? '<span class="sk-tag deal">-' + Math.round(DEAL_OFF * 100) + " %</span>" : sp && sp.tag === "excl" ? '<span class="sk-tag excl">' + tr("Exklusiv", "Exclusive") + "</span>" : sp && sp.tag === "hot" ? '<span class="sk-tag hot">' + tr("Beliebt", "Popular") + "</span>" : sp && sp.tag === "new" ? '<span class="sk-tag new">' + tr("Neu", "New") + "</span>" : "";
+      return '<button class="sk-card' + (isOn ? " on" : "") + (locked ? " locked" : "") + (how === "cash" ? " cash" : "") + '" type="button" data-sk="' + esc(sk) + '" style="--rc:' + r[2] + '">' + tag + '<img alt="" data-skimg="' + esc(sk) + '"><b>' + esc(skinName(sk)) + "</b><small" + (how === "cash" && !hasSkin(sk) ? ' class="eur"' : "") + ">" + (isOn ? tr("Aktiv", "Equipped") : priceLabel(sk)) + "</small></button>";
     };
-    const dealRow = '<div class="sk-deals"><span class="eyebrow">' + tr("Heute im Angebot · nur bis Mitternacht", "Today's deals · until midnight") + '</span><div class="sk-grid two">' + deals.map(card).join("") + "</div></div>";
-    let list = "";
-    if (SKS.tab === "special") list = SPECIALS.map((x) => card("s:" + x.id)).join("");
-    else {
-      const q = SKS.q.trim().toLowerCase();
-      const flags = cleanFlags(pr.flags);
+    const sec = (title, sub, items) => '<div class="sk-sec"><span class="eyebrow">' + title + "</span>" + (sub ? '<p class="note">' + sub + "</p>" : "") + '<div class="sk-grid">' + items.map(card).join("") + "</div></div>";
+    let body = "";
+    if (SKS.tab === "special") {
+      const by = (how) => SPECIALS.filter((x) => x.how === how).map((x) => "s:" + x.id);
+      const bundleOwned = BUNDLE.ids.every(hasSkin);
+      body = (bundleOwned ? "" : '<button class="sk-bundle" id="skBundle" type="button"><span class="sk-bimgs">' + BUNDLE.ids.map((sk) => '<img alt="" data-skimg="' + sk + '">').join("") + '</span><span class="sk-btx"><b>' + tr("Legenden-Paket", "Legends bundle") + "</b><small>" + tr("4 exklusive Skins + ", "4 exclusive skins + ") + fmtN(BUNDLE.coins) + tr(" Münzen", " coins") + "</small></span><span class=\"sk-bprice\"><s>" + eur(BUNDLE.ids.reduce((a, sk) => a + special(sk.slice(2)).eur, 0)) + "</s>" + eur(BUNDLE.eur) + "</span></button>") +
+        sec(tr("Exklusiv · nur im Shop", "Exclusive · shop only"), tr("Gibt es nicht für Münzen.", "Not available for coins."), by("cash")) +
+        sec(tr("Mit Münzen", "With coins"), "", by("coin")) +
+        sec(tr("Durch Karriere freischalten", "Unlock in career"), tr("Schaffe das Level in der Karriere, dann gehört der Skin dir.", "Clear the career level and the skin is yours."), by("lvl"));
+    } else {
+      const q = SKS.q.trim().toLowerCase(), flags = cleanFlags(pr.flags);
       const all = Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !q || n.toLowerCase().includes(q) || c.toLowerCase() === q)
         .sort((a, b) => (flags.includes(b[0]) - flags.includes(a[0])) || a[1].localeCompare(b[1]));
-      list = all.slice(0, q ? 60 : 36).map(([c]) => card("c:" + c)).join("");
+      body = '<input class="flagq" id="skQ" type="search" autocomplete="off" placeholder="' + esc(tr("Land suchen …", "Search country …")) + '" value="' + esc(SKS.q) + '">' + '<div class="sk-grid">' + all.slice(0, q ? 60 : 36).map(([c]) => card("c:" + c)).join("") + "</div>";
     }
-    openLayer('<span class="eyebrow">' + tr("Skins für dein Profilbild", "Skins for your profile picture") + '</span><h2>Skin-Shop</h2><div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" + dealRow +
+    openLayer('<span class="eyebrow">' + tr("Skins für dein Profilbild", "Skins for your profile picture") + '</span><h2>Skin-Shop</h2><div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" +
+      '<div class="sk-deals"><span class="eyebrow">' + tr("Heute im Angebot · nur bis Mitternacht", "Today's deals · until midnight") + '</span><div class="sk-grid two">' + deals.map(card).join("") + "</div></div>" +
       '<div class="seg two"><button type="button" id="skTabS" class="' + (SKS.tab === "special" ? "on" : "") + '">' + tr("Spezial", "Special") + '</button><button type="button" id="skTabC" class="' + (SKS.tab === "country" ? "on" : "") + '">' + tr("Länder-Helme", "Country helmets") + "</button></div>" +
-      (SKS.tab === "country" ? '<input class="flagq" id="skQ" type="search" autocomplete="off" placeholder="' + esc(tr("Land suchen …", "Search country …")) + '" value="' + esc(SKS.q) + '">' : "") +
-      '<div class="sk-grid" id="skGrid">' + list + "</div>" +
+      body +
       (pr.sk ? '<button class="btn ghost" id="skOff" type="button">' + tr("Skin ablegen", "Remove skin") + "</button>" : "") +
       '<button class="btn ghost" id="skCoins" type="button">' + tr("Münzen holen", "Get coins") + "</button>" +
       '<button class="link" id="skBack" type="button">' + tr("Zurück", "Back") + "</button>", "wide-sheet");
@@ -1135,35 +1181,52 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     sheet.querySelectorAll("[data-sk]").forEach((b) => b.addEventListener("click", () => skinDetail(b.dataset.sk, back)));
     on("skTabS", () => { SKS.tab = "special"; showSkins(back); });
     on("skTabC", () => { SKS.tab = "country"; showSkins(back); });
+    on("skBundle", () => cashCheckout(tr("Legenden-Paket", "Legends bundle"), BUNDLE.eur, () => { grantSkins(BUNDLE.ids); W.coins += BUNDLE.coins; renderWallet(); }, () => showSkins(back), BUNDLE.ids[0]));
     const q = $("skQ"); if (q) { q.addEventListener("input", () => { SKS.q = q.value; clearTimeout(SKS.t); SKS.t = setTimeout(() => { showSkins(back); const n = $("skQ"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 250); }); }
     on("skOff", () => { equipSkin(null); showSkins(back); });
     on("skCoins", () => showCoinShop(() => showSkins(back)));
     on("skBack", () => { if (back) back(); else closeLayer(); });
   }
+  // Echtgeld-Kauf: im Prototyp simuliert, in der App über App Store / Google Play
+  function cashCheckout(title, price, grant, after, showSk) {
+    openLayer('<span class="eyebrow">App Store · Google Play</span><h2>' + tr("Kauf bestätigen", "Confirm purchase") + "</h2>" + (showSk ? '<div class="sk-big"><img alt="" id="ccImg"></div>' : "") + "<p>" + esc(title) + " · <strong>" + eur(price) + "</strong></p>" +
+      '<p class="note">' + tr("Simulation. Es wird nichts abgebucht. In der App läuft das über App Store und Google Play.", "Simulation. Nothing is charged. In the app this goes through the App Store and Google Play.") + "</p>" +
+      '<button class="btn" id="ccOk" type="button">' + tr("Kauf simulieren", "Simulate purchase") + '</button><button class="btn ghost" id="ccNo" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
+    if (showSk) paintAvatar($("ccImg"), { sk: showSk });
+    on("ccOk", () => { grant(); SFX.record(); buzz([20, 40, 20]); acctAutosave(); after(); });
+    on("ccNo", after);
+  }
   function skinDetail(sk, back) {
-    const pr = profile() || {}, own = ownedSkins(), owned = own.includes(sk), isOn = pr.sk === sk, price = skinPrice(sk), r = RAR[skinRarity(sk)];
+    const pr = profile() || {}, owned = hasSkin(sk), isOn = pr.sk === sk, price = skinPrice(sk), r = RAR[skinRarity(sk)], how = skinHow(sk), sp = sk.startsWith("s:") ? special(sk.slice(2)) : null;
     const can = W.coins >= price;
-    openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + '</span><h2>' + esc(skinName(sk)) + '</h2><div class="sk-big" style="--rc:' + r[2] + '"><img alt="" id="skBig"></div>' +
-      '<div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" +
-      (isOn ? '<button class="btn" type="button" disabled>' + tr("Aktiv", "Equipped") + "</button>"
-        : owned ? '<button class="btn" id="skEq" type="button">' + tr("Ausrüsten", "Equip") + "</button>"
-        : '<button class="btn" id="skBuy" type="button"' + (can ? "" : " disabled") + ">" + tr("Kaufen für ", "Buy for ") + fmtN(price) + tr(" Münzen", " coins") + "</button>" + (can ? "" : '<button class="btn ghost" id="skGet" type="button">' + tr("Münzen holen", "Get coins") + "<small>" + tr("Dir fehlen ", "You need ") + fmtN(price - W.coins) + tr("", " more") + "</small></button>")) +
+    let action;
+    if (isOn) action = '<button class="btn" type="button" disabled>' + tr("Aktiv", "Equipped") + "</button>";
+    else if (owned) action = '<button class="btn" id="skEq" type="button">' + tr("Ausrüsten", "Equip") + "</button>";
+    else if (how === "lvl") action = '<p class="sk-lock">🔒 ' + tr("Schaffe Level " + sp.lvl + " in der Karriere, um diesen Skin freizuschalten.", "Clear level " + sp.lvl + " in career to unlock this skin.") + "</p>" +
+      '<button class="btn" id="skCar" type="button">' + tr("Zur Karriere", "Go to career") + "<small>" + tr("Du bist bei Level ", "You're at level ") + unlocked() + "</small></button>";
+    else if (how === "cash") action = '<button class="btn cashbtn" id="skCash" type="button">' + tr("Kaufen für ", "Buy for ") + eur(sp.eur) + "<small>" + tr("Exklusiv · nicht für Münzen", "Exclusive · not for coins") + "</small></button>";
+    else action = '<button class="btn" id="skBuy" type="button"' + (can ? "" : " disabled") + ">" + tr("Kaufen für ", "Buy for ") + fmtN(price) + tr(" Münzen", " coins") + "</button>" + (can ? "" : '<button class="btn ghost" id="skGet" type="button">' + tr("Münzen holen", "Get coins") + "<small>" + tr("Dir fehlen ", "You need ") + fmtN(price - W.coins) + tr("", " more") + "</small></button>");
+    openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + (how === "cash" ? tr(" · Exklusiv", " · Exclusive") : "") + '</span><h2>' + esc(skinName(sk)) + '</h2><div class="sk-big' + (how === "lvl" && !owned ? " dim" : "") + '" style="--rc:' + r[2] + '"><img alt="" id="skBig"></div>' +
+      (how === "coin" ? '<div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" : "") + action +
       '<p class="note">' + tr("Alle sehen deinen Skin: in der Rangliste, bei Freunden, im Turnier und bei Online-Duellen.", "Everyone sees your skin: on the leaderboard, with friends, in tournaments and online duels.") + "</p>" +
       '<button class="link" id="skDBack" type="button">' + tr("Zurück zum Shop", "Back to shop") + "</button>");
     paintAvatar($("skBig"), { sk });
-    on("skEq", () => { equipSkin(sk); SFX.coin(); showSkins(back); });
-    on("skBuy", () => {
-      if (W.coins < price || ownedSkins().includes(sk)) return;
-      W.coins -= price; store.set("skins", ownedSkins().concat(sk)); renderWallet();
-      equipSkin(sk); SFX.record(); buzz([20, 40, 20]);
+    const celebrate = () => {
+      equipSkin(sk);
       openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + "</span><h2>" + tr("Neuer Skin!", "New skin!") + '</h2><div class="sk-big pop" style="--rc:' + r[2] + '"><img alt="" id="skNew"></div><p>' + esc(skinName(sk)) + tr(" ist jetzt dein Profilbild.", " is now your profile picture.") + '</p><button class="btn" id="skOk" type="button">' + tr("Stark!", "Nice!") + "</button>");
       paintAvatar($("skNew"), { sk });
       on("skOk", () => showSkins(back));
+    };
+    on("skEq", () => { equipSkin(sk); SFX.coin(); showSkins(back); });
+    on("skBuy", () => {
+      if (W.coins < price || hasSkin(sk)) return;
+      W.coins -= price; grantSkins([sk]); renderWallet(); SFX.record(); buzz([20, 40, 20]); celebrate();
     });
+    on("skCash", () => cashCheckout(skinName(sk), sp.eur, () => grantSkins([sk]), celebrate, sk));
+    on("skCar", () => { closeLayer(); show("career"); renderCareer(); });
     on("skGet", () => showCoinShop(() => skinDetail(sk, back)));
     on("skDBack", () => showSkins(back));
   }
-
   const UNAME_RE = /^[a-z][a-z0-9_.]{2,15}$/;
   const BLOCKED = ["admin", "zack", "playzack", "support", "moderator", "mod", "official", "system", "root", "staff", "hitler", "nazi", "fuck", "ficken", "hure", "nigger", "neger", "bitch", "fotze", "wichser", "arsch"];
   function unameProblem(n) {
@@ -1558,7 +1621,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const c = careerData(), got = Object.assign({}, mileGot()), out = [];
     MILES.forEach((coins, i) => {
       const last = (i + 1) * 5, e = i + 1;
-      if (!got["m" + e] && (c[last] || 0) > 0) { got["m" + e] = 1; out.push({ e, coins, kind: "m" }); }
+      if (!got["m" + e] && (c[last] || 0) > 0) { got["m" + e] = 1; out.push({ e, coins, kind: "m" }); const ls = lvlSkinAt(last); if (ls) out.push({ e, coins: 0, kind: "k", sk: "s:" + ls.id }); }
       let st = 0; for (let n = last - 4; n <= last; n++) st += c[n] || 0;
       if (!got["s" + e] && st >= 15) { got["s" + e] = 1; out.push({ e, coins: STAR_BONUS, kind: "s" }); }
     });
@@ -1912,7 +1975,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       (info.sub ? "<p>" + esc(info.sub) + "</p>" : "") + best +
       (info.earn ? '<div class="earn">' + coinIco + "<b>+" + fmtN(info.earn.coins) + "</b> " + tr("Münzen", "coins") + ' · <span class="earn-lvl">' + tr("Stufe ", "Rank ") + W.lvl + "</span></div>" +
         info.earn.ups.map((u) => '<div class="lvlup">' + tr("Stufe ", "Rank ") + u.l + tr(" erreicht! ", " reached! ") + "+" + u.c + tr(" Münzen", " coins") + (u.t ? tr(" · +1 Verlängerung", " · +1 continue") : "") + "</div>").join("") : "") +
-      (info.miles && info.miles.length ? info.miles.map((x) => '<div class="lvlup mileup">🎁 ' + (x.kind === "m" ? tr("Etappenziel " + x.e + " erreicht! ", "Milestone " + x.e + " reached! ") : tr("Alle 15 Sterne in Etappe " + x.e + "! ", "All 15 stars in stage " + x.e + "! ")) + "+" + fmtN(x.coins) + tr(" Münzen", " coins") + "</div>").join("") : "") +
+      (info.miles && info.miles.length ? info.miles.map((x) => '<div class="lvlup mileup">🎁 ' + (x.kind === "k" ? tr("Neuer Skin freigeschaltet: ", "New skin unlocked: ") + esc(skinName(x.sk)) + "</div>" : (x.kind === "m" ? tr("Etappenziel " + x.e + " erreicht! ", "Milestone " + x.e + " reached! ") : tr("Alle 15 Sterne in Etappe " + x.e + "! ", "All 15 stars in stage " + x.e + "! ")) + "+" + fmtN(x.coins) + tr(" Münzen", " coins") + "</div>")).join("") : "") +
       (next ? tr('<button class="btn" id="rsNext" type="button">Nächstes Level</button>', "<button class=\"btn\" id=\"rsNext\" type=\"button\">Next level</button>") : "") +
       '<button class="btn' + (next ? " ghost" : "") + '" id="rsAgain" type="button">' + esc(info.againLabel || tr("Nochmal", "Play again")) + "</button>" + boost + followBtn +
       tr('<div class="row2"><button class="btn ghost" id="rsShare" type="button">Teilen</button><button class="btn ghost" id="rsMenu" type="button">Menü</button></div>', "<div class=\"row2\"><button class=\"btn ghost\" id=\"rsShare\" type=\"button\">Share</button><button class=\"btn ghost\" id=\"rsMenu\" type=\"button\">Menu</button></div>") +
@@ -3070,7 +3133,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         const e = n / 5, coins = MILES[e - 1], done = !!got["m" + e], sdone = !!got["s" + e];
         let st = 0, cleared = 0; for (let k = n - 4; k <= n; k++) { st += c[k] || 0; if (c[k] > 0) cleared++; }
         html += '<div class="mile' + (done ? " done" : "") + (n - 4 > u ? " far" : "") + '"><span class="mi-ico">' + (done ? "✓" : "🎁") + '</span><div class="mi-tx"><b>' + tr("Etappenziel ", "Milestone ") + e + (done ? tr(" · erhalten", " · claimed") : "") + "</b><small>" +
-          tr("Level " + n + " schaffen: ", "Clear level " + n + ": ") + "+" + fmtN(coins) + tr(" Münzen", " coins") + " · " + st + "/15 ★ " + (sdone ? tr("Bonus erhalten", "bonus claimed") : tr("= +" + STAR_BONUS + " Bonus", "= +" + STAR_BONUS + " bonus")) + '</small><span class="mi-bar"><i style="width:' + Math.round(Math.min(5, cleared) / 5 * 100) + '%"></i></span></div><span class="mi-c">' + coinIco + "<b>" + fmtN(coins) + "</b></span></div>";
+          tr("Level " + n + " schaffen: ", "Clear level " + n + ": ") + "+" + fmtN(coins) + tr(" Münzen", " coins") + (lvlSkinAt(n) ? tr(" + Skin „", " + skin \"") + skinName("s:" + lvlSkinAt(n).id) + tr("“", "\"") : "") + " · " + st + "/15 ★ " + (sdone ? tr("Bonus erhalten", "bonus claimed") : tr("= +" + STAR_BONUS + " Bonus", "= +" + STAR_BONUS + " bonus")) + '</small><span class="mi-bar"><i style="width:' + Math.round(Math.min(5, cleared) / 5 * 100) + '%"></i></span></div><span class="mi-c">' + coinIco + "<b>" + fmtN(coins) + "</b></span></div>";
       }
     }
     $("levels").innerHTML = html;
