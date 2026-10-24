@@ -649,6 +649,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .pt-pass { font-size: 18px; margin: 10px 0 0; }
 .pt-who { font-family: var(--font-display); font-size: clamp(40px, 13vw, 64px); line-height: 1; color: var(--volt); overflow-wrap: anywhere; margin: 6px 0 16px; }
 .pt-pad { min-height: min(52vh, 420px); border-radius: 18px; background: var(--housing); border: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; touch-action: none; cursor: pointer; padding: 20px; }
+.pt-pad .lights { width: 100%; max-width: 320px; box-sizing: border-box; gap: 8px; padding: 12px; justify-content: center; }
+.pt-pad .lights i { flex: 1 1 0; min-width: 0; width: auto; max-width: 52px; }
 .pt-target { font-family: var(--font-num); font-weight: 800; font-size: 18px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 .pt-msg { font-size: 18px; color: var(--muted); min-height: 26px; }
 .pt-msg strong { color: var(--chalk); }
@@ -854,7 +856,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       </button>
       <button class="wide tourcard" id="goTour" type="button">
         <span class="eyebrow" data-en="Tournament · for groups & streams">Turnier · für Gruppen & Streams</span>
-        <span class="wide-title" data-en="Who wins the group?">Wer gewinnt die Gruppe?</span>
+        <span class="wide-title" data-en="Who is the fastest?">Wer ist am schnellsten?</span>
         <span class="wide-sub" data-en="Create a code, everyone plays the same rounds, live leaderboard.">Code erstellen, alle spielen dieselben Runden, Live-Rangliste.</span>
       </button>
       <button class="wide partycard" id="goParty" type="button">
@@ -4387,7 +4389,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // =====================================================
   // PARTY: Verlierer zahlt — Handy reihum, wer am schlechtesten ist, zahlt
   // =====================================================
-  const PARTY = { names: [], game: "ampel", res: [], i: 0, kd: null };
+  const PARTY = { names: [], game: "ampel", res: [], tb: {}, pool: [], tie: false, queue: [], qi: 0, i: 0, kd: null };
   function partyKeysOff() { if (PARTY.kd) { document.removeEventListener("keydown", PARTY.kd); PARTY.kd = null; } }
   function partySetup() {
     let names = store.get("party:names", null);
@@ -4397,7 +4399,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       openLayer('<span class="eyebrow">' + tr("Partymodus · ein Handy", "Party mode · one phone") + "</span><h2>" + tr("Verlierer zahlt", "Loser pays") + "</h2><p>" + tr("Alle spielen nacheinander. Wer am schlechtesten ist, zahlt die nächste Runde.", "Everyone plays in turn. Whoever does worst pays the next round.") + "</p>" +
         '<div class="pt-names" id="ptNames"></div>' + (names.length < 8 ? '<button class="btn ghost" id="ptAdd" type="button">+ ' + tr("Spieler", "Player") + "</button>" : "") +
         '<span class="eyebrow">' + tr("Spiel", "Game") + '</span><div class="seg two"><button type="button" id="ptG1" class="' + (game === "ampel" ? "on" : "") + '">' + tr("Startampel", "Start lights") + '</button><button type="button" id="ptG2" class="' + (game === "uhr" ? "on" : "") + '">' + tr("Genau 5 Sekunden", "Exactly 5 seconds") + "</button></div>" +
-        '<p class="note">' + (game === "ampel" ? tr("Wer am langsamsten reagiert, zahlt. Fehlstart zählt als 1,5 Sekunden.", "Slowest reaction pays. A jump start counts as 1.5 seconds.") : tr("Uhr starten und blind bei 5,00 s stoppen. Wer am weitesten daneben liegt, zahlt.", "Start the clock and stop blind at 5.00 s. Furthest off pays.")) + "</p>" +
+        '<p class="note">' + (game === "ampel" ? tr("Wer am langsamsten reagiert, zahlt. Bei Fehlstart einfach nochmal.", "Slowest reaction pays. Jump start? Just go again.") : tr("Uhr starten und blind bei 5,00 s stoppen. Wer am weitesten daneben liegt, zahlt.", "Start the clock and stop blind at 5.00 s. Furthest off pays.")) + "</p>" +
         '<button class="btn" id="ptGo" type="button">' + tr("Los geht's", "Let's go") + "</button>" +
         '<p class="note">' + tr("ZACK! nimmt kein Geld. Die App entscheidet nur, wer die Runde zahlt.", "ZACK! takes no money. The app only decides who pays the round.") + '</p><button class="link" id="ptX" type="button">' + tr("Zurück", "Back") + "</button>", "party");
       const box = $("ptNames");
@@ -4416,16 +4418,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         const list = names.map((n) => String(n || "").trim().slice(0, 14)).filter(Boolean);
         if (list.length < 2) return;
         store.set("party:names", list); store.set("party:game", game);
-        PARTY.names = list; PARTY.game = game; PARTY.res = []; PARTY.i = 0;
-        partyTurn();
+        PARTY.names = list; PARTY.game = game; PARTY.tie = false; partyStart(list.map((_, i) => i));
       });
     };
     draw();
   }
+  function partyStart(queue) { PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; if (!PARTY.tie) PARTY.res = []; partyTurn(); }
   function partyTurn() {
     partyKeysOff();
     const n = PARTY.names[PARTY.i];
-    openLayer('<span class="eyebrow">' + tr("Spieler ", "Player ") + (PARTY.i + 1) + " / " + PARTY.names.length + '</span><p class="pt-pass">' + tr("Handy an", "Pass the phone to") + '</p><div class="pt-who"></div>' +
+    openLayer('<span class="eyebrow">' + (PARTY.tie ? tr("Stechen · ", "Tie-break · ") : "") + tr("Spieler ", "Player ") + (PARTY.qi + 1) + " / " + PARTY.queue.length + '</span><p class="pt-pass">' + tr("Handy an", "Pass the phone to") + '</p><div class="pt-who"></div>' +
       '<button class="btn" id="ptReady" type="button">' + tr("Bereit", "Ready") + "</button>", "party");
     sheet.querySelector(".pt-who").textContent = n;
     on("ptReady", partyPlay);
@@ -4441,18 +4443,18 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const setL = (k) => L.forEach((l, i) => l.classList.toggle("on", i < k));
     const done = (v, txt) => {
       st = "done"; cancelAnimationFrame(raf); partyKeysOff();
-      PARTY.res[PARTY.i] = v;
+      (PARTY.tie ? PARTY.tb : PARTY.res)[PARTY.i] = v;
       msg.innerHTML = "<strong>" + esc(txt) + "</strong>";
-      const last = PARTY.i >= PARTY.names.length - 1;
-      const b = h("button", "btn"); b.type = "button"; b.textContent = last ? tr("Auswertung", "Results") : tr("Weiter zu ", "Next: ") + PARTY.names[PARTY.i + 1];
-      b.addEventListener("click", (e) => { e.stopPropagation(); PARTY.i++; if (last) partyReveal(); else partyTurn(); });
+      const last = PARTY.qi >= PARTY.queue.length - 1;
+      const b = h("button", "btn"); b.type = "button"; b.textContent = last ? tr("Auswertung", "Results") : tr("Weiter zu ", "Next: ") + PARTY.names[PARTY.queue[PARTY.qi + 1]];
+      b.addEventListener("click", (e) => { e.stopPropagation(); if (last) partyReveal(); else { PARTY.qi++; PARTY.i = PARTY.queue[PARTY.qi]; partyTurn(); } });
       sheet.appendChild(b);
     };
     const tap = (ts) => {
       const now = ts || performance.now();
       if (ampel) {
         if (st === "idle") { st = "arm"; msg.innerHTML = tr("Warten …", "Wait …"); for (let i = 1; i <= 5; i++) T(i * 750, () => { setL(i); SFX.light(); buzz(10); }); T(5 * 750 + 400 + Math.random() * 2300, () => { setL(0); t0 = performance.now(); st = "go"; msg.innerHTML = "&nbsp;"; }); }
-        else if (st === "arm") { VS_T.forEach(clearTimeout); VS_T = []; setL(5); SFX.bad(); buzz(70); done(1500, tr("Fehlstart! Zählt als 1.500 ms", "Jump start! Counts as 1,500 ms")); }
+        else if (st === "arm") { VS_T.forEach(clearTimeout); VS_T = []; setL(5); SFX.bad(); buzz(70); st = "idle"; msg.innerHTML = "<strong>" + tr("Fehlstart! Nochmal.", "Jump start! Again.") + "</strong><br>" + tr("Tippen zum Starten", "Tap to start"); VS_T.push(setTimeout(() => { if (st === "idle") setL(0); }, 700)); }
         else if (st === "go") { const rt = Math.max(1, Math.round(now - t0)); SFX.go(); buzz(15); done(rt, rt + " ms"); }
       } else {
         const clk = $("ptClock");
@@ -4467,8 +4469,19 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function partyReveal() {
     partyKeysOff();
-    const R = PARTY.names.map((n, i) => ({ n, v: PARTY.res[i] })).sort((a, b) => a.v - b.v);
-    const worst = R[R.length - 1].v, losers = R.filter((x) => x.v === worst).map((x) => x.n);
+    const R = PARTY.names.map((n, i) => ({ n, i, v: PARTY.res[i] })).sort((a, b) => a.v - b.v);
+    // Verlierer nur unter den Spielern im Stechen bestimmen
+    const pool = PARTY.tie ? PARTY.pool : PARTY.names.map((_, i) => i), val = (i) => (PARTY.tie ? PARTY.tb[i] : PARTY.res[i]);
+    const worst = Math.max(...pool.map(val)), tied = pool.filter((i) => val(i) === worst).map((i) => ({ n: PARTY.names[i], i }));
+    const tbLine = PARTY.tie ? '<p class="note">' + tr("Stechen: ", "Tie-break: ") + esc(pool.map((i) => PARTY.names[i] + " " + fmtN(PARTY.tb[i])).join(" · ")) + "</p>" : "";
+    if (tied.length > 1) {
+      PARTY.tie = true; PARTY.pool = tied.map((x) => x.i); PARTY.tb = {};
+      openLayer('<span class="eyebrow">' + tr("Gleichstand!", "It's a tie!") + "</span><h2>" + tr("Stechen", "Tie-break") + "</h2><p>" + esc(tied.map((x) => x.n).join(" & ")) + tr(" haben genau gleich abgeschnitten. Ihr spielt nochmal gegeneinander.", " scored exactly the same. You play again.") + '</p><button class="btn" id="ptTie" type="button">' + tr("Los", "Go") + "</button>", "party");
+      SFX.light(); on("ptTie", () => partyStart(tied.map((x) => x.i)));
+      return;
+    }
+    PARTY.tie = false;
+    const losers = [tied[0].n], loserI = tied[0].i;
     openLayer('<span class="eyebrow">' + tr("Und zahlen muss …", "And the one paying is …") + '</span><div class="pt-roll" id="ptRoll">?</div>', "party");
     const roll = $("ptRoll");
     let k = 0, delay = 70;
@@ -4480,11 +4493,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const show_ = () => {
       const unit = PARTY.game === "ampel" ? " ms" : tr(" ms daneben", " ms off");
       openLayer('<span class="eyebrow">' + tr("Verlierer zahlt", "Loser pays") + '</span><div class="pt-loser"><span class="pt-money">💸</span><b></b><span>' + (losers.length > 1 ? tr("zahlen zusammen!", "pay together!") : tr("zahlt!", "pays!")) + "</span></div>" +
-        '<div class="pt-rank">' + R.map((x, i) => '<div class="pt-r' + (x.v === worst ? " lose" : i === 0 ? " win" : "") + '"><i>' + (i + 1) + "</i><span>" + esc(x.n) + "</span><b>" + fmtN(x.v) + esc(unit) + "</b></div>").join("") + "</div>" +
+        '<div class="pt-rank">' + R.map((x, i) => '<div class="pt-r' + (x.i === loserI ? " lose" : i === 0 ? " win" : "") + '"><i>' + (i + 1) + "</i><span>" + esc(x.n) + "</span><b>" + fmtN(x.v) + esc(unit) + "</b></div>").join("") + "</div>" + tbLine +
         '<button class="btn" id="ptAgain" type="button">' + tr("Revanche", "Rematch") + '</button><div class="row2"><button class="btn ghost" id="ptEdit" type="button">' + tr("Spieler ändern", "Change players") + '</button><button class="btn ghost" id="ptShare" type="button">' + tr("Teilen", "Share") + '</button></div><button class="link" id="ptMenu" type="button">' + tr("Menü", "Menu") + "</button>", "party");
       sheet.querySelector(".pt-loser b").textContent = losers.join(" & ");
       SFX.lose(); buzz([60, 40, 60, 40, 120]);
-      on("ptAgain", () => { PARTY.res = []; PARTY.i = 0; partyTurn(); });
+      on("ptAgain", () => { PARTY.tie = false; partyStart(PARTY.names.map((_, i) => i)); });
       on("ptEdit", partySetup);
       on("ptMenu", closeLayer);
       on("ptShare", () => shareOut(tr("Bei ZACK! hat ", "At ZACK! ") + losers.join(" & ") + tr(" verloren und zahlt die Runde 😂", " lost and pays the round 😂"), appLink(), partyReveal));
