@@ -188,6 +188,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 
 /* Ziele */
 .t { position: absolute; width: var(--s); height: var(--s); padding: 0; border: 0; background: none; touch-action: none; }
+.t::before, .dot::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; }
 .t .core { position: absolute; inset: 0; border-radius: 50%; background: var(--volt); color: var(--volt-ink); display: grid; place-items: center; font-family: var(--font-num); font-weight: 800; font-size: 20px; animation: pop .14s ease-out; }
 .t .ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--volt); transform: scale(1.9); pointer-events: none; }
 .t.bomb .core { background: var(--signal); color: var(--housing); font-size: 26px; }
@@ -244,7 +245,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .root.lanes { display: grid; grid-template-columns: repeat(3, 1fr); }
 .lane + .lane { border-left: 1px solid var(--line); }
 .hitline { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: var(--signal); opacity: .55; }
-.blk { position: absolute; top: 0; border: 0; padding: 0; border-radius: 12px; background: var(--volt); touch-action: none; display: grid; place-items: center; will-change: transform; backface-visibility: hidden; }
+.blk { position: absolute; top: 0; border: 0; padding: 0; pointer-events: none; border-radius: 12px; background: var(--volt); touch-action: none; display: grid; place-items: center; will-change: transform; backface-visibility: hidden; }
 .blk.red { background: var(--signal); }
 .blk.red::after { content: "✕"; color: var(--housing); font-size: 28px; font-weight: 800; }
 .blk.dbl { background: linear-gradient(180deg, #ffe680, var(--volt) 55%, #e8b400); box-shadow: inset 0 0 0 3px #17151b, inset 0 0 0 6px rgba(255, 255, 255, .55); }
@@ -1868,6 +1869,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       boost: opts.level ? opts.level.tier * 5 : 0,
       extraLife: opts.extraLife ? 1 : 0,
       t: () => clock.t(),
+      // Zeit, zu der der Finger wirklich aufgesetzt hat (Verarbeitung kommt oft 20–80 ms später)
+      evT(e) { const n = performance.now(), ts = e && e.timeStamp; const lag = ts > 0 && ts <= n && n - ts < 250 ? n - ts : 0; return clock.t() - lag; },
       live: () => E.active && !P.run.ended && clock.pausedAt == null,
       at(ms, fn) { P.events.push({ at: clock.t() + ms, fn }); },
       clearAt() { P.events = []; },
@@ -3592,7 +3595,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       b.type = "button"; b.style.cssText = "--s:" + size + "px;left:" + x + "px;top:" + y + "px";
       b.setAttribute("aria-label", type === "bomb" ? tr("Rotes Ziel, nicht tippen", "Red target, don't tap") : tr("Ziel", "Target"));
       const T = { el: b, ring: b.firstChild, type, born: start + at, life, x, y, size };
-      b.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); hit(T); });
+      b.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); hit(T, ctx.evT(e)); });
       r.appendChild(b); alive.push(T);
     }
     const kill = (T) => { T.el.remove(); alive = alive.filter((o) => o !== T); };
@@ -3601,9 +3604,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       lives--; combo = 0; ctx.info(""); ctx.lives(lives, max); ctx.hurt();
       if (lives <= 0) ctx.die();
     }
-    function hit(T) {
+    function hit(T, at) {
       if (!ctx.live() || !alive.includes(T)) return;
-      const k = (ctx.t() - T.born) / T.life;
+      const k = ((at || ctx.t()) - T.born) / T.life;
       kill(T);
       ctx.burst(T.x, T.y, T.size, T.type === "bomb" ? "var(--signal)" : T.type === "bonus" ? "var(--ice)" : "var(--volt)");
       if (T.type === "bomb") { lose(T, tr("Rot!", "Red!")); return; }
@@ -3623,8 +3626,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         while (el >= next && n++ < 3) spawn(next);
         for (const T of alive.slice()) {
           const k = (g - T.born) / T.life;
-          if (k >= 1) { kill(T); if (T.type === "normal") { lose(T, tr("Verpasst", "Missed")); if (!ctx.live()) return; } }
-          else T.ring.style.transform = "scale(" + (1 + (1 - k) * 0.9).toFixed(3) + ")";
+          if (g - T.born >= T.life + 90) { kill(T); if (T.type === "normal") { lose(T, tr("Verpasst", "Missed")); if (!ctx.live()) return; } }
+          else T.ring.style.transform = "scale(" + (1 + Math.max(0, 1 - k) * 0.9).toFixed(3) + ")";
         }
       },
       revive() {
@@ -3667,7 +3670,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     r.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       if (!ctx.live()) return;
-      const tap = ctx.t();
+      const tap = ctx.evT(e);
       if (state === "idle" || state === "result" || state === "false") seq();
       else if (state === "arming") {
         ctx.clearAt(); state = "false"; set(5); ctx.hurt();
@@ -3726,7 +3729,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const o = p === 1 ? 2 : 1;
       if (state === "arming") { ctx.clearAt(); set(5); beep(150, 0.3, "sawtooth", 0.07); buzz(60); point(o, p, tr("Punkt für dich", "Point for you"), tr("Fehlstart!", "Jump start!")); }
       else if (state === "go") {
-        const rt = Math.max(1, Math.round(ctx.t() - t0));
+        const rt = Math.max(1, Math.round(ctx.evT(e) - t0));
         if (fastest == null || rt < fastest) fastest = rt;
         beep(880, 0.08, "triangle", 0.07); buzz(15);
         point(p, o, rt + " ms", tr("Zu langsam", "Too slow"));
@@ -3773,7 +3776,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     r.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       if (!ctx.live()) return;
-      const t = ctx.t();
+      const t = ctx.evT(e);
       if (state === "idle" || state === "result") { state = "run"; t0 = t; msg.innerHTML = tr("Läuft … tippe bei ", "Running … tap at ") + fmt3(T()) + " s"; beep(660, 0.05); }
       else if (state === "run") stop((t - t0) / 1000);
     });
@@ -3815,7 +3818,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     r.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       if (!ctx.live()) return;
-      const t = ctx.t();
+      const t = ctx.evT(e);
       if (phase === "flash" && cur.green) {
         const rt = Math.round(t - cur.at);
         score++; combo++; ctx.score(score); ctx.info(combo >= 3 ? combo + tr(" in Folge", " in a row") : ""); ctx.streak(combo);
@@ -3835,7 +3838,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           if (green) { if (s > 15 && ctx.rng() < 0.25) w = ctx.rng() < 0.5 ? tr("STOPP", "STOP") : tr("ROT", "RED"); }
           else { const d = DECOYS[Math.floor(ctx.rng() * (s > 10 ? DECOYS.length : 4))]; c = d.c; w = d.w || ""; }
           const win = Math.max(450, 1100 - s * 9);
-          cur = { green, at: t, end: t + (green ? win : win * 0.85) };
+          cur = { green, at: t, end: t + (green ? win + 90 : win * 0.85) };
           phase = "flash"; light(c, w);
         } else if (phase === "flash" && t >= cur.end) {
           const missed = cur.green; endFlash(t);
@@ -3877,7 +3880,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     btns.forEach((b) => b.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       if (!ctx.live() || waiting) return;
-      const i = +b.dataset.i, t = ctx.t();
+      const i = +b.dataset.i, t = ctx.evT(e);
       if (i === ink) {
         score++; combo++; ctx.score(score); ctx.info(combo >= 3 ? combo + tr(" in Folge", " in a row") : ""); ctx.streak(combo);
         const rt = Math.round(t - shownAt);
@@ -3891,7 +3894,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       tick(t) {
         if (waiting) return;
         bar.style.transform = "scaleX(" + Math.max(0, (deadline - t) / dur).toFixed(3) + ")";
-        if (t >= deadline) { if (lose(tr("Zu langsam", "Too slow"))) { waiting = true; deadline = Infinity; return; } after(); }
+        if (t >= deadline + 80) { if (lose(tr("Zu langsam", "Too slow"))) { waiting = true; deadline = Infinity; return; } after(); }
       },
       revive() { lives = 1; combo = 0; ctx.lives(lives, max); ctx.info(""); waiting = true; deadline = Infinity; word.textContent = ""; ctx.at(900, (t) => next(t)); },
       result: () => ({ value: score, text: String(score), unit: tr("richtig", "correct") })
@@ -3926,9 +3929,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (kind === "hold") el.innerHTML = '<span class="bl-fill"></span><span class="bl-cap"></span><span class="bl-rail"></span><span class="bl-hold"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 1.8a1.3 1.3 0 0 1 2.6 0V7l.3-.1a1.3 1.3 0 0 1 2.4.7v.2l.2-.1a1.3 1.3 0 0 1 2 1.1V12c0 2.2-1.7 3.8-3.9 3.8H8.1c-1.2 0-2.3-.6-3-1.6L2.3 10a1.3 1.3 0 0 1 2.1-1.5L6 10.3z" fill="currentColor"/></svg><b>+' + pts + "</b></span>";
       el.style.width = W / 3 - 10 + "px"; el.style.height = th + "px"; el.style.left = (lane * W) / 3 + 5 + "px";
       const T = { el, lane, y: -th, h: th, red: kind === "red", kind, hits: 0, prog: 0, need: 0, holding: null, tick: 0, pts, snd: null };
-      if (kind === "hold") T.need = Math.max(500, Math.min(2600, (th / speed(s, H)) * 1000));
+      // Haltezeit passt sich dem Tempo an: muss immer locker zu schaffen sein, solange der Block sichtbar ist
+      if (kind === "hold") T.need = Math.max(320, Math.min(2600, (th / speed(s, H)) * 1000 * 0.8));
       el.style.transform = "translate3d(0," + T.y + "px,0)";
-      el.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); press(T, e.pointerId == null ? 0 : e.pointerId); });
       r.appendChild(el); tiles.push(T);
       next = at + Math.max(320, 900 - s * 9) + (kind === "hold" ? 200 * len : 0);
     }
@@ -3962,6 +3965,24 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       for (const T of tiles) if (T.kind === "hold" && T.holding != null && (pid == null || T.holding === pid)) { T.holding = null; T.el.classList.remove("on"); if (T.snd) { T.snd.stop(false); T.snd = null; } hapticStop(); }
     }
     const quiet = () => { tiles.forEach((T) => { if (T.snd) { T.snd.stop(false); T.snd = null; } }); hapticStop(); };
+    let curV = 0;
+    r.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      if (!ctx.live()) return;
+      const lp = ctx.local(e), W = ctx.W(), lane = Math.max(0, Math.min(2, Math.floor(lp.x / (W / 3))));
+      // der Block ist seit dem Antippen schon weitergefallen: Abstand nach oben großzügig, nach unten etwas Spiel
+      const lag = Math.max(0, ctx.t() - ctx.evT(e)) + 40;
+      const up = 26 + (curV * lag) / 1000, down = 26;
+      let best = null, bd = Infinity;
+      for (const T of tiles) {
+        if (T.lane !== lane || T.holding != null || lp.y < T.y - up || lp.y > T.y + T.h + down) continue;
+        const d = lp.y < T.y ? T.y - lp.y : lp.y > T.y + T.h ? lp.y - T.y - T.h : 0;
+        if (T.red && d > 0) continue; // Steine zählen nur bei echtem Treffer
+        const sc = d + (T.red ? 0.5 : 0) - T.y * 1e-6;
+        if (sc < bd) { bd = sc; best = T; }
+      }
+      if (best) press(best, e.pointerId == null ? 0 : e.pointerId);
+    });
     const onUp = (e) => { if (!r.isConnected) { quiet(); removeEventListener("pointerup", onUp); removeEventListener("pointercancel", onUp); return; } release(e.pointerId == null ? 0 : e.pointerId); };
     addEventListener("pointerup", onUp); addEventListener("pointercancel", onUp);
     return {
@@ -3971,7 +3992,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         const dt = Math.min(50, t - lastT); lastT = t;
         let n = 0; while (el >= next && n++ < 3) spawn(next);
         const s = el / 1000 + ctx.boost, H = ctx.H();
-        const v = speed(s, H);
+        const v = speed(s, H); curV = v;
         AU.setIntensity(s / 70);
         for (const T of tiles.slice()) {
           T.y += (v * dt) / 1000;
@@ -4011,13 +4032,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const y = H / 2 + Math.sin(a) * (H / 2 - size * 0.75) * k - size / 2;
       const el = h("button", "dot"); el.type = "button"; el.setAttribute("aria-label", tr("Punkt", "Dot"));
       el.style.cssText = "left:" + x + "px;top:" + y + "px;width:" + size + "px;height:" + size + "px";
-      el.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); hit(); });
+      el.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); hit(ctx.evT(e)); });
       r.appendChild(el);
       cur = { el, x, y, size, at: t, end: t + Math.max(320, 950 - s * 12) };
     }
-    function hit() {
+    function hit(at) {
       if (!ctx.live() || !cur) return;
-      const t = ctx.t(), c = cur; c.el.remove(); cur = null;
+      const t = at || ctx.t(), c = cur; c.el.remove(); cur = null;
       hint.hidden = true;
       score++; combo++; ctx.score(score); ctx.info(combo >= 3 ? combo + tr(" in Folge", " in a row") : ""); ctx.streak(combo);
       ctx.burst(c.x, c.y, c.size, "var(--volt)");
@@ -4028,7 +4049,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     return {
       tick(t) {
         if (!cur && t >= nextAt) spawn(t);
-        else if (cur && t >= cur.end) {
+        else if (cur && t >= cur.end + 90) {
           const c = cur; c.el.remove(); cur = null; nextAt = t + 500 + ctx.rng() * 500;
           ctx.float(c.x + c.size / 2, c.y + c.size / 2, tr("Verpasst", "Missed"), "bad");
           lives--; combo = 0; ctx.lives(lives, max); ctx.info(""); ctx.hurt();
@@ -4056,7 +4077,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     r.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       if (!ctx.live() || done) return;
-      const lp = ctx.local(e), px = lp.x, py = lp.y, d = Math.hypot(px - x, py - y);
+      const lp = ctx.local(e), px = lp.x, py = lp.y;
+      const lag = (Math.max(0, ctx.t() - ctx.evT(e)) + 16) / 1000; // Eingabe + ein Bild Anzeige
+      const d = Math.min(Math.hypot(px - x, py - y), Math.hypot(px - (x - vx * lag), py - (y - vy * lag)));
       let pts = 0, label = tr("Daneben", "Miss"), cls = "bad";
       if (d <= R * 0.3) { pts = 10; label = tr("+10 Volltreffer", "+10 Bullseye"); cls = "fast"; bulls++; }
       else if (d <= R * 0.65) { pts = 5; label = "+5"; cls = ""; }
