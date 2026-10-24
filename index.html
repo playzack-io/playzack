@@ -364,8 +364,9 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .srow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--asphalt-2); border: 1px solid var(--line); border-radius: 14px; }
 .srow img { width: 38px; height: 38px; border-radius: 50%; flex: none; }
 .avw { position: relative; flex: none; display: inline-flex; }
-.avw .odot { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: #6f6a7a; box-shadow: 0 0 0 2px var(--asphalt-2); }
-.avw .odot.on { background: var(--go); box-shadow: 0 0 0 2px var(--asphalt-2), 0 0 8px rgba(62, 226, 122, .7); }
+img.ring-on, img.ring-off { box-sizing: border-box; padding: 2px; border: 2px solid; background-clip: content-box; transition: border-color .3s, filter .3s; }
+img.ring-on { border-color: var(--go); box-shadow: 0 0 9px rgba(62, 226, 122, .55); }
+img.ring-off { border-color: #4a4654; filter: saturate(.55) brightness(.82); }
 .stext { flex: 1 1 140px; min-width: 0; display: flex; flex-direction: column; gap: 1px; overflow-wrap: anywhere; }
 .srow { flex-wrap: wrap; row-gap: 8px; }
 .srow .sbtns { margin-left: auto; }
@@ -1280,8 +1281,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   let regionNames = null, regionLang = null;
   function countryName(c) {
     if (CUSTOM[c]) return L(CUSTOM[c]);
+    if (c === "US") return "USA";
+    if (c === "GB" && S.lang !== "en") return "Großbritannien";
+    if (c === "AE" && S.lang !== "en") return "Vereinigte Arabische Emirate (VAE)";
     try { if (regionLang !== S.lang) { regionNames = new Intl.DisplayNames([S.lang === "en" ? "en" : "de"], { type: "region" }); regionLang = S.lang; } return regionNames.of(c) || c; } catch (e) { return c; }
   }
+  // Suchbegriffe, die im offiziellen Ländernamen nicht vorkommen (z. B. "USA" -> "Vereinigte Staaten")
+  const CALIAS = { US: "usa us amerika america vereinigte staaten united states", GB: "uk england britain großbritannien grossbritannien", AE: "uae vae emirate emirates dubai abu dhabi", NL: "holland", CZ: "tschechien czechia", KR: "südkorea korea", KP: "nordkorea", RU: "russland russia", CH: "schweiz switzerland", BA: "bosnien bosnia", MK: "mazedonien macedonia", XK: "kosovo", PS: "palästina palestine", CD: "kongo congo", CG: "kongo congo", CI: "elfenbeinküste ivory coast", VA: "vatikan vatican", TR: "türkei turkey türkiye turkiye" };
+  const flagMatch = (c, n, q) => !q || n.toLowerCase().includes(q) || c.toLowerCase() === q || (CALIAS[c] || "").includes(q);
   const isFlag = (c) => typeof c === "string" && (ISO.includes(c) || Object.prototype.hasOwnProperty.call(CUSTOM, c));
   const cleanFlags = (f) => (Array.isArray(f) ? f.filter(isFlag).slice(0, 1) : []);
   const flagsStr = (f) => { const x = cleanFlags(f); return x.length ? " " + x.map(flagEmoji).join(" ") : ""; };
@@ -1436,9 +1443,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function photoBadge(photo, sk, skinU) {
     const key = sk + "|" + photo.length + "|" + photo.slice(-32);
     if (BADGE[key]) return BADGE[key];
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="pc"><circle cx="32" cy="32" r="32"/></clipPath><clipPath id="bc"><circle cx="46.5" cy="46.5" r="10.2"/></clipPath></defs>' +
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="pc"><circle cx="32" cy="32" r="32"/></clipPath><clipPath id="bc"><circle cx="49" cy="15" r="10.2"/></clipPath></defs>' +
       '<image href="' + photo + '" xlink:href="' + photo + '" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#pc)"/>' +
-      '<circle cx="46.5" cy="46.5" r="12" fill="#17151b"/><image href="' + skinU + '" xlink:href="' + skinU + '" x="36.3" y="36.3" width="20.4" height="20.4" clip-path="url(#bc)"/></svg>';
+      '<circle cx="49" cy="15" r="12.4" fill="#17151b"/><image href="' + skinU + '" xlink:href="' + skinU + '" x="38.8" y="4.8" width="20.4" height="20.4" clip-path="url(#bc)"/></svg>';
     const keys = Object.keys(BADGE); if (keys.length > 60) delete BADGE[keys[0]];
     return (BADGE[key] = svgURL(svg));
   }
@@ -1449,7 +1456,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const base = photo || avatarURL(Number.isInteger(d.av) ? d.av : 0);
     if (!skinValid(d.sk)) { img.src = base; return; }
     if (photo) {
-      // eigenes Foto bleibt sichtbar, der Skin sitzt klein und rund unten rechts
+      // eigenes Foto bleibt sichtbar, der Skin sitzt klein und rund oben rechts
       const withBadge = (u) => { img.src = photoBadge(photo, d.sk, u); };
       if (d.sk.startsWith("s:")) { withBadge(skinURL(d.sk)); return; }
       if (SKINURL[d.sk]) { withBadge(SKINURL[d.sk]); return; }
@@ -1509,7 +1516,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         sec(tr("Durch Karriere freischalten", "Unlock in career"), tr("Schaffe das Level in der Karriere, dann gehört der Skin dir.", "Clear the career level and the skin is yours."), by("lvl"));
     } else {
       const q = SKS.q.trim().toLowerCase(), flags = cleanFlags(pr.flags);
-      const all = Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !q || n.toLowerCase().includes(q) || c.toLowerCase() === q)
+      const all = Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => flagMatch(c, n, q))
         .sort((a, b) => (flags.includes(b[0]) - flags.includes(a[0])) || a[1].localeCompare(b[1]));
       body = '<input class="flagq" id="skQ" type="search" autocomplete="off" placeholder="' + esc(tr("Land suchen …", "Search country …")) + '" value="' + esc(SKS.q) + '">' + '<div class="sk-grid">' + all.slice(0, q ? 60 : 36).map(([c]) => card("c:" + c)).join("") + "</div>";
     }
@@ -1774,7 +1781,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const drawList = () => {
       const q = ($("pfFlagQ").value || "").trim().toLowerCase(), list = $("pfFlagList"); list.innerHTML = "";
       const mc = myCountry();
-      Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !flags.includes(c) && (!q || n.toLowerCase().includes(q) || c.toLowerCase() === q))
+      Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !flags.includes(c) && flagMatch(c, n, q))
         .sort((a, b) => (hasFlag(b[0]) - hasFlag(a[0])) || ((b[0] === mc) - (a[0] === mc)) || a[1].localeCompare(b[1])).slice(0, 60).forEach(([c, n]) => {
           const b = h("button", "flagitem"); b.type = "button"; b.append(flagNode(c), document.createTextNode("  " + n + (CUSTOM[c] ? tr("  · Region", "  · region") : "")));
           if (!hasFlag(c)) { const pt = h("span", "flagprice"); pt.textContent = eur(FLAG_EUR); b.appendChild(pt); }
@@ -1982,7 +1989,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function renderProfileChip() {
     const pr = profile(), im = $("pAv"), nm = $("pName");
     if (!im) return;
-    paintAvatar(im, pr); nm.textContent = pr && pr.uname ? "@" + pr.uname : tr("Profil", "Profile"); if (pr) appendFlags(nm, pr.flags);
+    paintAvatar(im, pr); let on_ = false; try { on_ = !!NET.ok; } catch (e) {} im.classList.toggle("ring-on", on_); im.classList.toggle("ring-off", !on_); nm.textContent = pr && pr.uname ? "@" + pr.uname : tr("Profil", "Profile"); if (pr) appendFlags(nm, pr.flags);
   }
 
   // ---------- Münzen, Verlängerungen, Stufen ----------
@@ -2861,7 +2868,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   let netReadyResolve; NET.ready = new Promise((r) => { netReadyResolve = r; });
   async function initNet() {
     try { await initNet0(); } catch (e) { NET.ok = false; }
-    finally { netReadyResolve(); renderOnline(); }
+    finally { netReadyResolve(); renderOnline(); renderProfileChip(); }
   }
   async function initNet0() {
     if (!window.claude || typeof window.claude.use !== "function") { renderOnline(); netReadyResolve(); return; }
@@ -3177,7 +3184,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     for (const id of NET.follows) {
       const p = peerOf(id), st = p && p.presence ? p.presence.st : null;
       const b = h("button", "pick"); b.type = "button";
-      const img = h("img"); img.alt = ""; if (ps[id]) paintAvatar(img, ps[id]); else img.hidden = true;
+      const img = h("img", p ? "ring-on" : "ring-off"); img.alt = ""; if (ps[id]) paintAvatar(img, ps[id]); else img.hidden = true;
       const tx = h("span", "stext"); const n1 = h("span", "sname"); n1.textContent = nameOf(ps[id]);
       const n2 = h("span", "ssub", '<span class="sdot' + (p ? " on" : "") + '"></span>' + (p ? (st === "menu" ? tr("online · live spielen", "online · play live") : tr("online · gerade beschäftigt", "online · busy right now")) : tr("offline · zeitversetzt", "offline · async")));
       tx.append(n1, n2); b.append(img, tx);
@@ -3554,7 +3561,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     openLayer("<h2>" + esc(title) + '</h2><input class="flagq" id="pcQ" type="search" autocomplete="off" placeholder="' + esc(tr("Land suchen …", "Search country …")) + '"><div class="flaglist tall" id="pcList"></div><button class="btn ghost" id="pcX" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
     const draw = () => {
       const q = ($("pcQ").value || "").trim().toLowerCase(), list = $("pcList"); list.innerHTML = "";
-      Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !q || n.toLowerCase().includes(q) || c.toLowerCase() === q)
+      Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => flagMatch(c, n, q))
         .sort((a, b) => a[1].localeCompare(b[1])).forEach(([c, n]) => {
           const b = h("button", "flagitem"); b.type = "button"; b.append(flagNode(c), document.createTextNode("  " + n + (CUSTOM[c] ? tr("  · Region", "  · region") : "")));
           b.addEventListener("click", () => { closeLayer(); cb(c); });
@@ -3648,7 +3655,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (!NET.ok || !id) return;
     const ps = await names([id]), p = ps[id] || { name: tr("Spieler", "Player") }, cid = chatId(NET.me, id);
     const QUICK = [tr("GG 👊", "GG 👊"), tr("Revanche?", "Rematch?"), "🔥", "😂", tr("Gleich eine Runde?", "One round?")];
-    openLayer('<div class="chat-head"><span class="avw"><img id="chAv" alt=""><i class="odot' + (peerOf(id) ? " on" : "") + '"></i></span><span class="chat-who"><b id="chName"></b><small>' + (peerOf(id) ? "online" : "offline") + '</small></span><button class="sbtn" id="chDuel" type="button">' + tr("Herausfordern", "Challenge") + "</button></div>" +
+    openLayer('<div class="chat-head"><span class="avw"><img id="chAv" alt="" class="' + (peerOf(id) ? "ring-on" : "ring-off") + '"></span><span class="chat-who"><b id="chName"></b><small>' + (peerOf(id) ? "online" : "offline") + '</small></span><button class="sbtn" id="chDuel" type="button">' + tr("Herausfordern", "Challenge") + "</button></div>" +
       '<div class="chat-list" id="chList"><p class="note">' + tr("Lade …", "Loading …") + "</p></div>" +
       (mutual(id) ? '<div class="chat-quick" id="chQuick">' + QUICK.map((q) => '<button type="button">' + esc(q) + "</button>").join("") + '</div><form class="chat-in" id="chForm"><input id="chText" maxlength="300" autocomplete="off" enterkeyhint="send" placeholder="' + esc(tr("Nachricht …", "Message …")) + '"><button class="btn" type="submit">' + tr("Senden", "Send") + "</button></form>"
         : '<p class="note">' + tr("Ihr könnt chatten, sobald ihr euch gegenseitig folgt.", "You can chat once you follow each other.") + "</p>") +
@@ -3711,7 +3718,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const r = h("div", "srow");
     const img = h("img"); img.alt = ""; if (p) paintAvatar(img, p); else img.hidden = true;
     let avEl = img;
-    if (p && online != null) { avEl = h("span", "avw"); const dot = h("i", "odot" + (online ? " on" : "")); dot.title = online ? "online" : "offline"; avEl.append(img, dot); }
+    if (p && online != null) { avEl = h("span", "avw"); img.classList.add(online ? "ring-on" : "ring-off"); img.title = online ? "online" : "offline"; avEl.append(img); }
     const tx = h("div", "stext"); const n = h("span", "sname"); n.textContent = nameOf(p); appendFlags(n, p && p.flags);
     const s = h("span", "ssub"); s.innerHTML = online != null ? '<span class="sdot' + (online ? " on" : "") + '"></span>' : ""; s.appendChild(document.createTextNode(sub));
     tx.append(n, s);
