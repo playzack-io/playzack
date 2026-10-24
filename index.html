@@ -241,6 +241,11 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .cbtns button { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); background: var(--housing); border-radius: 14px; padding: 16px 14px; font-family: var(--font-num); font-weight: 800; font-size: 20px; text-transform: uppercase; touch-action: none; }
 .cbtns button span { width: 26px; height: 26px; border-radius: 8px; background: var(--cc); flex: none; }
 
+/* Turm */
+.root.tower { background: #18161d; }
+.tw-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.root.tower .hint { z-index: 2; }
+
 /* Lanes */
 .root.lanes { display: grid; grid-template-columns: repeat(3, 1fr); }
 .lane + .lane { border-left: 1px solid var(--line); }
@@ -358,7 +363,12 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .slist { display: flex; flex-direction: column; gap: 8px; }
 .srow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--asphalt-2); border: 1px solid var(--line); border-radius: 14px; }
 .srow img { width: 38px; height: 38px; border-radius: 50%; flex: none; }
-.stext { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; overflow-wrap: anywhere; }
+.avw { position: relative; flex: none; display: inline-flex; }
+.avw .odot { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: #6f6a7a; box-shadow: 0 0 0 2px var(--asphalt-2); }
+.avw .odot.on { background: var(--go); box-shadow: 0 0 0 2px var(--asphalt-2), 0 0 8px rgba(62, 226, 122, .7); }
+.stext { flex: 1 1 140px; min-width: 0; display: flex; flex-direction: column; gap: 1px; overflow-wrap: anywhere; }
+.srow { flex-wrap: wrap; row-gap: 8px; }
+.srow .sbtns { margin-left: auto; }
 .sname { font-weight: 600; }
 .ssub { font-size: 13px; color: var(--muted); }
 .sbtns { display: flex; gap: 6px; flex: none; flex-wrap: wrap; justify-content: flex-end; }
@@ -398,6 +408,16 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .seg button.on { background: var(--asphalt-2); color: var(--chalk); box-shadow: 0 0 0 1px var(--line); }
 .rrow { display: grid; grid-template-columns: 30px 36px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 9px 12px; background: var(--asphalt-2); border: 1px solid var(--line); border-radius: 14px; }
 .rrow.me { border-color: var(--volt); }
+.seg.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.rkweek { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, rgba(255, 210, 63, .18), rgba(255, 210, 63, .04)); border: 1px solid rgba(255, 210, 63, .5); }
+.rkweek b { font-family: var(--font-num); font-weight: 800; font-size: 17px; text-transform: uppercase; letter-spacing: .04em; color: var(--volt); }
+.rkweek span, .rkweek small { color: var(--muted); font-size: 13px; }
+.rkprize { display: flex; gap: 12px; flex-wrap: wrap; font-family: var(--font-num); font-weight: 800; font-size: 16px; }
+.rkprize i { font-style: normal; }
+.rkc { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; gap: 2px; }
+.rmv { font-family: var(--font-num); font-weight: 800; font-size: 11px; letter-spacing: .02em; white-space: nowrap; }
+.rmv.up { color: var(--go); } .rmv.down { color: var(--signal); } .rmv.new { color: var(--ice); font-size: 9px; }
+#rkList .rrow { grid-template-columns: 34px 36px minmax(0, 1fr) auto; }
 .rrow img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
 .rk { font-family: var(--font-num); font-weight: 800; font-size: 20px; text-align: center; color: var(--muted); }
 .rrow.top1 .rk { color: #ffd23f; } .rrow.top2 .rk { color: #d6d9e0; } .rrow.top3 .rk { color: #e59a5b; }
@@ -411,7 +431,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .flagchip.add { border-style: dashed; color: var(--volt); border-color: var(--volt); }
 .flagpick { display: flex; flex-direction: column; gap: 8px; }
 .flaglist { display: flex; flex-direction: column; max-height: 220px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--housing); text-align: left; }
-.flagitem { border: 0; border-bottom: 1px solid var(--line); background: transparent; padding: 10px 12px; text-align: left; font-size: 15px; color: var(--chalk); }
+.flagitem { display: flex; align-items: center; gap: 4px; border: 0; border-bottom: 1px solid var(--line); background: transparent; padding: 10px 12px; text-align: left; font-size: 15px; color: var(--chalk); }
 .flagitem:last-child { border-bottom: 0; }
 .keyhint kbd { font-family: var(--font-num); font-weight: 800; font-size: 13px; letter-spacing: .04em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; background: var(--housing); color: var(--chalk); }
 .flaglist.tall { max-height: min(52vh, 420px); }
@@ -597,6 +617,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .tu-mt small { color: var(--muted); font-size: 12.5px; }
 .pill.go { background: var(--volt); color: var(--volt-ink); border-color: var(--volt); font-weight: 800; }
 .pill:disabled { opacity: .4; }
+.tu-all { font-size: 13px; margin-left: 8px; }
 .tu-lbl { margin: 6px 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); text-align: left; }
 .tu-pick { display: flex; flex-wrap: wrap; gap: 6px; }
 .tu-per { display: block; font-weight: 500; font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
@@ -616,6 +637,66 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .rrow.tvrow .rn { font-size: clamp(17px, 2.2vw, 32px); }
 .rrow.tvrow .rv { font-size: clamp(22px, 3vw, 44px); }
 .rrow.tvrow .tu-per { font-size: clamp(11px, 1.2vw, 16px); }
+
+/* ---------- Partymodus ---------- */
+.wide.partycard { border-color: rgba(255, 70, 50, .6); background: linear-gradient(120deg, rgba(255, 70, 50, .18), var(--asphalt-2) 65%); }
+.wide.partycard .eyebrow { color: #ff8a7a; }
+.sheet.party { max-width: 440px; }
+.pt-names { display: flex; flex-direction: column; gap: 8px; }
+.pt-name { display: flex; gap: 8px; }
+.pt-name input { flex: 1; min-width: 0; background: var(--housing); color: var(--chalk); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; font-size: 17px; font-weight: 700; -webkit-user-select: text; user-select: text; }
+.pt-x { width: 44px; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 12px; font-size: 20px; }
+.pt-pass { font-size: 18px; margin: 10px 0 0; }
+.pt-who { font-family: var(--font-display); font-size: clamp(40px, 13vw, 64px); line-height: 1; color: var(--volt); overflow-wrap: anywhere; margin: 6px 0 16px; }
+.pt-pad { min-height: min(52vh, 420px); border-radius: 18px; background: var(--housing); border: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; touch-action: none; cursor: pointer; padding: 20px; }
+.pt-target { font-family: var(--font-num); font-weight: 800; font-size: 18px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.pt-msg { font-size: 18px; color: var(--muted); min-height: 26px; }
+.pt-msg strong { color: var(--chalk); }
+.pt-roll { font-family: var(--font-display); font-size: clamp(44px, 14vw, 72px); color: var(--chalk); min-height: 1.2em; margin: 30px 0; overflow-wrap: anywhere; }
+.pt-loser { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 18px; border-radius: 18px; background: radial-gradient(circle at 50% 30%, rgba(255, 70, 50, .45), rgba(255, 70, 50, .08) 70%); border: 1px solid rgba(255, 70, 50, .7); animation: skpop .45s cubic-bezier(.2, 1.5, .4, 1) both; }
+.pt-loser b { font-family: var(--font-display); font-size: clamp(36px, 11vw, 56px); line-height: 1; color: #fff; overflow-wrap: anywhere; }
+.pt-loser > span:last-child { font-family: var(--font-num); font-weight: 800; font-size: 22px; text-transform: uppercase; letter-spacing: .08em; color: #ffb3a8; }
+.pt-money { font-size: 46px; animation: ptMoney 1s ease-in-out infinite alternate; }
+@keyframes ptMoney { from { transform: rotate(-10deg) translateY(0); } to { transform: rotate(10deg) translateY(-6px); } }
+.pt-rank { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.pt-r { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; padding: 8px 12px; border-radius: 12px; background: var(--housing); border: 1px solid var(--line); }
+.pt-r i { font-style: normal; font-family: var(--font-num); font-weight: 800; color: var(--muted); }
+.pt-r b { font-family: var(--font-num); font-weight: 800; }
+.pt-r.win { border-color: var(--go); } .pt-r.lose { border-color: var(--signal); background: rgba(255, 70, 50, .12); }
+
+/* ---------- Chat ---------- */
+.sheet.chat-sheet { max-width: 460px; height: min(720px, 100%); gap: 10px; text-align: left; }
+.chat-head { display: flex; align-items: center; gap: 10px; }
+.chat-head img { width: 44px; height: 44px; border-radius: 50%; }
+.chat-who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.chat-who b { font-family: var(--font-num); font-weight: 800; font-size: 19px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-who small { color: var(--muted); font-size: 12px; }
+.chat-list { flex: 1; min-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding: 10px; background: var(--housing); border: 1px solid var(--line); border-radius: 16px; -webkit-overflow-scrolling: touch; }
+.bub { align-self: flex-start; max-width: 78%; background: var(--asphalt-2); border: 1px solid var(--line); border-radius: 16px 16px 16px 4px; padding: 8px 12px 6px; display: flex; flex-direction: column; gap: 2px; -webkit-user-select: text; user-select: text; overflow-wrap: anywhere; }
+.bub.me { align-self: flex-end; background: var(--volt); color: var(--volt-ink); border-color: transparent; border-radius: 16px 16px 4px 16px; }
+.bub small { font-size: 10px; opacity: .6; align-self: flex-end; }
+.chat-quick { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.chat-quick button { flex: none; border: 1px solid var(--line); background: var(--asphalt-2); color: var(--chalk); border-radius: 999px; padding: 7px 12px; font-size: 14px; }
+.chat-in { display: flex; gap: 8px; }
+.chat-in input { flex: 1; min-width: 0; background: var(--housing); color: var(--chalk); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; font-size: 16px; -webkit-user-select: text; user-select: text; }
+.chat-in .btn { padding: 10px 16px; font-size: 16px; }
+.sbtn.hot { background: var(--volt); color: var(--volt-ink); }
+
+/* ---------- Foto zuschneiden ---------- */
+.crop-layer { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: rgba(10, 9, 13, .94); padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
+.crop-box { width: 100%; max-width: 360px; max-height: 100%; overflow: auto; display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center; background: var(--asphalt-2); border: 1px solid var(--line); border-radius: 22px; padding: 20px 18px; box-sizing: border-box; }
+.crop-box h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; color: var(--volt); }
+.crop-stage { position: relative; width: min(260px, 72vw); aspect-ratio: 1; overflow: hidden; border-radius: 16px; background: #0b0a0e; touch-action: none; cursor: grab; }
+.crop-stage img { position: absolute; left: 0; top: 0; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; will-change: transform; }
+.crop-mask { position: absolute; inset: 0; pointer-events: none; border-radius: 50%; box-shadow: 0 0 0 999px rgba(10, 9, 13, .62), inset 0 0 0 3px var(--volt); }
+.crop-zoom { display: flex; align-items: center; gap: 10px; width: min(260px, 72vw); color: var(--muted); font-weight: 800; }
+.crop-zoom input { flex: 1; accent-color: var(--volt); }
+.crop-prev { display: flex; align-items: center; gap: 12px; }
+.crop-prev img { border-radius: 50%; background: #17151b; }
+.crop-prev img:first-child { width: 64px; height: 64px; box-shadow: 0 0 0 2px var(--volt); }
+.crop-prev img:nth-child(2) { width: 34px; height: 34px; }
+.crop-box .btn { width: 100%; }
+.flagitem .flagprice { margin-left: auto; font-family: var(--font-num); font-weight: 800; color: var(--volt); font-size: 13px; }
 
 /* ---------- Online: VS-Intro ---------- */
 .layer.vsl { overflow: hidden; padding: 0; background: #0b0a0e; -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -679,7 +760,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   #menu .feature { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   #menu .feature > #goCareer { grid-column: 1 / -1; padding: 22px 24px; }
   #goCareer .wide-title { font-size: 34px; }
-  #goSocial:not([hidden]) ~ #goTour { grid-column: 1 / -1; }
+  #menu .feature > #goParty { grid-column: 1 / -1; }
+  #goSocial:not([hidden]) ~ #goParty { grid-column: auto !important; }
   .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .tile-name { font-size: 20px; }
   .banner { align-self: center; width: 728px; max-width: 100%; box-sizing: border-box; }
@@ -701,7 +783,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   #goCareer .wide-title { font-size: 48px; line-height: 1; }
   #goCareer .wide-sub { font-size: 18px; }
   #goCareer .prog { height: 10px; border-radius: 5px; margin-top: 16px; }
-  #goSocial:not([hidden]) ~ #goTour { grid-column: 1 / -1; }
+  #goSocial:not([hidden]) ~ #goTour, #goSocial:not([hidden]) ~ #goParty { grid-column: span 2; }
+  #menu .feature > #goParty { grid-column: 1 / -1; }
+  #goSocial:not([hidden]) ~ #goParty { grid-column: span 2 !important; }
   .wide.skincard .sk-prev { top: auto; bottom: 14px; right: 14px; transform: none; }
   .wide.skincard .sk-prev img { width: 40px; height: 40px; margin-left: -12px; }
   .wide.skincard .wide-sub { padding-right: 96px; }
@@ -773,6 +857,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         <span class="wide-title" data-en="Who wins the group?">Wer gewinnt die Gruppe?</span>
         <span class="wide-sub" data-en="Create a code, everyone plays the same rounds, live leaderboard.">Code erstellen, alle spielen dieselben Runden, Live-Rangliste.</span>
       </button>
+      <button class="wide partycard" id="goParty" type="button">
+        <span class="eyebrow" data-en="Party mode · one phone">Partymodus · ein Handy</span>
+        <span class="wide-title" data-en="Loser pays">Verlierer zahlt</span>
+        <span class="wide-sub" data-en="Pass the phone around. Whoever is slowest pays the next round.">Handy reihum geben. Wer am langsamsten ist, zahlt die nächste Runde.</span>
+      </button>
     </div>
     <h2 class="sec" id="modesSec" data-en="All modes · solo, 2 players or online">Alle Modi · allein, zu zweit oder online</h2>
     <div class="tiles" id="tiles"></div>
@@ -818,7 +907,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     </div>
     <h3 class="sec" data-en="Challenges for you">Herausforderungen an dich</h3>
     <div class="slist" id="socIncoming"></div>
-    <h3 class="sec" data-en="Following">Du folgst</h3>
+    <h3 class="sec" id="socFolHead" data-en="Following">Du folgst</h3>
     <div class="slist" id="socFollowing"></div>
     <h3 class="sec" data-en="Find players">Spieler suchen</h3>
     <input class="search" id="socSearch" type="search" placeholder="@benutzername" data-en-ph="@username" autocomplete="off">
@@ -1057,6 +1146,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   function mulberry32(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 
+  // ---------- Woche: läuft Montag 00:00 bis Sonntag 24:00 (deutsche Zeit) ----------
+  function berlinParts() {
+    try {
+      const o = {}; new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).forEach((x) => { o[x.type] = +x.value || 0; });
+      return o;
+    } catch (e) { const d = new Date(); return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate(), hour: d.getHours(), minute: d.getMinutes(), second: d.getSeconds() }; }
+  }
+  function weekId() { const b = berlinParts(), days = Math.floor(Date.UTC(b.year, b.month - 1, b.day) / 86400000); return Math.floor((days + 3) / 7); }
+  function weekLeftMs() { const b = berlinParts(), days = Math.floor(Date.UTC(b.year, b.month - 1, b.day) / 86400000), dow = (days + 3) % 7; return ((6 - dow) * 86400 + 86400 - (b.hour * 3600 + b.minute * 60 + b.second)) * 1000; }
+  const WEEK_PRIZE = [1000, 500, 250];
   const dateKey = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   const todayKey = () => dateKey(new Date());
   const yesterdayKey = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dateKey(d); };
@@ -1069,7 +1168,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const AD = (() => {
     const lang = (navigator.languages && navigator.languages[0]) || navigator.language || "";
     let country = (lang.split("-")[1] || "").toUpperCase();
-    if (!country) { try { const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; country = /Berlin|Busingen/.test(tz) ? "DE" : /Vienna/.test(tz) ? "AT" : /Zurich/.test(tz) ? "CH" : ""; } catch (e) {} }
+    if (!country) { try { const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; const TZC = { Berlin: "DE", Busingen: "DE", Vienna: "AT", Zurich: "CH", Istanbul: "TR", Dubai: "AE", London: "GB", Paris: "FR", Rome: "IT", Madrid: "ES", Amsterdam: "NL", Brussels: "BE", Warsaw: "PL", Athens: "GR", Belgrade: "RS", Sarajevo: "BA", Skopje: "MK", Tirane: "AL", Zagreb: "HR", Bucharest: "RO", Sofia: "BG", Moscow: "RU", Kiev: "UA", Kyiv: "UA", Riyadh: "SA", Baghdad: "IQ", Tehran: "IR", Beirut: "LB", Damascus: "SY", Amman: "JO", Cairo: "EG", Casablanca: "MA", Tunis: "TN", Algiers: "DZ", Kabul: "AF", Karachi: "PK", Kolkata: "IN", New_York: "US", Chicago: "US", Los_Angeles: "US", Toronto: "CA" }; const k = Object.keys(TZC).find((x) => tz.includes(x)); country = k ? TZC[k] : ""; } catch (e) {} }
     if (!country) country = "??";
     const ua = navigator.userAgent || "";
     const device = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? "iOS" : /Android/.test(ua) ? "Android" : "Desktop";
@@ -1112,12 +1211,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     farbwort:    { name: ["Farbwort", "Color Word"], kind: ["Endlos", "Endless"], desc: ["Tippe die Farbe der Schrift, nicht das Wort.", "Tap the color of the ink, not the word."], unit: ["richtig", "correct"], bestLabel: ["Rekord", "Best"] },
     lanes:       { name: ["Lanes", "Lanes"], kind: ["Endlos", "Endless"], desc: ["Blöcke fallen in drei Spuren. Tippen, bevor sie unten sind. 2× gibt doppelte Punkte, lange Blöcke gedrückt halten.", "Blocks fall in three lanes. Tap them before they hit the bottom. 2× gives double points, hold the long ones."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     augenwinkel: { name: ["Augenwinkel", "Side Eye"], kind: ["Endlos", "Endless"], desc: ["Blick aufs Kreuz. Punkte blitzen kurz am Rand auf.", "Eyes on the cross. Dots flash briefly at the edge."], unit: ["Treffer", "hits"], bestLabel: ["Rekord", "Best"] },
+    turm:        { name: ["Turm", "Tower"], kind: ["Endlos · neu", "Endless · new"], desc: ["Der Block schwingt hin und her. Tippen zum Absetzen. Was übersteht, fällt ab.", "The block swings back and forth. Tap to drop it. Whatever hangs over falls off."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     praezision:  { name: ["Präzision", "Precision"], kind: ["30 Sek.", "30 sec"], desc: ["Ein bewegtes Ziel. Je näher an der Mitte, desto mehr Punkte.", "A moving target. The closer to the center, the more points."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] }
   };
   const MODE_DEF = {
     ziele: { revive: true, make: makeZiele }, startampel: { lower: true, bestUnit: " ms", make: makeAmpel }, stoppuhr: { bestUnit: " %", make: makeStoppuhr },
     taeuschung: { revive: true, make: makeTaeuschung }, farbwort: { revive: true, make: makeFarbwort }, lanes: { revive: true, make: makeLanes },
-    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }
+    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }, turm: { revive: true, make: makeTurm }
   };
   const MODES = {};
   for (const id of Object.keys(MODE_TXT)) {
@@ -1125,7 +1225,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     for (const k of Object.keys(MODE_TXT[id])) Object.defineProperty(m, k, { get: () => L(MODE_TXT[id][k]), enumerable: true });
     MODES[id] = m;
   }
-  const ORDER = ["ziele", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
+  const ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
   const DAILY = ["ziele", "farbwort", "taeuschung", "lanes", "augenwinkel", "praezision", "startampel"];
   const COURSES = [{ name: ["Strecke A", "Track A"], seed: 1101 }, { name: ["Strecke B", "Track B"], seed: 2202 }, { name: ["Strecke C", "Track C"], seed: 3303 }];
   const offNote = () => tr("Online braucht die geteilte Version mit Anmeldung", "Online needs the shared version while signed in");
@@ -1138,6 +1238,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Grün antippen", "1 Punkt"], ["Andere Farbe oder Trick-Wort", "1 Leben weg"], ["Grün verpasst oder zu früh", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     farbwort: [["Richtige Schriftfarbe", "1 Punkt"], ["Falsch oder zu langsam", "1 Leben weg"], ["Ab 20 Punkten", "Knöpfe werden gemischt"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block antippen", "doppelte Punkte: 2"], ["Langen Block gedrückt halten, bis er voll ist", "3 bis 6 Punkte, je länger desto mehr"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
+    turm: [["Block absetzen", "1 Punkt"], ["Perfekt auf den Turm", "+1 extra, ab 3 in Folge wächst der Block wieder"], ["Überstand", "fällt ab, der Turm wird schmaler"], ["Komplett daneben", "1 Leben weg"]],
     augenwinkel: [["Punkt am Rand antippen", "1 Punkt"], ["Verpasst", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     praezision: [["Gelbe Mitte", "10 Punkte"], ["Roter Ring", "5 Punkte"], ["Weißer Rand", "2 Punkte"], ["Daneben", "0 Punkte"], ["Zeit", "30 Sekunden"]]
   };
@@ -1148,6 +1249,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Tap green", "1 point"], ["Other color or trick word", "lose 1 life"], ["Missed green or too early", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     farbwort: [["Right ink color", "1 point"], ["Wrong or too slow", "lose 1 life"], ["From 20 points", "buttons get shuffled"], ["Streak", "sound and vibration, no extra points"]],
     lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block", "double points: 2"], ["Hold a long block until it's full", "3 to 6 points, longer gives more"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
+    turm: [["Drop a block", "1 point"], ["Perfect on the tower", "+1 extra, 3 in a row make the block grow back"], ["Overhang", "falls off, the tower gets narrower"], ["Missed completely", "lose 1 life"]],
     augenwinkel: [["Tap a dot at the edge", "1 point"], ["Missed", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     praezision: [["Yellow center", "10 points"], ["Red ring", "5 points"], ["White edge", "2 points"], ["Miss", "0 points"], ["Time", "30 seconds"]]
   };
@@ -1227,7 +1329,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   ];
   const BUNDLE = { ids: ["s:royal", "s:phantom", "s:diamond", "s:holo"], eur: 6.99, coins: 5000 };
   const eur = (v) => { const t = Number.isInteger(v) ? String(v) : v.toFixed(2); return S.lang === "en" ? "€" + t : t.replace(".", ",") + " €"; };
-  const skinHow = (sk) => (sk.startsWith("s:") ? special(sk.slice(2)).how : "coin");
+  const skinHow = (sk) => (sk.startsWith("s:") ? special(sk.slice(2)).how : "cash");
+  const HELM_EUR = 3.99, FLAG_EUR = 1.99, PAIR_EUR = 4.19; // Helm + Flagge zusammen: 30 % günstiger als einzeln (5,98 €)
+  const flagsOwned = () => { const f = store.get("flagsOwned", null); return Array.isArray(f) ? f.filter(isFlag) : []; };
+  const hasFlag = (c) => flagsOwned().includes(c);
+  function grantFlag(c) { store.set("flagsOwned", Array.from(new Set(flagsOwned().concat(c)))); }
+  // wer schon eine Flagge im Profil hatte, behält sie
+  try { if (store.get("flagsOwned", null) === null) { const pf = store.get("profile", null); store.set("flagsOwned", pf && Array.isArray(pf.flags) ? pf.flags.filter((c) => typeof c === "string") : []); } } catch (e) {}
   const lvlSkinAt = (n) => SPECIALS.find((x) => x.how === "lvl" && x.lvl === n);
   const COUNTRY_PRICE = 600, DEAL_OFF = 0.3;
   const SHELL = "M12 40 C12 22 24 11 37 11 C50 11 57 21 57 33 L57 43 C57 47 54 50 50 50 L20 50 C15 50 12 46 12 40 Z";
@@ -1247,10 +1355,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     return d.includes(s) ? Math.round((base * (1 - DEAL_OFF)) / 10) * 10 : base;
   }
   // Angebote des Tages: ein Spezial-Skin und ein Länder-Helm, für alle gleich
+  // eigenes Land: Profil-Flagge, sonst Land des Geräts
+  function myCountry() { const f = cleanFlags((profile() || {}).flags)[0]; return f || (ISO.includes(AD.country) ? AD.country : null); }
   function dailyDeals() {
     const n = dayNum(), all = Object.keys(CUSTOM).concat(ISO);
     const coinSkins = SPECIALS.filter((x) => x.how === "coin");
-    return ["s:" + coinSkins[(n * 7) % coinSkins.length].id, "c:" + all[(n * 31) % all.length]];
+    const mine = myCountry(), own = mine && !(hasSkin("c:" + mine) && hasFlag(mine)) ? mine : null;
+    return ["s:" + coinSkins[(n * 7) % coinSkins.length].id, "c:" + (own || all[(n * 31) % all.length])];
   }
   function helmetSVG(o) {
     // o: defs, bg, shell, overlay (über der Schale, auf Schale beschnitten), visor, ring, after
@@ -1319,12 +1430,31 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (sk.startsWith("s:")) return SKINURL[sk] || (SKINURL[sk] = svgURL(SPECIAL_SVG[sk.slice(2)]()));
     return svgURL(countrySVG(f));
   }
-  // Setzt das Profilbild eines Spielers: Skin > eigenes Foto > Avatar
+  const BADGE = {};
+  function photoBadge(photo, sk, skinU) {
+    const key = sk + "|" + photo.length + "|" + photo.slice(-32);
+    if (BADGE[key]) return BADGE[key];
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="pc"><circle cx="32" cy="32" r="32"/></clipPath><clipPath id="bc"><circle cx="46.5" cy="46.5" r="10.2"/></clipPath></defs>' +
+      '<image href="' + photo + '" xlink:href="' + photo + '" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#pc)"/>' +
+      '<circle cx="46.5" cy="46.5" r="12" fill="#17151b"/><image href="' + skinU + '" xlink:href="' + skinU + '" x="36.3" y="36.3" width="20.4" height="20.4" clip-path="url(#bc)"/></svg>';
+    const keys = Object.keys(BADGE); if (keys.length > 60) delete BADGE[keys[0]];
+    return (BADGE[key] = svgURL(svg));
+  }
+  // Setzt das Profilbild eines Spielers: eigenes Foto (+ Skin-Abzeichen) > Skin > Avatar
   function paintAvatar(img, d) {
     d = d || {};
     const photo = typeof d.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(d.photo) && d.photo.length < 60000 ? d.photo : null;
     const base = photo || avatarURL(Number.isInteger(d.av) ? d.av : 0);
     if (!skinValid(d.sk)) { img.src = base; return; }
+    if (photo) {
+      // eigenes Foto bleibt sichtbar, der Skin sitzt klein und rund unten rechts
+      const withBadge = (u) => { img.src = photoBadge(photo, d.sk, u); };
+      if (d.sk.startsWith("s:")) { withBadge(skinURL(d.sk)); return; }
+      if (SKINURL[d.sk]) { withBadge(SKINURL[d.sk]); return; }
+      img.src = photo;
+      flagText(d.sk.slice(2)).then((f) => { if (!f) return; const u = SKINURL[d.sk] = skinURL(d.sk, f); withBadge(u); });
+      return;
+    }
     if (d.sk.startsWith("s:")) { img.src = skinURL(d.sk); return; }
     if (SKINURL[d.sk]) { img.src = SKINURL[d.sk]; return; }
     img.src = base;
@@ -1345,6 +1475,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (hasSkin(sk)) return tr("Besitzt du", "Owned");
     const how = skinHow(sk);
     if (how === "lvl") return "🔒 Level " + special(sk.slice(2)).lvl;
+    if (how === "cash" && sk.startsWith("c:")) return dailyDeals().includes(sk) && !hasFlag(sk.slice(2)) ? eur(PAIR_EUR) : eur(HELM_EUR);
     if (how === "cash") return eur(special(sk.slice(2)).eur);
     return '<span class="coin" aria-hidden="true"></span> ' + fmtN(skinPrice(sk));
   }
@@ -1353,12 +1484,20 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const card = (sk) => {
       const r = RAR[skinRarity(sk)], isOn = pr.sk === sk, deal = deals.includes(sk), how = skinHow(sk);
       const sp = sk.startsWith("s:") ? special(sk.slice(2)) : null, locked = how === "lvl" && !hasSkin(sk);
-      const tag = deal && !hasSkin(sk) ? '<span class="sk-tag deal">-' + Math.round(DEAL_OFF * 100) + " %</span>" : sp && sp.tag === "myth" ? '<span class="sk-tag myth">' + tr("Mythisch", "Mythic") + "</span>" : sp && sp.tag === "excl" ? '<span class="sk-tag excl">' + tr("Exklusiv", "Exclusive") + "</span>" : sp && sp.tag === "hot" ? '<span class="sk-tag hot">' + tr("Beliebt", "Popular") + "</span>" : sp && sp.tag === "new" ? '<span class="sk-tag new">' + tr("Neu", "New") + "</span>" : "";
+      const tag = deal && !hasSkin(sk) ? '<span class="sk-tag deal">' + (sk === "c:" + myCountry() ? tr("Dein Land ", "Your country ") : "") + "-" + Math.round(DEAL_OFF * 100) + " %</span>" : sp && sp.tag === "myth" ? '<span class="sk-tag myth">' + tr("Mythisch", "Mythic") + "</span>" : sp && sp.tag === "excl" ? '<span class="sk-tag excl">' + tr("Exklusiv", "Exclusive") + "</span>" : sp && sp.tag === "hot" ? '<span class="sk-tag hot">' + tr("Beliebt", "Popular") + "</span>" : sp && sp.tag === "new" ? '<span class="sk-tag new">' + tr("Neu", "New") + "</span>" : "";
       return '<button class="sk-card' + (isOn ? " on" : "") + (locked ? " locked" : "") + (how === "cash" ? " cash" : "") + '" type="button" data-sk="' + esc(sk) + '" style="--rc:' + r[2] + '">' + tag + '<img alt="" data-skimg="' + esc(sk) + '"><b>' + esc(skinName(sk)) + "</b><small" + (how === "cash" && !hasSkin(sk) ? ' class="eur"' : "") + ">" + (isOn ? tr("Aktiv", "Equipped") : priceLabel(sk)) + "</small></button>";
     };
     const sec = (title, sub, items) => '<div class="sk-sec"><span class="eyebrow">' + title + "</span>" + (sub ? '<p class="note">' + sub + "</p>" : "") + '<div class="sk-grid">' + items.map(card).join("") + "</div></div>";
     let body = "";
-    if (SKS.tab === "special") {
+    if (SKS.tab === "mine") {
+      // alle Skins im Besitz, antippen = im Profil tragen
+      const mine = SPECIALS.map((x) => "s:" + x.id).filter(hasSkin).concat(ownedSkins().filter((k) => k.startsWith("c:")));
+      const eq = (sk) => { const r = RAR[sk ? skinRarity(sk) : "c"], isOn = (pr.sk || null) === sk;
+        return '<button class="sk-card' + (isOn ? " on" : "") + '" type="button" data-eq="' + esc(sk || "") + '" style="--rc:' + (sk ? r[2] : "#6f6a7a") + '">' + (isOn ? '<span class="sk-tag new">' + tr("Aktiv", "Equipped") + "</span>" : "") +
+          (sk ? '<img alt="" data-skimg="' + esc(sk) + '">' : '<img alt="" data-noskin="1">') + "<b>" + (sk ? esc(skinName(sk)) : tr("Keiner", "None")) + "</b><small>" + (isOn ? tr("Im Profil", "In profile") : tr("Auswählen", "Select")) + "</small></button>"; };
+      body = '<p class="note">' + (pr.photo ? tr("Du hast ein eigenes Foto: der Skin erscheint klein und rund darauf.", "You use your own photo: the skin shows as a small round badge on it.") : tr("Tipp auf einen Skin, um ihn im Profil zu tragen.", "Tap a skin to wear it on your profile.")) + "</p>" +
+        (mine.length ? '<div class="sk-grid">' + [null].concat(mine).map(eq).join("") + "</div>" : '<p class="empty">' + tr("Noch keine Skins. Hol dir welche mit Münzen, über die Karriere oder im Shop.", "No skins yet. Get some with coins, through the career or in the shop.") + "</p>");
+    } else if (SKS.tab === "special") {
       const by = (how) => SPECIALS.filter((x) => x.how === how).map((x) => "s:" + x.id);
       const bundleOwned = BUNDLE.ids.every(hasSkin), myth = "s:zgold", mythOwned = hasSkin(myth);
       body = '<button class="sk-myth" id="skMyth" type="button"><img alt="" data-skimg="' + myth + '"><span class="sk-mtx"><span class="sk-tag myth">' + tr("Mythisch · höchste Stufe", "Mythic · top tier") + "</span><b>" + tr("Goldenes ZACK!", "Golden ZACK!") + "</b><small>" + tr("Der seltenste Helm im Spiel. Animierter Goldrahmen, eingeprägtes Logo, funkelt überall, wo du auftauchst.", "The rarest helmet in the game. Animated gold frame, embossed logo, sparkles wherever you show up.") + '</small><span class="sk-mprice">' + (mythOwned ? (pr.sk === myth ? tr("Aktiv", "Equipped") : tr("Besitzt du", "Owned")) : eur(special("zgold").eur)) + "</span></span></button>" +
@@ -1373,8 +1512,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       body = '<input class="flagq" id="skQ" type="search" autocomplete="off" placeholder="' + esc(tr("Land suchen …", "Search country …")) + '" value="' + esc(SKS.q) + '">' + '<div class="sk-grid">' + all.slice(0, q ? 60 : 36).map(([c]) => card("c:" + c)).join("") + "</div>";
     }
     openLayer('<span class="eyebrow">' + tr("Skins für dein Profilbild", "Skins for your profile picture") + '</span><h2>Skin-Shop</h2><div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" +
-      '<div class="sk-deals"><span class="eyebrow">' + tr("Heute im Angebot · nur bis Mitternacht", "Today's deals · until midnight") + '</span><div class="sk-grid two">' + deals.map(card).join("") + "</div></div>" +
-      '<div class="seg two"><button type="button" id="skTabS" class="' + (SKS.tab === "special" ? "on" : "") + '">' + tr("Spezial", "Special") + '</button><button type="button" id="skTabC" class="' + (SKS.tab === "country" ? "on" : "") + '">' + tr("Länder-Helme", "Country helmets") + "</button></div>" +
+      '<div class="sk-deals"><span class="eyebrow">' + tr("Angebote für dich", "Deals for you") + '</span><div class="sk-grid two">' + deals.map(card).join("") + "</div></div>" +
+      '<div class="seg three"><button type="button" id="skTabM" class="' + (SKS.tab === "mine" ? "on" : "") + '">' + tr("Meine", "Mine") + '</button><button type="button" id="skTabS" class="' + (SKS.tab === "special" ? "on" : "") + '">' + tr("Spezial", "Special") + '</button><button type="button" id="skTabC" class="' + (SKS.tab === "country" ? "on" : "") + '">' + tr("Länder", "Countries") + "</button></div>" +
       body +
       (pr.sk ? '<button class="btn ghost" id="skOff" type="button">' + tr("Skin ablegen", "Remove skin") + "</button>" : "") +
       '<button class="btn ghost" id="skCoins" type="button">' + tr("Münzen holen", "Get coins") + "</button>" +
@@ -1382,6 +1521,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     sheet.querySelectorAll("[data-skimg]").forEach((im) => paintAvatar(im, { sk: im.dataset.skimg }));
     sheet.querySelectorAll("[data-sk]").forEach((b) => b.addEventListener("click", () => skinDetail(b.dataset.sk, back)));
     on("skTabS", () => { SKS.tab = "special"; showSkins(back); });
+    on("skTabM", () => { SKS.tab = "mine"; showSkins(back); });
+    sheet.querySelectorAll("[data-noskin]").forEach((im) => paintAvatar(im, { av: pr.av, photo: pr.photo }));
+    sheet.querySelectorAll("[data-eq]").forEach((b) => b.addEventListener("click", () => { equipSkin(b.dataset.eq || null); SFX.coin(); buzz(15); showSkins(back); }));
     on("skTabC", () => { SKS.tab = "country"; showSkins(back); });
     on("skMyth", () => skinDetail("s:zgold", back));
     on("skBundle", () => cashCheckout(tr("Legenden-Paket", "Legends bundle"), BUNDLE.eur, () => { grantSkins(BUNDLE.ids); W.coins += BUNDLE.coins; renderWallet(); }, () => showSkins(back), BUNDLE.ids[0]));
@@ -1407,10 +1549,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     else if (owned) action = '<button class="btn" id="skEq" type="button">' + tr("Ausrüsten", "Equip") + "</button>";
     else if (how === "lvl") action = '<p class="sk-lock">🔒 ' + tr("Schaffe Level " + sp.lvl + " in der Karriere, um diesen Skin freizuschalten.", "Clear level " + sp.lvl + " in career to unlock this skin.") + "</p>" +
       '<button class="btn" id="skCar" type="button">' + tr("Zur Karriere", "Go to career") + "<small>" + tr("Du bist bei Level ", "You're at level ") + unlocked() + "</small></button>";
+    else if (how === "cash" && !sp) {
+      const c = sk.slice(2), fl = hasFlag(c);
+      action = (fl ? "" : '<button class="btn cashbtn" id="skPair" type="button">' + tr("Helm + Flagge im Profil", "Helmet + profile flag") + " · " + eur(PAIR_EUR) + "<small><s>" + eur(+(HELM_EUR + FLAG_EUR).toFixed(2)) + "</s> · " + tr("30 % gespart · ", "save 30% · ") + tr("Flagge neben deinem Namen", "flag next to your name") + "</small></button>") +
+        '<button class="btn ' + (fl ? "cashbtn" : "ghost") + '" id="skCash" type="button">' + tr("Nur Helm · ", "Helmet only · ") + eur(HELM_EUR) + "</button>";
+    }
     else if (how === "cash") action = '<button class="btn cashbtn" id="skCash" type="button">' + tr("Kaufen für ", "Buy for ") + eur(sp.eur) + "<small>" + tr("Exklusiv · nicht für Münzen", "Exclusive · not for coins") + "</small></button>";
     else action = '<button class="btn" id="skBuy" type="button"' + (can ? "" : " disabled") + ">" + tr("Kaufen für ", "Buy for ") + fmtN(price) + tr(" Münzen", " coins") + "</button>" + (can ? "" : '<button class="btn ghost" id="skGet" type="button">' + tr("Münzen holen", "Get coins") + "<small>" + tr("Dir fehlen ", "You need ") + fmtN(price - W.coins) + tr("", " more") + "</small></button>");
     openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + (how === "cash" ? tr(" · Exklusiv", " · Exclusive") : "") + '</span><h2>' + esc(skinName(sk)) + '</h2><div class="sk-big' + (how === "lvl" && !owned ? " dim" : "") + '" style="--rc:' + r[2] + '"><img alt="" id="skBig"></div>' +
       (how === "coin" ? '<div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" : "") + action +
+      (!sp && !owned ? '<p class="note">' + tr("Mit Flagge erscheinst du auch in der Länder-Rangliste.", "With the flag you also appear on the country leaderboard.") + "</p>" : "") +
       '<p class="note">' + tr("Alle sehen deinen Skin: in der Rangliste, bei Freunden, im Turnier und bei Online-Duellen.", "Everyone sees your skin: on the leaderboard, with friends, in tournaments and online duels.") + "</p>" +
       '<button class="link" id="skDBack" type="button">' + tr("Zurück zum Shop", "Back to shop") + "</button>");
     paintAvatar($("skBig"), { sk });
@@ -1425,7 +1573,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (W.coins < price || hasSkin(sk)) return;
       W.coins -= price; grantSkins([sk]); renderWallet(); SFX.record(); buzz([20, 40, 20]); celebrate();
     });
-    on("skCash", () => cashCheckout(skinName(sk), sp.eur, () => grantSkins([sk]), celebrate, sk));
+    on("skCash", () => cashCheckout(skinName(sk) + (sp ? "" : tr(" · Helm", " · helmet")), sp ? sp.eur : HELM_EUR, () => grantSkins([sk]), celebrate, sk));
+    on("skPair", () => { const c = sk.slice(2); cashCheckout(skinName(sk) + tr(" · Helm + Flagge", " · helmet + flag"), PAIR_EUR, () => { grantSkins([sk]); grantFlag(c); const p2 = profile(); if (p2) { p2.flags = [c]; store.set("profile", p2); renderProfileChip(); pushProfile(); } }, celebrate, sk); });
     on("skCar", () => { closeLayer(); show("career"); renderCareer(); });
     on("skGet", () => showCoinShop(() => skinDetail(sk, back)));
     on("skDBack", () => showSkins(back));
@@ -1465,6 +1614,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const pr = profile() || {};
     const d = { seen: Date.now(), uname: pr.uname || null, unameLc: pr.uname || null, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags), lvl: W.lvl };
     ORDER.forEach((id) => { const b = store.get("best:" + id, null); if (typeof b === "number" && isFinite(b)) d["b_" + id] = b; });
+    const wk = weekId();
+    [wk, wk - 1].forEach((w) => ORDER.forEach((id) => { const b = store.get("wbest:" + w + ":" + id, null); if (typeof b === "number" && isFinite(b) && b > 0) d["w" + w + "_" + id] = b; }));
     return d;
   }
   async function syncPlayer() {
@@ -1473,12 +1624,81 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const local = playerDoc();
     let server = null;
     try { const sn = await NET.db.doc("players/" + NET.me).get(); server = sn.exists ? sn.data() : null; } catch (e) {}
-    if (server) ORDER.forEach((id) => { const f = "b_" + id, a = local[f], b = server[f]; if (typeof b === "number" && isFinite(b) && (a == null || (MODES[id].lower ? b < a : b > a))) local[f] = b; });
+    const wk = weekId();
+    if (server) ORDER.forEach((id) => ["b_" + id, "w" + wk + "_" + id, "w" + (wk - 1) + "_" + id].forEach((f) => { const a = local[f], b = server[f]; if (typeof b === "number" && isFinite(b) && b > 0 && (a == null || (MODES[id].lower ? b < a : b > a))) local[f] = b; }));
     await NET.db.doc("players/" + NET.me).set(local);
   }
   async function pushProfile() {
     if (!NET.ok) return;
     try { await syncPlayer(); } catch (e) {}
+  }
+  // Flagge fürs Profil kaufen: eigenes Fenster über dem Profil
+  function buyFlag(c) {
+    return new Promise((resolve) => {
+      const wrap = h("div", "crop-layer"), owns = hasSkin("c:" + c);
+      wrap.innerHTML = '<div class="crop-box"><span class="eyebrow">App Store · Google Play</span><h2>' + tr("Flagge im Profil", "Profile flag") + '</h2><div class="sk-big"><img alt="" id="bfImg"></div>' +
+        '<p><span id="bfFlag"></span></p><p class="note">' + tr("Deine Flagge steht neben deinem Namen: in Ranglisten, bei Freunden und Online-Duellen. Und du erscheinst in der Länder-Rangliste.", "Your flag shows next to your name: on leaderboards, with friends and in online duels. And you appear on the country leaderboard.") + "</p>" +
+        (owns ? "" : '<button class="btn cashbtn" id="bfPair" type="button">' + tr("Flagge + Länder-Helm", "Flag + country helmet") + " · " + eur(PAIR_EUR) + "<small><s>" + eur(+(HELM_EUR + FLAG_EUR).toFixed(2)) + "</s> · " + tr("30 % gespart", "save 30%") + "</small></button>") +
+        '<button class="btn ' + (owns ? "cashbtn" : "ghost") + '" id="bfOne" type="button">' + tr("Nur Flagge · ", "Flag only · ") + eur(FLAG_EUR) + "</button>" +
+        '<p class="note">' + tr("Simulation. Es wird nichts abgebucht.", "Simulation. Nothing is charged.") + '</p><button class="link" id="bfX" type="button">' + tr("Abbrechen", "Cancel") + "</button></div>";
+      document.body.appendChild(wrap);
+      paintAvatar(wrap.querySelector("#bfImg"), { sk: "c:" + c });
+      const fl = wrap.querySelector("#bfFlag"); fl.appendChild(flagNode(c)); fl.appendChild(document.createTextNode(" " + countryName(c)));
+      const done = (ok) => { wrap.remove(); resolve(ok); };
+      const okBuy = (pair) => { grantFlag(c); if (pair) grantSkins(["c:" + c]); SFX.record(); buzz([20, 40, 20]); acctAutosave(); done(true); };
+      const bp = wrap.querySelector("#bfPair"); if (bp) bp.addEventListener("click", () => okBuy(true));
+      wrap.querySelector("#bfOne").addEventListener("click", () => okBuy(false));
+      wrap.querySelector("#bfX").addEventListener("click", () => done(false));
+    });
+  }
+  // Foto zuschneiden: verschieben, zoomen, runde Vorschau genau wie im Profil
+  function cropPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("img")); };
+      img.onload = () => {
+        const wrap = h("div", "crop-layer");
+        wrap.innerHTML = '<div class="crop-box"><span class="eyebrow">' + tr("Profilbild", "Profile picture") + "</span><h2>" + tr("Ausschnitt wählen", "Choose the crop") + "</h2>" +
+          '<div class="crop-stage" id="cpStage"><img id="cpImg" alt="" draggable="false"><div class="crop-mask"></div></div>' +
+          '<p class="note">' + tr("Ziehen zum Verschieben · zwei Finger oder Regler zum Zoomen", "Drag to move · pinch or slider to zoom") + "</p>" +
+          '<div class="crop-zoom"><span>−</span><input type="range" id="cpZoom" min="1" max="4" step="0.01" value="1" aria-label="Zoom"><span>+</span></div>' +
+          '<div class="crop-prev"><img id="cpP1" alt=""><img id="cpP2" alt=""><span class="note">' + tr("So sehen dich andere", "How others see you") + "</span></div>" +
+          '<button class="btn" id="cpOk" type="button">' + tr("Übernehmen", "Use photo") + '</button><button class="link" id="cpX" type="button">' + tr("Abbrechen", "Cancel") + "</button></div>";
+        document.body.appendChild(wrap);
+        const st = wrap.querySelector("#cpStage"), im = wrap.querySelector("#cpImg"), zr = wrap.querySelector("#cpZoom");
+        im.src = url;
+        const W = img.naturalWidth, H = img.naturalHeight;
+        let S = st.clientWidth || 260, z = 1, ox = 0, oy = 0, raf = 0;
+        const sc = () => (S / Math.min(W, H)) * z;
+        const clamp = () => { const k = sc(), mx = Math.max(0, (W * k - S) / 2), my = Math.max(0, (H * k - S) / 2); ox = Math.max(-mx, Math.min(mx, ox)); oy = Math.max(-my, Math.min(my, oy)); };
+        const out = (size) => { const c = document.createElement("canvas"); c.width = c.height = size; const g = c.getContext("2d"), k = sc(), r = size / S; g.fillStyle = "#17151b"; g.fillRect(0, 0, size, size); g.imageSmoothingQuality = "high"; g.drawImage(img, (S / 2 - (W * k) / 2 + ox) * r, (S / 2 - (H * k) / 2 + oy) * r, W * k * r, H * k * r); return c; };
+        const draw = () => {
+          raf = 0; clamp(); const k = sc();
+          im.style.width = W * k + "px"; im.style.height = H * k + "px";
+          im.style.transform = "translate3d(" + (S / 2 - (W * k) / 2 + ox) + "px," + (S / 2 - (H * k) / 2 + oy) + "px,0)";
+          const u = out(96).toDataURL("image/jpeg", 0.8); wrap.querySelector("#cpP1").src = u; wrap.querySelector("#cpP2").src = u;
+        };
+        const redraw = () => { if (!raf) raf = requestAnimationFrame(draw); };
+        draw();
+        const pts = new Map(); let pinch = null;
+        st.addEventListener("pointerdown", (e) => { e.preventDefault(); st.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z }; } });
+        st.addEventListener("pointermove", (e) => {
+          const p0 = pts.get(e.pointerId); if (!p0) return;
+          const p1 = { x: e.clientX, y: e.clientY }; pts.set(e.pointerId, p1);
+          if (pts.size >= 2 && pinch) { const [a, b] = [...pts.values()]; z = Math.max(1, Math.min(4, pinch.z * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d)); zr.value = z; }
+          else { ox += p1.x - p0.x; oy += p1.y - p0.y; }
+          redraw();
+        });
+        const up = (e) => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; };
+        st.addEventListener("pointerup", up); st.addEventListener("pointercancel", up);
+        st.addEventListener("wheel", (e) => { e.preventDefault(); z = Math.max(1, Math.min(4, z * (e.deltaY < 0 ? 1.08 : 1 / 1.08))); zr.value = z; redraw(); }, { passive: false });
+        zr.addEventListener("input", () => { z = +zr.value; redraw(); });
+        const done = (v) => { URL.revokeObjectURL(url); wrap.remove(); if (v) resolve(v); else reject(new Error("cancel")); };
+        wrap.querySelector("#cpOk").addEventListener("click", () => done(out(192).toDataURL("image/jpeg", 0.82)));
+        wrap.querySelector("#cpX").addEventListener("click", () => done(null));
+      };
+      img.src = url;
+    });
   }
   function photoFromFile(file) {
     return new Promise((res, rej) => {
@@ -1501,7 +1721,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function showProfile(first, after) {
     const pr = profile() || { uname: "", av: Math.floor(Math.random() * AVATARS.length), photo: null };
     let av = pr.av || 0, photo = pr.photo || null, sk = skinValid(pr.sk) ? pr.sk : null, checkTimer = 0;
-    let flags = cleanFlags(pr.flags); if (first && !flags.length && ISO.includes(AD.country)) flags = [AD.country];
+    let flags = cleanFlags(pr.flags).filter(hasFlag);
     openLayer('<span class="eyebrow">' + (first ? tr("Willkommen bei ZACK!", "Welcome to ZACK!") : tr("Profil", "Profile")) + "</span><h2>" + (first ? tr("Erstell dein Profil", "Create your profile") : tr("Profil bearbeiten", "Edit profile")) + "</h2>" +
       "<p>" + tr("Mit deinem Benutzernamen finden dich Freunde.", "Friends find you by your username.") + "</p>" +
       '<div class="pf-preview"><img id="pfImg" alt=""><span id="pfShow">@</span></div>' +
@@ -1513,6 +1733,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<div class="flagpick" id="pfPick" hidden><input class="search" id="pfFlagQ" autocomplete="off" placeholder="' + tr("Land suchen", "Search country") + '"><div class="flaglist" id="pfFlagList"></div></div>' +
       (first ? "" : '<button class="btn ghost pf-skins" id="pfSkins" type="button">' + tr("Skins ansehen", "Browse skins") + "<small>" + (sk ? tr("Aktiv: ", "Equipped: ") + esc(skinName(sk)) : tr("Gold, Neon, Galaxie, Länder-Helme …", "Gold, neon, galaxy, country helmets …")) + "</small></button>") +
       '<label class="btn ghost pf-photo" for="pfFile">' + tr("Eigenes Foto", "Own photo") + '</label><input id="pfFile" type="file" accept="image/*" hidden>' +
+      '<button class="link" id="pfRecrop" type="button" hidden>' + tr("Ausschnitt ändern", "Change crop") + "</button>" +
       '<p class="msg-bad" id="pfErr" hidden></p>' +
       '<button class="btn" id="pfSave" type="button">' + (first ? tr("Los geht's", "Let's go") : tr("Speichern", "Save")) + "</button>" +
       (first ? '<button class="link" id="pfHave" type="button">' + tr("Ich hab schon ein Konto · Anmelden", "I already have an account · Sign in") + "</button>" : '<button class="btn ghost" id="pfAcct" type="button">' + (AUTH().current() ? tr("Konto · angemeldet", "Account · signed in") : tr("Konto & Passwort", "Account & password")) + "<small>" + (AUTH().current() ? esc(AUTH().current().email) : tr("Fortschritt auf allen Geräten sichern", "Keep your progress on every device")) + "</small></button>" + '<button class="link" id="pfCancel" type="button">' + tr("Abbrechen", "Cancel") + "</button>") +
@@ -1543,17 +1764,22 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         box.appendChild(x);
       });
       if (!flags.length) {
-        const add = h("button", "flagchip add"); add.type = "button"; add.textContent = "+ " + tr("Land wählen", "Choose country");
+        const add = h("button", "flagchip add"); add.type = "button"; add.textContent = "+ " + tr("Flagge hinzufügen", "Add flag") + (flagsOwned().length ? "" : " · " + eur(FLAG_EUR));
         add.addEventListener("click", openPick);
         box.appendChild(add);
       }
     };
     const drawList = () => {
       const q = ($("pfFlagQ").value || "").trim().toLowerCase(), list = $("pfFlagList"); list.innerHTML = "";
+      const mc = myCountry();
       Object.keys(CUSTOM).concat(ISO).map((c) => [c, countryName(c)]).filter(([c, n]) => !flags.includes(c) && (!q || n.toLowerCase().includes(q) || c.toLowerCase() === q))
-        .sort((a, b) => a[1].localeCompare(b[1])).slice(0, 60).forEach(([c, n]) => {
+        .sort((a, b) => (hasFlag(b[0]) - hasFlag(a[0])) || ((b[0] === mc) - (a[0] === mc)) || a[1].localeCompare(b[1])).slice(0, 60).forEach(([c, n]) => {
           const b = h("button", "flagitem"); b.type = "button"; b.append(flagNode(c), document.createTextNode("  " + n + (CUSTOM[c] ? tr("  · Region", "  · region") : "")));
-          b.addEventListener("click", () => { flags = [c]; $("pfPick").hidden = true; $("pfFlagQ").value = ""; drawFlags(); preview(); });
+          if (!hasFlag(c)) { const pt = h("span", "flagprice"); pt.textContent = eur(FLAG_EUR); b.appendChild(pt); }
+          b.addEventListener("click", async () => {
+            if (!hasFlag(c) && !(await buyFlag(c))) return;
+            flags = [c]; $("pfPick").hidden = true; $("pfFlagQ").value = ""; drawFlags(); preview();
+          });
           list.appendChild(b);
         });
     };
@@ -1574,10 +1800,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         else if (t === false) { hint.textContent = tr("@" + v + " ist frei.", "@" + v + " is available."); hint.classList.add("good"); }
       }, 400);
     });
-    $("pfFile").addEventListener("change", async (e) => {
-      const f = e.target.files && e.target.files[0]; if (!f) return;
-      try { photo = await photoFromFile(f); sk = null; drawGrid(); preview(); } catch (x) { err.hidden = false; err.textContent = tr("Das Foto ließ sich nicht laden.", "Couldn't load that photo."); }
-    });
+    let lastFile = null;
+    const doCrop = async (f) => {
+      try { photo = await cropPhoto(f); lastFile = f; drawGrid(); preview(); const rb = $("pfRecrop"); if (rb) rb.hidden = false; }
+      catch (x) { if (x && x.message === "cancel") return; err.hidden = false; err.textContent = tr("Das Foto ließ sich nicht laden.", "Couldn't load that photo."); }
+    };
+    $("pfFile").addEventListener("change", (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ""; if (f) doCrop(f); });
+    on("pfRecrop", () => { if (lastFile) doCrop(lastFile); });
     on("pfCancel", closeLayer);
     on("pfSave", async () => {
       const v = inp.value.trim().toLowerCase(), prob = unameProblem(v);
@@ -1600,7 +1829,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     });
     on("pfHave", () => showAccount("in", () => showProfile(true, after)));
     on("pfAcct", () => showAccount(null, () => showProfile(false, after)));
-    on("pfSkins", () => showSkins(() => showProfile(false, after)));
+    on("pfSkins", () => { SKS.tab = "mine"; showSkins(() => showProfile(false, after)); });
     setTimeout(() => inp.focus({ preventScroll: true }), 50);
   }
   // =====================================================
@@ -1768,7 +1997,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // Münzen pro Runde aus der Leistung (pro Modus vergleichbar gemacht)
   const EARN = {
     ziele: (v) => v, farbwort: (v) => v * 2, taeuschung: (v) => v * 2, lanes: (v) => v, augenwinkel: (v) => v * 2,
-    praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
+    turm: (v) => v * 1.5, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
   };
   function gainXP(x) {
     const ups = []; let xp = W.xp + x, l = W.lvl;
@@ -1943,8 +2172,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // ---------- Tastatur (Desktop) ----------
   const FINE = () => { try { return matchMedia("(pointer: fine)").matches; } catch (e) { return false; } };
   function keyHint(id, two) {
-    const one = { startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
-    const duo = { startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
+    const one = { turm: tr("Leertaste", "Space"), startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
+    const duo = { turm: "A · L", startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
     const k = two ? duo : one;
     return k ? '<p class="note keyhint">' + (two ? tr("Zu zweit am Computer: ", "Two players on a computer: ") : tr("Am Computer: ", "On a computer: ")) + "<kbd>" + k + "</kbd>" + (id === "farbwort" && !two ? tr(" (Knöpfe von links nach rechts)", " (buttons left to right)") : "") + "</p>" : "";
   }
@@ -1979,7 +2208,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (id === "startampel" && E.opts && E.opts.local2) { const r = E.players[0] && E.players[0].root; if (!r) return; const lk = k === " " ? "a" : k === "Enter" ? "l" : k; fire(r.querySelector(lk in L1 ? ".half.p1" : ".half.p2")); e.preventDefault(); return; }
     const P = E.players[pi]; if (!P || !P.root) return;
     const r = P.root;
-    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung") { fire(r); e.preventDefault(); return; }
+    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung" || id === "turm") { fire(r); e.preventDefault(); return; }
     if (id === "lanes") { if (idx <= 2) laneTap(r, idx); e.preventDefault(); return; }
     if (id === "farbwort") { const bs = visBtns(r, "button[data-i]"); if (bs[idx]) fire(bs[idx]); e.preventDefault(); return; }
   });
@@ -2134,6 +2363,10 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const prev = store.get(key, null);
       const better = prev == null ? (m.lower || res.value > 0) : (m.lower ? res.value < prev : res.value > prev);
       if (better) { store.set(key, res.value); if (key === "best:" + E.id) setTimeout(pushProfile, 0); }
+      if (key === "best:" + E.id) {
+        const wk = "wbest:" + weekId() + ":" + E.id, wp = store.get(wk, null);
+        if (wp == null ? (m.lower || res.value > 0) : (m.lower ? res.value < wp : res.value > wp)) { store.set(wk, res.value); setTimeout(pushProfile, 0); }
+      }
       info.isRec = better && prev != null; info.first = better && prev == null;
       info.best = better ? res.value : prev;
     }
@@ -2316,11 +2549,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function openLayer(html, cls) {
     clearInterval(adTimer);
     VS_T.forEach(clearTimeout); VS_T = [];
+    chatStop(); partyKeysOff();
     layer.className = "layer" + (cls === "vs" ? " vsl" : "");
     sheet.className = "sheet " + (cls || ""); sheet.innerHTML = html; layer.hidden = false; layerAt = Date.now();
     const f = sheet.querySelector(".btn:not([disabled])"); if (f && !E.active && !FINE()) f.focus({ preventScroll: true });
   }
-  function closeLayer() { clearInterval(adTimer); VS_T.forEach(clearTimeout); VS_T = []; CD_ON = false; layer.hidden = true; layer.className = "layer"; sheet.innerHTML = ""; }
+  function closeLayer() { clearInterval(adTimer); VS_T.forEach(clearTimeout); VS_T = []; chatStop(); partyKeysOff(); CD_ON = false; layer.hidden = true; layer.className = "layer"; sheet.innerHTML = ""; }
   function on(id, fn) { const e = $(id); if (e) e.addEventListener("click", fn); }
   function note(title, text) { openLayer("<h2>" + esc(title) + "</h2><p>" + esc(text) + '</p><button class="btn" id="ntOk" type="button">OK</button>'); on("ntOk", closeLayer); }
   function appLink() { return ONLINE ? "https://playzack.io/" : location.origin + location.pathname; }
@@ -2652,16 +2886,46 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const ign = () => {};
       db.doc("follows/" + NET.me).onSnapshot((s) => { const d = s.exists ? s.data() : null; NET.follows = d && Array.isArray(d.ids) ? d.ids.filter((x) => typeof x === "string").slice(0, 300) : []; renderOnline(); }, ign);
       db.collection("follows").where("ids", "array-contains", NET.me).limit(300).onSnapshot((q) => { NET.followers = q.docs.map((d) => d.id); renderOnline(); if (CUR_DUEL) paintFollow(CUR_DUEL); }, ign);
+      const onCh = (q) => { q.docs.forEach((d) => { const x = d.data(); if (x && typeof x.a === "string" && typeof x.b === "string") CH.list[d.id] = Object.assign({ id: d.id }, x); }); renderOnline(); };
+      db.collection("chats").where("a", "==", NET.me).limit(100).onSnapshot(onCh, ign);
+      db.collection("chats").where("b", "==", NET.me).limit(100).onSnapshot(onCh, ign);
       db.collection("challenges").where("to", "==", NET.me).limit(60).onSnapshot((q) => { NET.incoming = q.docs.map((d) => Object.assign({ id: d.id }, d.data())).filter(validChal); renderOnline(); }, ign);
       db.collection("challenges").where("from", "==", NET.me).limit(60).onSnapshot((q) => { NET.sent = q.docs.map((d) => Object.assign({ id: d.id }, d.data())).filter(validChal); renderOnline(); }, ign);
       db.collection("players").orderBy("seen", "desc").limit(40).onSnapshot((q) => { NET.recent = q.docs.map((d) => d.id); renderOnline(); }, ign);
       try { const s = await db.doc("runs/" + NET.me).get(); NET.myRuns = s.exists ? Object.assign({}, s.data()) : {}; } catch (e) {}
       try { await syncPlayer(); } catch (e) { NET.ok = false; }
+      setTimeout(() => { claimWeekly().catch(() => {}); }, 2500);
     }
     netReadyResolve();
     renderOnline();
   }
 
+  async function claimWeekly() {
+    if (!NET.ok) return;
+    const prev = weekId() - 1, ck = "wclaim:" + prev;
+    if (store.get(ck, false)) return;
+    const wins = [];
+    for (const id of ORDER) {
+      const f = "w" + prev + "_" + id, mine = store.get("wbest:" + prev + ":" + id, null);
+      if (mine == null) continue;
+      try {
+        const q = await NET.db.collection("players").where(f, ">", 0).orderBy(f, MODES[id].lower ? "asc" : "desc").limit(3).get();
+        const i = q.docs.findIndex((d) => d.id === NET.me);
+        if (i >= 0 && i < 3) wins.push({ id, place: i + 1, coins: WEEK_PRIZE[i] });
+      } catch (e) { return; }
+    }
+    store.set(ck, true);
+    if (!wins.length) return;
+    const sum = wins.reduce((a, w) => a + w.coins, 0);
+    W.coins += sum; renderWallet(); acctAutosave();
+    const show_ = () => {
+      openLayer('<span class="eyebrow">' + tr("Wochen-Challenge", "Weekly challenge") + "</span><h2>" + tr("Du bist in den Top 3!", "You made the top 3!") + "</h2>" + wins.map((w) => '<div class="lvlup">' + ["🥇", "🥈", "🥉"][w.place - 1] + " " + tr("Platz ", "Place ") + w.place + " · " + esc(MODES[w.id].name) + " · +" + fmtN(w.coins) + tr(" Münzen", " coins") + "</div>").join("") +
+        '<div class="earn">' + coinIco + "<b>+" + fmtN(sum) + "</b> " + tr("Münzen", "coins") + '</div><button class="btn" id="wkOk" type="button">' + tr("Abholen", "Collect") + "</button>");
+      SFX.record(); buzz([20, 40, 20]);
+      on("wkOk", closeLayer);
+    };
+    if (layer.hidden && !E.active) show_(); else setTimeout(() => { if (layer.hidden && !E.active) show_(); }, 4000);
+  }
   function setPresence(patch) { if (NET.room) NET.room.presence(Object.assign({ uid: NET.me }, patch)).catch(() => {}); }
   const peerOf = (id) => NET.peers.find((p) => !p.isMe && p.kind === "viewer" && (p.by === id || (p.presence && p.presence.uid === id)));
   const onlineCount = () => new Set(NET.peers.filter((p) => !p.isMe && p.kind === "viewer").map((p) => p.by || p.peer)).size;
@@ -2681,7 +2945,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           if (x && typeof x.uname === "string" && UNAME_RE.test(x.uname)) {
             const photo = typeof x.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(x.photo) && x.photo.length < 60000 ? x.photo : null;
             const bests = {}; ORDER.forEach((m) => { const v = x["b_" + m]; if (typeof v === "number" && isFinite(v) && v > 0) bests[m] = v; });
-            p = { id, name: "@" + x.uname, avatarUrl: photo || avatarURL(Number.isInteger(x.av) ? x.av : 0), flags: cleanFlags(x.flags), av: Number.isInteger(x.av) ? x.av : 0, photo, sk: skinValid(x.sk) ? x.sk : null, lvl: Number.isInteger(x.lvl) && x.lvl > 0 && x.lvl < 10000 ? x.lvl : null, bests };
+            p = { id, name: "@" + x.uname, avatarUrl: photo || avatarURL(Number.isInteger(x.av) ? x.av : 0), flags: cleanFlags(x.flags), av: Number.isInteger(x.av) ? x.av : 0, photo, sk: skinValid(x.sk) ? x.sk : null, lvl: Number.isInteger(x.lvl) && x.lvl > 0 && x.lvl < 10000 ? x.lvl : null, bests, seen: Number.isFinite(x.seen) ? x.seen : null };
           }
         }
       } catch (e) {}
@@ -2802,7 +3066,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
 
   // ---------- Bot: passt sich deinem Niveau an, bleibt aber knapp vor dir ----------
-  const BOT_BASE = { ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
+  const BOT_BASE = { turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
   function recordSkill(mode, value, dur) {
     if (value == null || !BOT_BASE[mode]) return;
     const sk = store.get("skill:" + mode, []); sk.push(value); store.set("skill:" + mode, sk.slice(-6));
@@ -3012,7 +3276,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const TU_CODE_RE = /^[A-Z2-9]{5}$/;
   const tuCode = () => { const A = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; return Array.from({ length: 5 }, () => A[Math.floor(Math.random() * A.length)]).join(""); };
   function validTour(d) {
-    return d && typeof d.code === "string" && TU_CODE_RE.test(d.code) && Array.isArray(d.modes) && d.modes.length >= 1 && d.modes.length <= 3 && d.modes.every((m) => MODES[m]) &&
+    return d && typeof d.code === "string" && TU_CODE_RE.test(d.code) && Array.isArray(d.modes) && d.modes.length >= 1 && d.modes.length <= 12 && new Set(d.modes).size === d.modes.length && d.modes.every((m) => MODES[m]) &&
       Number.isInteger(d.seed) && Number.isFinite(d.ends) && Number.isFinite(d.created) && typeof d.host === "string" && (d.tries === 0 || [1, 3].includes(d.tries));
   }
   const tourId = (t) => t.host + "-" + t.created;
@@ -3151,18 +3415,19 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const TRY = [[1, tr("1 Versuch", "1 try")], [3, tr("3 Versuche", "3 tries")], [0, tr("Unbegrenzt", "Unlimited")]];
     openLayer('<span class="eyebrow">' + tr("Neues Turnier", "New tournament") + "</span><h2>" + tr("Turnier erstellen", "Create tournament") + "</h2>" +
       '<input class="flagq" id="tcName" maxlength="40" value="' + esc(tr("Turnier von @", "@") + (pr.uname || "") + tr("", "'s tournament")) + '">' +
-      '<p class="tu-lbl">' + tr("Modi (bis zu 3)", "Modes (up to 3)") + '</p><div class="tu-pick" id="tcModes"></div>' +
+      '<p class="tu-lbl">' + tr("Spiele · 1 bis alle", "Games · 1 to all") + ' <button class="link tu-all" id="tcAll" type="button">' + tr("Alle wählen", "Select all") + "</button>" + '</p><div class="tu-pick" id="tcModes"></div>' +
       '<p class="tu-lbl">' + tr("Dauer", "Duration") + '</p><div class="tu-pick" id="tcDur"></div>' +
       '<p class="tu-lbl">' + tr("Versuche pro Modus", "Tries per mode") + '</p><div class="tu-pick" id="tcTry"></div>' +
       '<p class="note" id="tcNote"></p>' +
       '<button class="btn" id="tcGo" type="button">' + tr("Starten und Code teilen", "Start and share code") + '</button><button class="link" id="tcX" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
     const draw = () => {
       const m = $("tcModes"); m.innerHTML = "";
-      ORDER.forEach((id) => { const b = h("button", "chip" + (modes.includes(id) ? " on" : "")); b.type = "button"; b.textContent = MODES[id].name; b.addEventListener("click", () => { if (modes.includes(id)) { if (modes.length > 1) modes = modes.filter((x) => x !== id); } else if (modes.length < 3) modes = modes.concat(id); else { $("tcNote").textContent = tr("Höchstens 3 Modi.", "3 modes at most."); return; } $("tcNote").textContent = ""; draw(); }); m.appendChild(b); });
+      ORDER.forEach((id) => { const b = h("button", "chip" + (modes.includes(id) ? " on" : "")); b.type = "button"; b.textContent = MODES[id].name; b.addEventListener("click", () => { if (modes.includes(id)) { if (modes.length > 1) modes = modes.filter((x) => x !== id); } else modes = modes.concat(id); $("tcNote").textContent = ""; draw(); }); m.appendChild(b); });
       const d = $("tcDur"); d.innerHTML = ""; DUR.forEach(([v, l]) => { const b = h("button", "chip" + (dur === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { dur = v; draw(); }); d.appendChild(b); });
       const t = $("tcTry"); t.innerHTML = ""; TRY.forEach(([v, l]) => { const b = h("button", "chip" + (tries === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { tries = v; draw(); }); t.appendChild(b); });
     };
     draw();
+    on("tcAll", () => { modes = modes.length === ORDER.length ? [ORDER[0]] : ORDER.slice(); const a = $("tcAll"); if (a) a.textContent = modes.length === ORDER.length ? tr("Nur eins", "Just one") : tr("Alle wählen", "Select all"); draw(); });
     on("tcX", closeLayer);
     on("tcGo", async () => {
       const btn = $("tcGo"); btn.disabled = true;
@@ -3281,7 +3546,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   // ---------- Rangliste ----------
-  const RK = { mode: "ziele", scope: "world", country: null };
+  const RK = { mode: "ziele", scope: "week", country: null };
   // Länderauswahl als Liste mit Suche (für die Rangliste)
   function pickCountry(title, cb) {
     openLayer("<h2>" + esc(title) + '</h2><input class="flagq" id="pcQ" type="search" autocomplete="off" placeholder="' + esc(tr("Land suchen …", "Search country …")) + '"><div class="flaglist tall" id="pcList"></div><button class="btn ghost" id="pcX" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
@@ -3305,14 +3570,22 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const myFlag = RK.country;
     seg.innerHTML = "";
     const choose = () => pickCountry(tr("Land wählen", "Choose country"), (c) => { RK.country = c; RK.scope = "country"; renderRanks(); });
-    [["world", tr("Weltweit", "Worldwide")], ["country", tr("Länder", "Countries")], ["friends", tr("Freunde", "Friends")]].forEach(([k, label]) => {
+    seg.className = "seg four";
+    [["week", tr("Woche", "Week")], ["world", tr("Weltweit", "Worldwide")], ["country", tr("Länder", "Countries")], ["friends", tr("Freunde", "Friends")]].forEach(([k, label]) => {
       const b = h("button", RK.scope === k ? "on" : ""); b.type = "button"; b.textContent = label;
       b.addEventListener("click", () => { if (k === "country" && !RK.country) { choose(); return; } RK.scope = k; renderRanks(); }); seg.appendChild(b);
     });
     const cb = $("rkCountry"); cb.hidden = RK.scope !== "country" || !myFlag; cb.innerHTML = "";
     if (!cb.hidden) { cb.append(flagNode(myFlag), document.createTextNode(" " + countryName(myFlag))); const ch = h("span", "rkchg"); ch.textContent = tr("Land ändern ▾", "Change ▾"); cb.appendChild(ch); cb.onclick = choose; }
-    const mode = RK.mode, m = MODES[mode], myBest = store.get("best:" + mode, null);
-    note.textContent = tr("Dein Bestwert: ", "Your best: ") + (myBest == null ? tr("noch keiner", "none yet") : fmtVal(mode, myBest)) + (m.lower ? tr(" · weniger ist besser", " · lower is better") : "");
+    const mode = RK.mode, m = MODES[mode], wkNow = weekId(), myBest = RK.scope === "week" ? store.get("wbest:" + wkNow + ":" + mode, null) : store.get("best:" + mode, null);
+    note.textContent = (RK.scope === "week" ? tr("Dein Wochen-Bestwert: ", "Your best this week: ") : tr("Dein Bestwert: ", "Your best: ")) + (myBest == null ? tr("noch keiner", "none yet") : fmtVal(mode, myBest)) + (m.lower ? tr(" · weniger ist besser", " · lower is better") : "");
+    let wb = $("rkWeek");
+    if (!wb) { wb = h("div", "rkweek"); wb.id = "rkWeek"; list.parentNode.insertBefore(wb, list); }
+    wb.hidden = RK.scope !== "week";
+    if (!wb.hidden) {
+      const left = weekLeftMs(), dd = Math.floor(left / 86400000), hh = Math.floor((left % 86400000) / 3600000);
+      wb.innerHTML = "<b>" + tr("Wochen-Challenge", "Weekly challenge") + "</b><span>" + tr("Top 3 in jedem Modus gewinnen Münzen", "Top 3 in every mode win coins") + '</span><div class="rkprize"><i>🥇 ' + fmtN(WEEK_PRIZE[0]) + "</i><i>🥈 " + fmtN(WEEK_PRIZE[1]) + "</i><i>🥉 " + fmtN(WEEK_PRIZE[2]) + "</i></div><small>" + tr("Endet Sonntag 24:00 · noch ", "Ends Sunday midnight · ") + (dd ? dd + tr(" T ", "d ") : "") + hh + tr(" Std.", "h left") + "</small>";
+    }
     list.innerHTML = "";
     if (!NET.ok) {
       list.appendChild(empty(ONLINE ? offNote() + "." : tr("Die Rangliste mit anderen Spielern kommt, sobald Online in der App aktiv ist. Bis dahin siehst du unten deinen Bestwert.", "The leaderboard with other players arrives once online is active in the app. Until then you see your best below.")));
@@ -3320,13 +3593,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     if (RK.scope === "country" && !myFlag) { list.appendChild(empty(tr("Wähl ein Land aus.", "Choose a country."))); return; }
     list.appendChild(empty(tr("Lade …", "Loading …")));
-    const field = "b_" + mode;
+    const field = RK.scope === "week" ? "w" + wkNow + "_" + mode : "b_" + mode;
     let docs = [];
     try {
       // Länder-Filter ohne zusammengesetzten Index: per Flagge laden, dann hier sortieren
       const snap = RK.scope === "country"
         ? await NET.db.collection("players").where("flags", "array-contains", myFlag).limit(500).get()
-        : await NET.db.collection("players").where(field, ">", 0).orderBy(field, m.lower ? "asc" : "desc").limit(RK.scope === "friends" ? 500 : 50).get();
+        : await NET.db.collection("players").where(RK.scope === "friends" ? "b_" + mode : field, ">", 0).orderBy(RK.scope === "friends" ? "b_" + mode : field, m.lower ? "asc" : "desc").limit(RK.scope === "friends" ? 500 : 50).get();
       docs = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
       if (RK.scope === "country") docs = docs.filter((d) => Number.isFinite(d[field]) && d[field] > 0).sort((a, b) => (m.lower ? a[field] - b[field] : b[field] - a[field]));
     } catch (e) { list.innerHTML = ""; list.appendChild(empty(tr("Rangliste konnte nicht geladen werden.", "Couldn't load the leaderboard."))); return; }
@@ -3335,9 +3608,21 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     docs = docs.filter((d) => typeof d.uname === "string" && UNAME_RE.test(d.uname) && Number.isFinite(d[field])).slice(0, 50);
     list.innerHTML = "";
     if (!docs.length) { list.appendChild(empty(tr("Noch keine Einträge. Spiel eine Runde und sei der Erste!", "No entries yet. Play a round and be the first!"))); return; }
+    // Platzveränderung: Vergleich mit dem letzten anders aussehenden Stand, den du gesehen hast
+    const hk = "rkhist:" + mode + ":" + RK.scope + (RK.scope === "country" ? ":" + myFlag : ""), hist = store.get(hk, null) || {};
+    const cur = {}; docs.forEach((d, i) => { cur[d.id] = i + 1; });
+    let ref = hist.ref || null, last = hist.last || null;
+    if (!last) last = { at: Date.now(), r: cur };
+    else if (JSON.stringify(last.r) !== JSON.stringify(cur)) { ref = last; last = { at: Date.now(), r: cur }; }
+    store.set(hk, { ref, last });
+    const moveOf = (id, rank) => { if (!ref || !ref.r) return null; const was = ref.r[id]; return was == null ? "new" : was - rank; };
+    const myMove = moveOf(NET.me, cur[NET.me]);
+    if (typeof myMove === "number" && myMove !== 0) note.textContent = (myMove > 0 ? "▲ " + tr("Du bist " + myMove + (myMove === 1 ? " Platz" : " Plätze") + " aufgestiegen", "You climbed " + myMove + (myMove === 1 ? " place" : " places")) : "▼ " + tr("Du bist " + -myMove + (myMove === -1 ? " Platz" : " Plätze") + " abgerutscht", "You dropped " + -myMove + (myMove === -1 ? " place" : " places"))) + " · " + note.textContent;
     docs.forEach((d, i) => {
       const r = h("div", "rrow" + (d.id === NET.me ? " me" : "") + (i < 3 ? " top" + (i + 1) : ""));
-      const rk = h("b", "rk"); rk.textContent = i + 1;
+      const rk = h("div", "rkc"), rkn = h("b", "rk"); rkn.textContent = i + 1; rk.appendChild(rkn);
+      const mv = moveOf(d.id, i + 1);
+      if (mv != null && mv !== 0) { const m = h("span", "rmv " + (mv === "new" ? "new" : mv > 0 ? "up" : "down")); m.textContent = mv === "new" ? tr("NEU", "NEW") : (mv > 0 ? "▲" : "▼") + Math.abs(mv); rk.appendChild(m); }
       const img = h("img"); img.alt = "";
       paintAvatar(img, d);
       const nm = h("span", "rn"); nm.textContent = "@" + d.uname; appendFlags(nm, d.flags);
@@ -3346,17 +3631,91 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     });
   }
 
+  // ---------- Chat mit Freunden (nur gegenseitige Freunde) ----------
+  const CH = { list: {}, unsub: null, open: null, lastSend: 0 };
+  const chatId = (a, b) => [a, b].sort().join("_");
+  const mutual = (id) => NET.follows.includes(id) && NET.followers.includes(id);
+  const blockedList = () => { const b = store.get("blocked", []); return Array.isArray(b) ? b : []; };
+  const BADW = /\b(hurensohn\w*|hure|wichser|fotze|missgeburt|spast\w*|schlampe|arschloch|bastard|nigg\w*|fuck\w*|bitch\w*|cunt|whore|orospu\w*|siktir\w*|amk|piç\w*|kahpe|yarrak\w*)\b/gi;
+  const chatClean = (t) => String(t).replace(/[\u0000-\u001f]/g, " ").replace(BADW, (w) => w[0] + "*".repeat(Math.max(2, w.length - 1)));
+  function chatStop() { if (CH.unsub) { try { CH.unsub(); } catch (e) {} } CH.unsub = null; CH.open = null; }
+  function chatUnread(id) { const c = CH.list[chatId(NET.me, id)]; return !!(c && c.lastBy && c.lastBy !== NET.me && !blockedList().includes(c.lastBy) && (c.at || 0) > store.get("chatSeen:" + c.id, 0)); }
+  const chatUnreadTotal = () => Object.values(CH.list).filter((c) => c.lastBy && c.lastBy !== NET.me && !blockedList().includes(c.lastBy) && (c.at || 0) > store.get("chatSeen:" + c.id, 0)).length;
+  const hhmm = (t) => { const d = new Date(t); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+  async function openChat(id) {
+    if (!NET.ok || !id) return;
+    const ps = await names([id]), p = ps[id] || { name: tr("Spieler", "Player") }, cid = chatId(NET.me, id);
+    const QUICK = [tr("GG 👊", "GG 👊"), tr("Revanche?", "Rematch?"), "🔥", "😂", tr("Gleich eine Runde?", "One round?")];
+    openLayer('<div class="chat-head"><span class="avw"><img id="chAv" alt=""><i class="odot' + (peerOf(id) ? " on" : "") + '"></i></span><span class="chat-who"><b id="chName"></b><small>' + (peerOf(id) ? "online" : "offline") + '</small></span><button class="sbtn" id="chDuel" type="button">' + tr("Herausfordern", "Challenge") + "</button></div>" +
+      '<div class="chat-list" id="chList"><p class="note">' + tr("Lade …", "Loading …") + "</p></div>" +
+      (mutual(id) ? '<div class="chat-quick" id="chQuick">' + QUICK.map((q) => '<button type="button">' + esc(q) + "</button>").join("") + '</div><form class="chat-in" id="chForm"><input id="chText" maxlength="300" autocomplete="off" enterkeyhint="send" placeholder="' + esc(tr("Nachricht …", "Message …")) + '"><button class="btn" type="submit">' + tr("Senden", "Send") + "</button></form>"
+        : '<p class="note">' + tr("Ihr könnt chatten, sobald ihr euch gegenseitig folgt.", "You can chat once you follow each other.") + "</p>") +
+      '<div class="row2"><button class="btn ghost" id="chSafe" type="button">' + tr("Melden / Blockieren", "Report / Block") + '</button><button class="btn ghost" id="chBack" type="button">' + tr("Zurück", "Back") + "</button></div>", "chat-sheet");
+    paintAvatar($("chAv"), p); const nm = $("chName"); nm.textContent = nameOf(p); appendFlags(nm, p.flags);
+    on("chBack", () => { closeLayer(); if (!$("social").hidden) renderSocial(); });
+    on("chDuel", () => chooseModeFor(id, nameOf(p)));
+    on("chSafe", () => chatSafety(id, p, cid));
+    const list = $("chList");
+    let lastTheirs = "";
+    const render = (docs) => {
+      const bl = blockedList();
+      const msgs = docs.map((d) => d.data()).filter((m) => m && typeof m.t === "string" && typeof m.by === "string" && !bl.includes(m.by)).sort((a, b) => (a.at || 0) - (b.at || 0));
+      list.innerHTML = "";
+      if (!msgs.length) { const e = h("p", "note"); e.textContent = tr("Noch keine Nachrichten. Sag Hallo!", "No messages yet. Say hi!"); list.appendChild(e); }
+      msgs.forEach((m) => { const b = h("div", "bub" + (m.by === NET.me ? " me" : "")); const tx = h("span"); tx.textContent = chatClean(m.t); const tm = h("small"); tm.textContent = m.at ? hhmm(m.at) : ""; b.append(tx, tm); list.appendChild(b); if (m.by !== NET.me) lastTheirs = m.t; });
+      list.scrollTop = list.scrollHeight;
+      store.set("chatSeen:" + cid, Date.now()); renderOnline();
+    };
+    try {
+      CH.open = cid;
+      CH.unsub = NET.db.collection("chats/" + cid + "/msgs").orderBy("at", "desc").limit(60).onSnapshot((q) => render(q.docs), () => { list.innerHTML = '<p class="note">' + tr("Chat konnte nicht geladen werden.", "Couldn't load the chat.") + "</p>"; });
+    } catch (e) {}
+    CH.lastTheirs = () => lastTheirs;
+    const form = $("chForm"), inp = $("chText");
+    const send = async (raw) => {
+      const t = chatClean(String(raw || "").trim()).slice(0, 300);
+      if (!t || !mutual(id)) return;
+      if (Date.now() - CH.lastSend < 700) return; CH.lastSend = Date.now();
+      const at = Date.now(), [a, b] = cid.split("_");
+      try {
+        await NET.db.collection("chats/" + cid + "/msgs").add({ by: NET.me, t, at });
+        await NET.db.doc("chats/" + cid).set({ a, b, last: t.slice(0, 120), lastBy: NET.me, at });
+        buzz(8);
+      } catch (e) { note(tr("Senden ging nicht", "Couldn't send"), tr("Prüf deine Verbindung und ob ihr euch noch gegenseitig folgt.", "Check your connection and that you still follow each other.")); }
+    };
+    if (form) form.addEventListener("submit", (e) => { e.preventDefault(); const v = inp.value; inp.value = ""; send(v); });
+    const qb = $("chQuick"); if (qb) qb.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => send(b.textContent)));
+  }
+  function chatSafety(id, p, cid) {
+    const nm = nameOf(p), isBl = blockedList().includes(id);
+    openLayer("<h2>" + esc(nm) + "</h2><p>" + tr("Wenn dich jemand belästigt, kannst du ihn melden und blockieren. Blockierte Spieler können dir nicht mehr schreiben.", "If someone harasses you, report and block them. Blocked players can't message you anymore.") + "</p>" +
+      '<button class="btn" id="sfRep" type="button">' + tr("Melden", "Report") + '</button><button class="btn ghost" id="sfBl" type="button">' + (isBl ? tr("Blockierung aufheben", "Unblock") : tr("Blockieren", "Block")) + '</button><button class="link" id="sfBack" type="button">' + tr("Zurück", "Back") + "</button>");
+    on("sfBack", () => openChat(id));
+    on("sfRep", async () => {
+      try { await NET.db.collection("reports").add({ by: NET.me, who: id, cid, at: Date.now(), last: String((CH.lastTheirs && CH.lastTheirs()) || "").slice(0, 300) }); } catch (e) {}
+      note(tr("Danke für deine Meldung", "Thanks for your report"), tr("Wir schauen uns das an. Du kannst den Spieler zusätzlich blockieren.", "We'll look into it. You can also block the player."));
+    });
+    on("sfBl", () => {
+      const bl = blockedList();
+      if (isBl) store.set("blocked", bl.filter((x) => x !== id));
+      else { store.set("blocked", bl.concat(id).slice(-500)); unfollow(id); }
+      closeLayer(); if (!$("social").hidden) renderSocial();
+    });
+  }
+
   // ---------- Freunde-Bildschirm ----------
   function openSocial() { closeLayer(); stopEngine(); show("social"); renderSocial(); }
   function row(id, p, sub, buttons, online) {
     const r = h("div", "srow");
     const img = h("img"); img.alt = ""; if (p) paintAvatar(img, p); else img.hidden = true;
+    let avEl = img;
+    if (p && online != null) { avEl = h("span", "avw"); const dot = h("i", "odot" + (online ? " on" : "")); dot.title = online ? "online" : "offline"; avEl.append(img, dot); }
     const tx = h("div", "stext"); const n = h("span", "sname"); n.textContent = nameOf(p); appendFlags(n, p && p.flags);
     const s = h("span", "ssub"); s.innerHTML = online != null ? '<span class="sdot' + (online ? " on" : "") + '"></span>' : ""; s.appendChild(document.createTextNode(sub));
     tx.append(n, s);
     const bs = h("div", "sbtns");
-    buttons.forEach(([label, fn, quiet]) => { const b = h("button", "sbtn" + (quiet ? " quiet" : "")); b.type = "button"; b.textContent = label; b.addEventListener("click", fn); bs.appendChild(b); });
-    r.append(img, tx, bs);
+    buttons.forEach(([label, fn, quiet, cls]) => { const b = h("button", "sbtn" + (quiet ? " quiet" : "") + (cls ? " " + cls : "")); b.type = "button"; b.textContent = label; b.addEventListener("click", fn); bs.appendChild(b); });
+    r.append(avEl, tx, bs);
     return r;
   }
   const empty = (t) => { const p = h("p", "empty"); p.textContent = t; return p; };
@@ -3368,7 +3727,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (!NET.ok) sub.textContent = offNote();
       else {
         const open = NET.incoming.filter((c) => c.status === "open").length;
-        sub.textContent = onlineCount() + " online · " + NET.follows.length + tr(" Freunde", " friends") + (open ? " · " + open + (open > 1 ? tr(" Herausforderungen", " challenges") : tr(" Herausforderung", " challenge")) : "");
+        const fOn = NET.follows.filter((id) => peerOf(id)).length, unr = chatUnreadTotal();
+        sub.textContent = (unr ? unr + (unr > 1 ? tr(" neue Chats", " new chats") : tr(" neuer Chat", " new chat")) + " · " : "") + (fOn ? fOn + tr(" Freunde online", " friends online") : NET.follows.length + tr(" Freunde", " friends")) + " · " + onlineCount() + tr(" Spieler online", " players online") + (open ? " · " + open + (open > 1 ? tr(" Herausforderungen", " challenges") : tr(" Herausforderung", " challenge")) : "");
       }
     }
     if (!$("social").hidden && !socialRenderQueued) { socialRenderQueued = true; setTimeout(() => { socialRenderQueued = false; renderSocial(); }, 150); }
@@ -3384,9 +3744,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const ps = await names(ids);
     const fill = (el, nodes, emptyText) => { el.innerHTML = ""; if (!nodes.length) el.appendChild(empty(emptyText)); else nodes.forEach((n) => el.appendChild(n)); };
     fill($("socIncoming"), open.map((c) => row(c.from, ps[c.from], MODES[c.mode].name + " · " + (c.v == null ? "–" : c.v + " " + MODES[c.mode].unit) + tr(" zu schlagen", " to beat"), [[tr("Annehmen", "Accept"), () => acceptChallenge(c, nameOf(ps[c.from]))]], null)), NET.ok ? tr("Keine offenen Herausforderungen.", "No open challenges.") : "–");
-    fill($("socFollowing"), NET.follows.map((id) => {
+    const ago = (t) => { if (!t) return "offline"; const m = Math.round((Date.now() - t) / 60000); return "offline · " + (m < 60 ? tr("vor " + Math.max(1, m) + " Min.", Math.max(1, m) + " min ago") : m < 1440 ? tr("vor " + Math.round(m / 60) + " Std.", Math.round(m / 60) + " h ago") : tr("vor " + Math.round(m / 1440) + " Tg.", Math.round(m / 1440) + " d ago")); };
+    const fol = NET.follows.slice().sort((a, b) => (!!peerOf(b) - !!peerOf(a)) || (((ps[b] || {}).seen || 0) - ((ps[a] || {}).seen || 0)));
+    const onF = fol.filter((id) => peerOf(id)).length, fh = $("socFolHead");
+    if (fh) fh.textContent = tr("Du folgst", "Following") + (NET.follows.length ? " · " + onF + tr(" online", " online") : "");
+    fill($("socFollowing"), fol.map((id) => {
       const p = peerOf(id), st2 = p && p.presence ? p.presence.st : null;
-      return row(id, ps[id], p ? (st2 === "menu" ? "online" : st2 === "seek" ? tr("sucht Gegner", "looking for a match") : tr("spielt gerade", "playing")) : "offline", [[tr("Herausfordern", "Challenge"), () => chooseModeFor(id, nameOf(ps[id]))], [tr("Entfolgen", "Unfollow"), () => unfollow(id), true]], !!p);
+      const chatBtn = mutual(id) ? [[chatUnread(id) ? tr("Chat • neu", "Chat • new") : "Chat", () => openChat(id), false, chatUnread(id) ? "hot" : ""]] : [];
+      return row(id, ps[id], p ? (st2 === "menu" ? "online" : st2 === "seek" ? tr("online · sucht Gegner", "online · looking for a match") : tr("online · spielt gerade", "online · playing")) : ago((ps[id] || {}).seen), chatBtn.concat([[tr("Herausfordern", "Challenge"), () => chooseModeFor(id, nameOf(ps[id]))], [tr("Entfolgen", "Unfollow"), () => unfollow(id), true]]), !!p);
     }), NET.ok ? tr("Du folgst noch niemandem. Such unten nach Namen.", "You're not following anyone yet. Search for names below.") : "–");
     fill($("socFollowers"), NET.followers.map((id) => row(id, ps[id], NET.follows.includes(id) ? tr("ihr folgt euch", "you follow each other") : tr("folgt dir", "follows you"), NET.follows.includes(id) ? [] : [[tr("Folgen", "Follow"), () => follow(id)]], !!peerOf(id))), NET.ok ? tr("Noch niemand.", "Nobody yet.") : "–");
     fill($("socRecent"), recent.map((id) => row(id, ps[id], peerOf(id) ? "online" : tr("hat ZACK! gespielt", "played ZACK!"), [[tr("Folgen", "Follow"), () => follow(id)]], !!peerOf(id))), NET.ok ? tr("Noch keine anderen Spieler.", "No other players yet.") : "–");
@@ -3418,7 +3783,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const ps = await names(ids);
       box.innerHTML = "";
       if (!ids.length) { box.appendChild(empty(tr("Niemand mit diesem Namen gefunden.", "Nobody found with that name."))); return; }
-      ids.forEach((id) => box.appendChild(row(id, ps[id], NET.follows.includes(id) ? tr("du folgst", "following") : peerOf(id) ? "online" : "", NET.follows.includes(id) ? [] : [[tr("Folgen", "Follow"), () => follow(id)]], !!peerOf(id))));
+      ids.forEach((id) => box.appendChild(row(id, ps[id], NET.follows.includes(id) ? tr("du folgst", "following") : peerOf(id) ? "online" : "", NET.follows.includes(id) ? [] : [[tr("Folgen", "Follow"), (ev) => { follow(id); const b = ev.currentTarget; b.textContent = tr("Du folgst ✓", "Following ✓"); b.disabled = true; }]], !!peerOf(id))));
     }, 250);
   });
 
@@ -3496,6 +3861,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   $("goCareer").addEventListener("click", () => { renderCareer(); show("career"); });
   $("goRanks").addEventListener("click", () => { show("ranks"); renderRanks(); });
   $("goTour").addEventListener("click", openTour);
+  $("goParty").addEventListener("click", partySetup);
   $("goSkins").addEventListener("click", () => showSkins());
   ["s:gold", "s:neon", "s:galaxy"].forEach((sk, i) => paintAvatar($("skPrev" + (i + 1)), { sk }));
   $("goSocial").addEventListener("click", openSocial);
@@ -4015,6 +4381,207 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       },
       revive() { quiet(); AU.setTheme("lanes"); lives = 1; combo = 0; ctx.lives(lives, max); ctx.info(""); tiles.forEach((T) => T.el.remove()); tiles = []; next = ctx.t() - start + 1200; lastT = null; },
       result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points") })
+    };
+  }
+
+  // =====================================================
+  // PARTY: Verlierer zahlt — Handy reihum, wer am schlechtesten ist, zahlt
+  // =====================================================
+  const PARTY = { names: [], game: "ampel", res: [], i: 0, kd: null };
+  function partyKeysOff() { if (PARTY.kd) { document.removeEventListener("keydown", PARTY.kd); PARTY.kd = null; } }
+  function partySetup() {
+    let names = store.get("party:names", null);
+    if (!Array.isArray(names) || names.length < 2) { const pr = profile() || {}; names = [pr.uname ? pr.uname : tr("Spieler 1", "Player 1"), tr("Spieler 2", "Player 2"), tr("Spieler 3", "Player 3")]; }
+    let game = store.get("party:game", "ampel");
+    const draw = () => {
+      openLayer('<span class="eyebrow">' + tr("Partymodus · ein Handy", "Party mode · one phone") + "</span><h2>" + tr("Verlierer zahlt", "Loser pays") + "</h2><p>" + tr("Alle spielen nacheinander. Wer am schlechtesten ist, zahlt die nächste Runde.", "Everyone plays in turn. Whoever does worst pays the next round.") + "</p>" +
+        '<div class="pt-names" id="ptNames"></div>' + (names.length < 8 ? '<button class="btn ghost" id="ptAdd" type="button">+ ' + tr("Spieler", "Player") + "</button>" : "") +
+        '<span class="eyebrow">' + tr("Spiel", "Game") + '</span><div class="seg two"><button type="button" id="ptG1" class="' + (game === "ampel" ? "on" : "") + '">' + tr("Startampel", "Start lights") + '</button><button type="button" id="ptG2" class="' + (game === "uhr" ? "on" : "") + '">' + tr("Genau 5 Sekunden", "Exactly 5 seconds") + "</button></div>" +
+        '<p class="note">' + (game === "ampel" ? tr("Wer am langsamsten reagiert, zahlt. Fehlstart zählt als 1,5 Sekunden.", "Slowest reaction pays. A jump start counts as 1.5 seconds.") : tr("Uhr starten und blind bei 5,00 s stoppen. Wer am weitesten daneben liegt, zahlt.", "Start the clock and stop blind at 5.00 s. Furthest off pays.")) + "</p>" +
+        '<button class="btn" id="ptGo" type="button">' + tr("Los geht's", "Let's go") + "</button>" +
+        '<p class="note">' + tr("ZACK! nimmt kein Geld. Die App entscheidet nur, wer die Runde zahlt.", "ZACK! takes no money. The app only decides who pays the round.") + '</p><button class="link" id="ptX" type="button">' + tr("Zurück", "Back") + "</button>", "party");
+      const box = $("ptNames");
+      names.forEach((n, i) => {
+        const row = h("div", "pt-name"), inp = h("input"); inp.value = n; inp.maxLength = 14; inp.placeholder = tr("Name", "Name"); inp.autocomplete = "off";
+        inp.addEventListener("input", () => { names[i] = inp.value; });
+        row.appendChild(inp);
+        if (names.length > 2) { const x = h("button", "pt-x"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", tr("Entfernen", "Remove")); x.addEventListener("click", () => { names.splice(i, 1); draw(); }); row.appendChild(x); }
+        box.appendChild(row);
+      });
+      on("ptAdd", () => { names.push(tr("Spieler ", "Player ") + (names.length + 1)); draw(); const ins = sheet.querySelectorAll(".pt-name input"); const last = ins[ins.length - 1]; if (last) { last.focus(); last.select(); } });
+      on("ptG1", () => { game = "ampel"; draw(); });
+      on("ptG2", () => { game = "uhr"; draw(); });
+      on("ptX", closeLayer);
+      on("ptGo", () => {
+        const list = names.map((n) => String(n || "").trim().slice(0, 14)).filter(Boolean);
+        if (list.length < 2) return;
+        store.set("party:names", list); store.set("party:game", game);
+        PARTY.names = list; PARTY.game = game; PARTY.res = []; PARTY.i = 0;
+        partyTurn();
+      });
+    };
+    draw();
+  }
+  function partyTurn() {
+    partyKeysOff();
+    const n = PARTY.names[PARTY.i];
+    openLayer('<span class="eyebrow">' + tr("Spieler ", "Player ") + (PARTY.i + 1) + " / " + PARTY.names.length + '</span><p class="pt-pass">' + tr("Handy an", "Pass the phone to") + '</p><div class="pt-who"></div>' +
+      '<button class="btn" id="ptReady" type="button">' + tr("Bereit", "Ready") + "</button>", "party");
+    sheet.querySelector(".pt-who").textContent = n;
+    on("ptReady", partyPlay);
+  }
+  function partyPlay() {
+    const ampel = PARTY.game === "ampel", n = PARTY.names[PARTY.i];
+    openLayer('<span class="eyebrow">' + esc(n) + '</span><div class="pt-pad" id="ptPad">' +
+      (ampel ? '<div class="lights">' + "<i></i>".repeat(5) + "</div>" : '<div class="pt-target">' + tr("Ziel: 5,00 s", "Target: 5.00 s") + '</div><div class="clock" id="ptClock">0,000</div>') +
+      '<div class="pt-msg" id="ptMsg"><strong>' + tr("Tippen zum Starten", "Tap to start") + "</strong></div></div>", "party");
+    const pad = $("ptPad"), msg = $("ptMsg"), L = ampel ? [...pad.querySelectorAll(".lights i")] : [];
+    let st = "idle", t0 = 0, raf = 0;
+    const T = (ms, f) => VS_T.push(setTimeout(f, ms));
+    const setL = (k) => L.forEach((l, i) => l.classList.toggle("on", i < k));
+    const done = (v, txt) => {
+      st = "done"; cancelAnimationFrame(raf); partyKeysOff();
+      PARTY.res[PARTY.i] = v;
+      msg.innerHTML = "<strong>" + esc(txt) + "</strong>";
+      const last = PARTY.i >= PARTY.names.length - 1;
+      const b = h("button", "btn"); b.type = "button"; b.textContent = last ? tr("Auswertung", "Results") : tr("Weiter zu ", "Next: ") + PARTY.names[PARTY.i + 1];
+      b.addEventListener("click", (e) => { e.stopPropagation(); PARTY.i++; if (last) partyReveal(); else partyTurn(); });
+      sheet.appendChild(b);
+    };
+    const tap = (ts) => {
+      const now = ts || performance.now();
+      if (ampel) {
+        if (st === "idle") { st = "arm"; msg.innerHTML = tr("Warten …", "Wait …"); for (let i = 1; i <= 5; i++) T(i * 750, () => { setL(i); SFX.light(); buzz(10); }); T(5 * 750 + 400 + Math.random() * 2300, () => { setL(0); t0 = performance.now(); st = "go"; msg.innerHTML = "&nbsp;"; }); }
+        else if (st === "arm") { VS_T.forEach(clearTimeout); VS_T = []; setL(5); SFX.bad(); buzz(70); done(1500, tr("Fehlstart! Zählt als 1.500 ms", "Jump start! Counts as 1,500 ms")); }
+        else if (st === "go") { const rt = Math.max(1, Math.round(now - t0)); SFX.go(); buzz(15); done(rt, rt + " ms"); }
+      } else {
+        const clk = $("ptClock");
+        if (st === "idle") { st = "run"; t0 = now; msg.innerHTML = tr("Läuft … stopp bei 5,00 s", "Running … stop at 5.00 s"); beep(660, 0.05);
+          const loop = () => { const el = (performance.now() - t0) / 1000; if (el < 1) clk.textContent = fmt3(el); else if (!clk.classList.contains("blind")) { clk.textContent = "?,???"; clk.classList.add("blind"); } if (el > 15) { done(10000, tr("Zu lange gewartet", "Waited too long")); return; } raf = requestAnimationFrame(loop); }; raf = requestAnimationFrame(loop); }
+        else if (st === "run") { const el = (now - t0) / 1000, dev = Math.round(Math.abs(el - 5) * 1000); clk.classList.remove("blind"); clk.textContent = fmt3(el); beep(880, 0.08, "triangle", 0.07); buzz(12); done(dev, fmt3(el) + " s · " + dev + tr(" ms daneben", " ms off")); }
+      }
+    };
+    pad.addEventListener("pointerdown", (e) => { e.preventDefault(); if (st !== "done") tap(e.timeStamp); });
+    PARTY.kd = (e) => { if ((e.key === " " || e.key === "Enter") && st !== "done") { e.preventDefault(); tap(); } };
+    document.addEventListener("keydown", PARTY.kd);
+  }
+  function partyReveal() {
+    partyKeysOff();
+    const R = PARTY.names.map((n, i) => ({ n, v: PARTY.res[i] })).sort((a, b) => a.v - b.v);
+    const worst = R[R.length - 1].v, losers = R.filter((x) => x.v === worst).map((x) => x.n);
+    openLayer('<span class="eyebrow">' + tr("Und zahlen muss …", "And the one paying is …") + '</span><div class="pt-roll" id="ptRoll">?</div>', "party");
+    const roll = $("ptRoll");
+    let k = 0, delay = 70;
+    const step = () => {
+      roll.textContent = PARTY.names[k++ % PARTY.names.length]; SFX.tick(); buzz(6);
+      delay *= 1.12;
+      if (delay < 420) VS_T.push(setTimeout(step, delay)); else VS_T.push(setTimeout(show_, 380));
+    };
+    const show_ = () => {
+      const unit = PARTY.game === "ampel" ? " ms" : tr(" ms daneben", " ms off");
+      openLayer('<span class="eyebrow">' + tr("Verlierer zahlt", "Loser pays") + '</span><div class="pt-loser"><span class="pt-money">💸</span><b></b><span>' + (losers.length > 1 ? tr("zahlen zusammen!", "pay together!") : tr("zahlt!", "pays!")) + "</span></div>" +
+        '<div class="pt-rank">' + R.map((x, i) => '<div class="pt-r' + (x.v === worst ? " lose" : i === 0 ? " win" : "") + '"><i>' + (i + 1) + "</i><span>" + esc(x.n) + "</span><b>" + fmtN(x.v) + esc(unit) + "</b></div>").join("") + "</div>" +
+        '<button class="btn" id="ptAgain" type="button">' + tr("Revanche", "Rematch") + '</button><div class="row2"><button class="btn ghost" id="ptEdit" type="button">' + tr("Spieler ändern", "Change players") + '</button><button class="btn ghost" id="ptShare" type="button">' + tr("Teilen", "Share") + '</button></div><button class="link" id="ptMenu" type="button">' + tr("Menü", "Menu") + "</button>", "party");
+      sheet.querySelector(".pt-loser b").textContent = losers.join(" & ");
+      SFX.lose(); buzz([60, 40, 60, 40, 120]);
+      on("ptAgain", () => { PARTY.res = []; PARTY.i = 0; partyTurn(); });
+      on("ptEdit", partySetup);
+      on("ptMenu", closeLayer);
+      on("ptShare", () => shareOut(tr("Bei ZACK! hat ", "At ZACK! ") + losers.join(" & ") + tr(" verloren und zahlt die Runde 😂", " lost and pays the round 😂"), appLink(), partyReveal));
+    };
+    step();
+  }
+
+  // =====================================================
+  // MODE: Turm (stapeln, so hoch es geht)
+  // =====================================================
+  function makeTurm(ctx) {
+    const r = ctx.root; r.classList.add("tower");
+    r.innerHTML = '<canvas class="tw-cv"></canvas><div class="hint">' + tr("Tippen, wenn der Block genau über dem Turm ist.", "Tap when the block is right above the tower.") + "</div>";
+    const cv = r.firstChild, g = cv.getContext("2d"), hint = r.querySelector(".hint");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+    const size = () => { const w = ctx.W(), hh = ctx.H(); if (w === W && hh === H) return; W = w; H = hh; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); };
+    size();
+    const SH = () => Math.max(22, Math.round(H * 0.05)), W0 = () => Math.round(W * 0.6);
+    let stack = [{ x: (W - W0()) / 2, w: W0(), hue: 42 }], cur = null, score = 0, perfect = 0, cam = 0, debris = [], fx = [], lastT = null, lives = 1 + ctx.extraLife;
+    const max = lives; ctx.lives(lives, max); ctx.score(0);
+    function spawn() {
+      const top = stack[stack.length - 1], lvl = stack.length, fromLeft = ctx.rng() < 0.5;
+      const v = Math.min(W * 1.8, W * (0.62 + lvl * 0.028) + ctx.boost * 8);
+      cur = { x: fromLeft ? -top.w * 0.9 : W - top.w * 0.1, w: top.w, dir: fromLeft ? 1 : -1, v, hue: (top.hue + 11) % 360 };
+    }
+    spawn();
+    const slabY = (i) => H * 0.86 - (i + 1) * SH() + cam;
+    function drop() {
+      if (!ctx.live() || !cur) return;
+      hint.hidden = true;
+      const top = stack[stack.length - 1], tol = Math.max(5, W * 0.014), y = slabY(stack.length);
+      let x = cur.x, w = cur.w;
+      if (Math.abs(x - top.x) <= tol) {
+        perfect++; x = top.x;
+        if (perfect >= 3 && w < W0()) { const nw = Math.min(W0(), w + W * 0.05); x = Math.max(0, Math.min(W - nw, top.x - (nw - w) / 2)); w = nw; }
+        score += 2; fx.push({ x, y, w, h: SH(), t: 0 });
+        AU.tone(523 * Math.pow(2, Math.min(perfect, 12) / 12), 0.16, "triangle", 0.22, 1.02); buzz(perfect >= 3 ? [10, 30, 10] : 12);
+        if (perfect >= 3 && perfect % 3 === 0) ctx.milestone(tr("Perfekt ×", "Perfect ×") + perfect, Math.min(6, 2 + perfect / 3));
+        else ctx.float(x + w / 2, y - 10, perfect > 1 ? tr("Perfekt ×", "Perfect ×") + perfect : tr("Perfekt!", "Perfect!"), "fast");
+      } else {
+        const left = Math.max(x, top.x), right = Math.min(x + w, top.x + top.w), ov = right - left;
+        if (ov <= 0) {
+          debris.push({ x, y, w, h: SH(), vy: 0, vx: cur.dir * 60, rot: 0, vr: cur.dir * 2.5, hue: cur.hue });
+          perfect = 0; lives--; ctx.lives(lives, max); ctx.hurt(); ctx.float(W / 2, y - 10, tr("Daneben!", "Missed!"), "bad");
+          if (lives <= 0) { cur = null; ctx.die(); return; }
+          spawn(); return;
+        }
+        if (x < top.x) debris.push({ x, y, w: top.x - x, h: SH(), vy: 0, vx: -40, rot: 0, vr: -2, hue: cur.hue });
+        else debris.push({ x: right, y, w: x + w - right, h: SH(), vy: 0, vx: 40, rot: 0, vr: 2, hue: cur.hue });
+        x = left; w = ov; perfect = 0; score += 1;
+        beep(300 + Math.min(stack.length, 40) * 12, 0.06); buzz(8);
+      }
+      stack.push({ x, w, hue: cur.hue }); ctx.score(score); ctx.info(perfect >= 2 ? perfect + tr(" perfekt in Folge", " perfect in a row") : stack.length - 1 + tr(" Etagen", " floors"));
+      spawn();
+    }
+    r.addEventListener("pointerdown", (e) => { e.preventDefault(); drop(); });
+    r.__tw = () => ({ cur, top: stack[stack.length - 1] }); // für Tests
+    const slab = (x, y, w, hgt, hue, a) => {
+      g.globalAlpha = a == null ? 1 : a;
+      g.fillStyle = "hsl(" + hue + ",85%,57%)";
+      if (g.roundRect) { g.beginPath(); g.roundRect(x, y, w, hgt, Math.min(6, hgt / 3)); g.fill(); } else g.fillRect(x, y, w, hgt);
+      g.fillStyle = "rgba(255,255,255,.28)"; g.fillRect(x + 3, y + 2, Math.max(0, w - 6), Math.max(2, hgt * 0.22));
+      g.fillStyle = "rgba(0,0,0,.18)"; g.fillRect(x + 2, y + hgt - Math.max(2, hgt * 0.18), Math.max(0, w - 4), Math.max(2, hgt * 0.18));
+      g.globalAlpha = 1;
+    };
+    function draw() {
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const hue = (stack[stack.length - 1].hue + 190) % 360, bg = g.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "hsl(" + hue + ",42%,17%)"); bg.addColorStop(1, "#18161d");
+      g.fillStyle = bg; g.fillRect(0, 0, W, H);
+      const sh = SH(), from = Math.max(0, stack.length - Math.ceil(H / sh) - 2);
+      g.fillStyle = "#2a2733"; g.fillRect(0, H * 0.86 + cam, W, H);
+      for (let i = from; i < stack.length; i++) { const s0 = stack[i]; slab(s0.x, slabY(i), s0.w, sh, s0.hue); }
+      if (cur) slab(cur.x, slabY(stack.length), cur.w, sh, cur.hue);
+      for (const d of debris) { g.save(); g.translate(d.x + d.w / 2, d.y + d.h / 2); g.rotate(d.rot); slab(-d.w / 2, -d.h / 2, d.w, d.h, d.hue, 0.9); g.restore(); }
+      for (const f of fx) { const k = f.t / 0.45; g.strokeStyle = "rgba(255,255,255," + (1 - k) + ")"; g.lineWidth = 3; const p = k * 14; g.strokeRect(f.x - p, f.y - p, f.w + p * 2, f.h + p * 2); }
+    }
+    return {
+      tick(t) {
+        size();
+        if (lastT == null) lastT = t;
+        const dt = Math.min(50, t - lastT) / 1000; lastT = t;
+        if (cur) {
+          cur.x += cur.dir * cur.v * dt;
+          if (cur.dir > 0 && cur.x + cur.w > W + cur.w * 0.15) { cur.dir = -1; }
+          else if (cur.dir < 0 && cur.x < -cur.w * 0.15) { cur.dir = 1; }
+        }
+        const target = Math.max(0, (stack.length + 1) * SH() - H * 0.48);
+        cam += (target - cam) * Math.min(1, dt * 6);
+        for (const d of debris) { d.vy += 1900 * dt; d.y += d.vy * dt; d.x += d.vx * dt; d.rot += d.vr * dt; }
+        debris = debris.filter((d) => d.y < H + 120);
+        for (const f of fx) f.t += dt; fx = fx.filter((f) => f.t < 0.45);
+        draw();
+      },
+      revive() { lives = 1; perfect = 0; ctx.lives(lives, max); ctx.info(""); spawn(); lastT = null; },
+      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: stack.length - 1 + tr(" Etagen", " floors") })
     };
   }
 

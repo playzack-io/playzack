@@ -30,6 +30,27 @@ service cloud.firestore {
     match /tourneys/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
     match /tentries/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
 
+    // Chat: nur gegenseitige Freunde, nur Text bis 300 Zeichen
+    function follows(a, b) { return exists(/databases/$(database)/documents/follows/$(a)) && b in get(/databases/$(database)/documents/follows/$(a)).data.ids; }
+    function inChat(cid) { return signedIn() && cid.split('_').size() == 2 && (cid.split('_')[0] == request.auth.uid || cid.split('_')[1] == request.auth.uid); }
+    function chatOther(cid) { return cid.split('_')[0] == request.auth.uid ? cid.split('_')[1] : cid.split('_')[0]; }
+    function friends(cid) { return follows(request.auth.uid, chatOther(cid)) && follows(chatOther(cid), request.auth.uid); }
+    match /chats/{cid} {
+      allow read: if signedIn() && (resource.data.a == request.auth.uid || resource.data.b == request.auth.uid);
+      allow create, update: if inChat(cid) && friends(cid)
+        && request.resource.data.a == cid.split('_')[0] && request.resource.data.b == cid.split('_')[1]
+        && request.resource.data.lastBy == request.auth.uid
+        && request.resource.data.last is string && request.resource.data.last.size() <= 120;
+      match /msgs/{mid} {
+        allow read: if inChat(cid);
+        allow create: if inChat(cid) && friends(cid) && request.resource.data.by == request.auth.uid
+          && request.resource.data.t is string && request.resource.data.t.size() > 0 && request.resource.data.t.size() <= 300
+          && request.resource.data.keys().hasOnly(['by', 't', 'at']);
+      }
+    }
+    // Meldungen: nur anlegen, lesen nur in der Firebase-Konsole
+    match /reports/{id} { allow create: if signedIn() && request.resource.data.by == request.auth.uid; }
+
     // Live-Räume: Anwesenheit und kurze Nachrichten
     match /rooms/{room}/peers/{peer} {
       allow read: if signedIn();
