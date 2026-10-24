@@ -12,7 +12,7 @@ DIR="$HOME/zack-app"
 if [ ! -f "$DIR/package.json" ]; then
   echo "== ZACK!-App wird angelegt (dauert 1-3 Minuten) =="
   cd "$HOME"
-  npx --yes create-expo-app@latest zack-app --template blank@sdk-57
+  npx --yes create-expo-app@latest zack-app --template blank@sdk-58
 fi
 cd "$DIR"
 echo "== Bausteine fuer Webansicht und Vibration =="
