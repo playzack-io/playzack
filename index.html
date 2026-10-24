@@ -880,12 +880,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       } catch (e) { c = null; }
       return c;
     }
+    let unlocked = false;
     function unlock() {
-      try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+      try { if (navigator.audioSession && navigator.audioSession.type !== "playback") navigator.audioSession.type = "playback"; } catch (e) {}
       const a = ensure(); if (!a) return;
-      if (a.state !== "running") a.resume().catch(() => {});
+      if (a.state === "running" && unlocked) { if (S.music && !musicOn) startMusic(); return; }
+      const go = () => { if (a.state === "running") { unlocked = true; if (S.music) startMusic(); } };
+      if (a.state !== "running") a.resume().then(go, () => {});
       try { const b = a.createBuffer(1, 1, 22050), src = a.createBufferSource(); src.buffer = b; src.connect(a.destination); src.start(0); } catch (e) {}
-      if (S.music) startMusic();
+      go();
     }
     function tone(freq, dur, type, vol, slide, when, out) {
       const a = ensure(); if (!a) return;
@@ -1046,7 +1049,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     } catch (e) {}
   }
   // erster Fingertipp schaltet Ton frei (iOS/Android verlangen eine Geste)
-  ["pointerdown", "keydown"].forEach((ev) => window.addEventListener(ev, () => AU.unlock(), { capture: true, passive: true }));
+  // iOS gibt Ton erst bei "touchend"/"click" frei (nicht bei pointerdown) — deshalb bei allen Gesten versuchen
+  ["pointerdown", "pointerup", "touchend", "click", "keydown"].forEach((ev) => window.addEventListener(ev, () => AU.unlock(), { capture: true, passive: true }));
   document.addEventListener("visibilitychange", () => { if (document.hidden) AU.stopMusic(); else if (S.music) AU.startMusic(); });
   // Klick-Sound für Knöpfe
   document.addEventListener("click", (e) => { if (e.target.closest(".btn, .tile, .wide, .pill, .lv, .pick, .sbtn, .modegrid button, .tgl, .lang, .link")) SFX.click(); });
