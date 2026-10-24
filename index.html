@@ -933,8 +933,31 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     // generative Hintergrundmusik: Am – F – C – G, Bass + Arpeggio + Hi-Hat
     const PROG = [[45, 57, 60, 64, 69], [41, 57, 60, 65, 69], [48, 55, 60, 64, 67], [43, 55, 59, 62, 67]];
     const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+    // Lanes-Track: treibender Beat, Bass, Arpeggio und Ohrwurm-Melodie, wird mit dem Spieltempo schneller und voller
+    let theme = null, inten = 0;
+    const LN_PROG = [[52, 55, 59], [48, 52, 55], [43, 47, 50], [50, 54, 57]]; // Em – C – G – D
+    const LN_HOOK = [71, 0, 0, 0, 69, 0, 71, 0, 74, 0, 0, 71, 0, 69, 67, 0, 64, 0, 0, 0, 67, 0, 69, 0, 71, 0, 0, 0, 0, 0, 0, 0];
+    const LN_HOOK2 = [71, 0, 0, 0, 69, 0, 71, 0, 74, 0, 76, 0, 74, 0, 71, 0, 69, 0, 67, 0, 69, 0, 0, 64, 0, 0, 67, 0, 0, 0, 0, 0];
+    function scheduleLanes(a) {
+      const bpm = 124 + inten * 22, spb = 60 / bpm / 4;
+      while (nextT < a.currentTime + 0.2) {
+        const w = Math.max(0, nextT - a.currentTime), s16 = step % 16, bar = Math.floor(step / 16), ch = LN_PROG[bar % 4];
+        if (s16 % 4 === 0) tone(150, 0.2, "sine", 0.6, 0.3, w, mus);
+        if (inten > 0.1 && (s16 === 4 || s16 === 12)) noise(0.11, 0.17, w, mus, 3200);
+        if (s16 % 4 === 2) noise(0.07, 0.07, w, mus, 7000); else if (s16 % 2 === 1 || inten > 0.55) noise(0.025, 0.035, w, mus, 9000);
+        if (s16 % 2 === 0) { const b = ch[0] - 12 + (s16 % 4 === 2 ? 12 : 0); tone(mtof(b), spb * 1.7, "triangle", 0.26, 1, w, mus); tone(mtof(b), spb * 1.4, "square", 0.05, 1, w, mus); }
+        if (inten > 0.1) tone(mtof(ch[[0, 1, 2, 1][s16 % 4]] + 24 + (inten > 0.7 && s16 >= 8 ? 12 : 0)), spb * 0.7, "triangle", 0.04, 1, w, mus);
+        if (inten > 0.28) { const hn = (Math.floor(bar / 4) % 2 ? LN_HOOK2 : LN_HOOK)[step % 32]; if (hn) { tone(mtof(hn), spb * 1.8, "square", 0.05, 1, w, mus); tone(mtof(hn + 12), spb * 1.3, "sine", 0.035, 1, w, mus); } }
+        if (s16 === 0) ch.forEach((m) => tone(mtof(m + 12), spb * 14, "triangle", 0.03, 1, w, mus));
+        if (inten > 0.45 && s16 === 15 && bar % 4 === 3) noise(0.18, 0.08, w, mus, 5000);
+        nextT += spb; step++;
+      }
+    }
+    function setTheme(t) { if (theme === t) return; theme = t; step = 0; if (c) nextT = Math.max(nextT, c.currentTime + 0.05); }
+    function setIntensity(x) { inten = Math.max(0, Math.min(1, x)); }
     function schedule() {
       const a = c; if (!a || !musicOn) return;
+      if (theme === "lanes") { scheduleLanes(a); return; }
       const spb = 60 / 116 / 2;
       while (nextT < a.currentTime + 0.25) {
         const ch = PROG[Math.floor(step / 8) % PROG.length], s8 = step % 8;
@@ -976,7 +999,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       };
     }
     SFX.holdDone = function () { if (!on()) return; [784, 988, 1175, 1568].forEach((fr, i) => tone(fr, 0.32, "triangle", 0.2, 1, i * 0.045)); tone(2349, 0.5, "sine", 0.08, 1, 0.18); noise(0.3, 0.06, 0.05, null, 7000); };
-    return { unlock, tone, SFX, startMusic, stopMusic, duck, ensure, holdTone };
+    return { unlock, tone, SFX, startMusic, stopMusic, duck, ensure, holdTone, setTheme, setIntensity };
   })();
   const SFX = AU.SFX;
   // alte Ton-Aufrufe → lauter und weicher
@@ -1958,7 +1981,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     let ev; try { ev = new PointerEvent("pointerup", { bubbles: true, pointerId: 0 }); } catch (x) { ev = new MouseEvent("pointerup", { bubbles: true }); }
     window.dispatchEvent(ev);
   });
-  function stopEngine() { E.active = false; cancelAnimationFrame(E.raf); E.players = []; stage.innerHTML = ""; }
+  function stopEngine() { AU.setTheme(null); E.active = false; cancelAnimationFrame(E.raf); E.players = []; stage.innerHTML = ""; }
   function frame() {
     if (!E.active) return;
     if (clock.pausedAt == null) {
@@ -2034,6 +2057,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (E.players.every((x) => x.run.ended)) { const g = E.gen; setTimeout(() => { if (E.gen === g) finishLocal2(); }, 700); }
   }
   function finishLocal2() {
+    AU.setTheme(null);
     if (!E.active || !E.local2) return;
     clock.pause();
     const [A, B] = E.players, m = E.mode, a = A.res.value, b = B.res.value;
@@ -2091,6 +2115,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   // ---------- Rundenende (1 Spieler) ----------
   function finish() {
+    AU.setTheme(null);
     const P = E.players[0];
     if (!P || P.run.ended) return;
     P.run.ended = true; clock.pause();
@@ -3882,6 +3907,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     let score = 0, lives = 3 + ctx.extraLife, combo = 0, tiles = [], next = 800, last = -1, lastT = null;
     const max = lives, start = ctx.t();
     ctx.lives(lives, max); ctx.score(0);
+    AU.setIntensity(ctx.boost / 70); AU.setTheme("lanes"); if (S.music) AU.startMusic();
     const speed = (s, H) => Math.min(H * 1.5, H * (0.38 + s * 0.012));
     // Blockarten: normal (1 Punkt), rot (nicht tippen), 2× (zweimal tippen, 2 Punkte), lang (gedrückt halten, 3 Punkte)
     function spawn(at) {
@@ -3946,6 +3972,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         let n = 0; while (el >= next && n++ < 3) spawn(next);
         const s = el / 1000 + ctx.boost, H = ctx.H();
         const v = speed(s, H);
+        AU.setIntensity(s / 70);
         for (const T of tiles.slice()) {
           T.y += (v * dt) / 1000;
           T.el.style.transform = "translate3d(0," + T.y + "px,0)";
@@ -3961,7 +3988,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           if (T.y > H) { if (T.snd) { T.snd.stop(false); T.snd = null; hapticStop(); } remove(T); if (!T.red) { lose(cx(T), H - 30, tr("Verpasst", "Missed")); if (!ctx.live()) return; } }
         }
       },
-      revive() { quiet(); lives = 1; combo = 0; ctx.lives(lives, max); ctx.info(""); tiles.forEach((T) => T.el.remove()); tiles = []; next = ctx.t() - start + 1200; lastT = null; },
+      revive() { quiet(); AU.setTheme("lanes"); lives = 1; combo = 0; ctx.lives(lives, max); ctx.info(""); tiles.forEach((T) => T.el.remove()); tiles = []; next = ctx.t() - start + 1200; lastT = null; },
       result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points") })
     };
   }
