@@ -7,11 +7,12 @@ if ! command -v node >/dev/null 2>&1; then
   open "https://nodejs.org" 2>/dev/null || true
   exit 1
 fi
-DIR="$HOME/Desktop/zack-app"
+# Nicht auf dem Schreibtisch: der wird oft mit iCloud synchronisiert, dann bricht Expo mit ETIMEDOUT ab
+DIR="$HOME/zack-app"
 if [ ! -f "$DIR/package.json" ]; then
   echo "== ZACK!-App wird angelegt (dauert 1-3 Minuten) =="
-  cd "$HOME/Desktop"
-  npx --yes create-expo-app@latest zack-app --template blank
+  cd "$HOME"
+  npx --yes create-expo-app@latest zack-app --template blank@sdk-57
 fi
 cd "$DIR"
 echo "== Bausteine fuer Webansicht und Vibration =="
@@ -103,6 +104,6 @@ echo ""
 echo "== Fertig! Gleich erscheint ein QR-Code. =="
 echo "iPhone: Expo Go aus dem App Store installieren, dann den QR-Code mit der normalen Kamera scannen."
 echo "Wichtig: iPhone und Mac muessen im selben WLAN sein."
-echo "Beenden mit Ctrl + C. Spaeter neu starten mit:  cd ~/Desktop/zack-app && npx expo start"
+echo "Beenden mit Ctrl + C. Spaeter neu starten mit:  cd ~/zack-app && npx expo start"
 echo ""
 npx expo start
