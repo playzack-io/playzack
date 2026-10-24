@@ -600,6 +600,61 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .rrow.tvrow .rv { font-size: clamp(22px, 3vw, 44px); }
 .rrow.tvrow .tu-per { font-size: clamp(11px, 1.2vw, 16px); }
 
+/* ---------- Online: VS-Intro ---------- */
+.layer.vsl { padding: 0; background: #0b0a0e; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.sheet.vs { max-width: none; width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0; padding: 0; background: transparent; position: relative; overflow: hidden; display: block; }
+.vs-half { position: absolute; left: 0; right: 0; height: 52%; display: flex; align-items: center; gap: clamp(14px, 3vw, 28px); padding: 0 max(24px, 7vw); box-sizing: border-box; }
+.vs-me { top: 0; padding-top: env(safe-area-inset-top, 0px); background: linear-gradient(135deg, #ffd23f 0%, #f2a100 100%); color: #2a2000; clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%); animation: vsInL .45s cubic-bezier(.2, .9, .2, 1.08) both; }
+.vs-op { bottom: 0; padding-bottom: env(safe-area-inset-bottom, 0px); background: linear-gradient(135deg, #ff5a3c 0%, #b3172b 100%); color: #fff; flex-direction: row-reverse; text-align: right; clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%); animation: vsInR .45s .08s cubic-bezier(.2, .9, .2, 1.08) both; }
+.vs-op.bot { background: linear-gradient(135deg, #4f7dff 0%, #2a2f8f 100%); }
+.vs-half img { width: clamp(96px, 26vw, 176px); height: clamp(96px, 26vw, 176px); border-radius: 50%; flex: none; background: #17151b; box-shadow: 0 0 0 5px rgba(255, 255, 255, .92), 0 14px 34px rgba(0, 0, 0, .35); }
+.vs-tx { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.vs-tx b { font-family: var(--font-num); font-weight: 800; font-size: clamp(26px, 7vw, 50px); line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vs-tx span { font-family: var(--font-num); font-weight: 700; font-size: clamp(14px, 3.6vw, 18px); text-transform: uppercase; letter-spacing: .06em; opacity: .82; }
+.vs-tx i { font-style: normal; font-family: var(--font-num); font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; }
+.vs-mid { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 2; pointer-events: none; }
+.vs-word { font-family: var(--font-display); font-size: clamp(88px, 25vw, 180px); line-height: .85; color: #fff; -webkit-text-stroke: 5px #17151b; paint-order: stroke fill; text-shadow: 0 8px 0 #17151b, 0 0 44px rgba(255, 255, 255, .35); animation: vsSlam .5s .45s cubic-bezier(.2, 1.5, .4, 1) both; }
+.vs-mode { margin-top: 10px; background: #17151b; color: var(--volt); font-family: var(--font-num); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; padding: 7px 16px; border-radius: 999px; font-size: 14px; white-space: nowrap; animation: vsFade .3s .85s both; }
+.vs-cd { font-family: var(--font-display); font-size: 58px; line-height: 1; color: #fff; -webkit-text-stroke: 3px #17151b; paint-order: stroke fill; min-height: 64px; margin-top: 8px; }
+.vs-cd.pop { animation: pop .35s cubic-bezier(.2, 1.6, .4, 1); }
+.vs-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 3; animation: vsFlash .5s .5s both; }
+.sheet.vs.shake { animation: vsShake .38s .52s; }
+@keyframes vsInL { from { transform: translateX(-105%); } to { transform: none; } }
+@keyframes vsInR { from { transform: translateX(105%); } to { transform: none; } }
+@keyframes vsSlam { 0% { transform: scale(3.4) rotate(-8deg); opacity: 0; } 60% { opacity: 1; transform: scale(.9) rotate(-4deg); } 100% { transform: scale(1) rotate(-4deg); opacity: 1; } }
+@keyframes vsFlash { 0% { opacity: 0; } 12% { opacity: .6; } 100% { opacity: 0; } }
+@keyframes vsFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes vsShake { 0%, 100% { transform: none; } 20% { transform: translate(-9px, 5px); } 40% { transform: translate(8px, -6px); } 60% { transform: translate(-5px, 3px); } 80% { transform: translate(3px, -2px); } }
+
+/* ---------- Online: Duell-Ergebnis ---------- */
+.sheet.duelres { max-width: 440px; gap: 14px; }
+.duel { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.dside { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px 12px; border-radius: 18px; background: var(--housing); border: 1px solid var(--line); min-width: 0; animation: skpop .4s cubic-bezier(.2, 1.4, .4, 1) both; }
+.dside.op { animation-delay: .12s; }
+.dside img { width: 76px; height: 76px; border-radius: 50%; background: #17151b; box-shadow: 0 0 0 3px rgba(255, 255, 255, .85); }
+.dside b { font-family: var(--font-num); font-weight: 800; font-size: 15px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dside .dval { font-family: var(--font-num); font-weight: 800; font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums; }
+.dside .dval small { font-size: 13px; color: var(--muted); margin-left: 3px; }
+.dside .dtag { font-family: var(--font-num); font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ice); min-height: 13px; }
+.dside.win { border-color: var(--volt); background: linear-gradient(180deg, rgba(255, 210, 63, .2), var(--housing) 70%); box-shadow: 0 0 28px rgba(255, 210, 63, .22); }
+.dside.win img { box-shadow: 0 0 0 3px var(--volt), 0 0 22px rgba(255, 210, 63, .55); }
+.dside.lose { opacity: .62; filter: saturate(.6); }
+.dside .crown { position: absolute; top: -17px; left: 50%; width: 38px; height: 26px; transform: translateX(-50%) rotate(-8deg); animation: crownIn .5s .45s cubic-bezier(.2, 1.6, .4, 1) both; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .45)); }
+@keyframes crownIn { from { transform: translateX(-50%) translateY(-24px) scale(.3) rotate(-30deg); opacity: 0; } to { transform: translateX(-50%) rotate(-8deg); opacity: 1; } }
+.dvs { font-family: var(--font-display); font-size: 26px; color: var(--muted); transform: rotate(-6deg); }
+.sheet h2.dwin { color: var(--volt); }
+.sheet h2.dlose { color: var(--signal); }
+.sheet h2.ddraw { color: var(--chalk); }
+.restat { min-height: 18px; font-size: 14px; color: var(--muted); }
+.restat.hot { color: var(--volt); font-weight: 700; }
+.btn.pulse { animation: rePulse 1s ease-in-out infinite; }
+@keyframes rePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 210, 63, .55); } 50% { box-shadow: 0 0 0 10px rgba(255, 210, 63, 0); } }
+.btn.fol-ok, .btn.fol-ok:disabled { color: var(--go); border-color: var(--go); opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .vs-me, .vs-op, .vs-word, .vs-mode, .sheet.vs.shake, .vs-cd.pop, .dside, .dside .crown, .btn.pulse { animation: none !important; }
+  .vs-flash { display: none; }
+}
+
 /* ---------- Tablet / kleiner Laptop ---------- */
 @media (min-width: 760px) and (max-width: 1099.98px) {
   #app { max-width: 940px; padding-left: 28px; padding-right: 28px; }
@@ -846,6 +901,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       lose() { if (!on()) return; [392, 330, 262].forEach((f, i) => tone(f, 0.3, "triangle", 0.22, 0.98, i * 0.14)); },
       coin() { if (!on()) return; tone(988, 0.07, "square", 0.12); tone(1319, 0.25, "square", 0.12, 1, 0.07); },
       revive() { if (!on()) return; [660, 880, 1320].forEach((f, i) => tone(f, 0.14, "triangle", 0.24, 1, i * 0.07)); },
+      swoosh() { if (!on()) return; noise(0.32, 0.16, 0, null, 4200); noise(0.3, 0.12, 0.09, null, 4200); },
+      vs() { if (!on()) return; noise(0.45, 0.32, 0, null, 700); tone(98, 0.55, "sawtooth", 0.32, 0.45); tone(49, 0.7, "sine", 0.5, 0.7); tone(1568, 0.12, "square", 0.07, 0.6, 0.02); },
       combo(level) {
         if (!on()) return;
         const lv = Math.max(2, Math.min(6, level || 2)), base = 523 * Math.pow(1.06, lv * 2);
@@ -1330,7 +1387,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function playerDoc() {
     const pr = profile() || {};
-    const d = { seen: Date.now(), uname: pr.uname || null, unameLc: pr.uname || null, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags) };
+    const d = { seen: Date.now(), uname: pr.uname || null, unameLc: pr.uname || null, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags), lvl: W.lvl };
     ORDER.forEach((id) => { const b = store.get("best:" + id, null); if (typeof b === "number" && isFinite(b)) d["b_" + id] = b; });
     return d;
   }
@@ -2025,13 +2082,113 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (o.tour) { tourFinish(res, info); showResult(info); return; }
     afterRun(info);
   }
+  let syncT = 0;
+  function schedulePlayerSync() { if (!NET.ok) return; clearTimeout(syncT); syncT = setTimeout(() => { syncPlayer().catch(() => {}); }, 2500); }
   function afterRun(info) {
-    acctAutosave();
+    acctAutosave(); schedulePlayerSync();
     AD.onRunEnd();
     if (AD.shouldInter()) showInterstitial(() => showResult(info)); else showResult(info);
   }
 
+  // ---------- Online-Ergebnis: du gegen Gegner, Folgen, Revanche ----------
+  const CROWN = '<svg class="crown" viewBox="0 0 38 26" aria-hidden="true"><path d="M3 21 L1 5 L11 12 L19 2 L27 12 L37 5 L35 21 Z" fill="#ffd23f" stroke="#17151b" stroke-width="2" stroke-linejoin="round"/><rect x="3" y="20" width="32" height="5" rx="2.5" fill="#f2a100" stroke="#17151b" stroke-width="1.5"/><circle cx="19" cy="12" r="2.4" fill="#ff4632"/></svg>';
+  const RE = { opp: null, mode: null, mine: null, theirs: null, open: false, timer: 0, msg: "" };
+  let CUR_DUEL = null;
+  function earnHTML(info) {
+    return (info.earn ? '<div class="earn">' + coinIco + "<b>+" + fmtN(info.earn.coins) + "</b> " + tr("Münzen", "coins") + ' · <span class="earn-lvl">' + tr("Stufe ", "Rank ") + W.lvl + "</span></div>" +
+      info.earn.ups.map((u) => '<div class="lvlup">' + tr("Stufe ", "Rank ") + u.l + tr(" erreicht! ", " reached! ") + "+" + u.c + tr(" Münzen", " coins") + (u.t ? tr(" · +1 Verlängerung", " · +1 continue") : "") + "</div>").join("") : "");
+  }
+  function paintFollow(D) {
+    const b = $("rsFollow"), t = $("dOpTag");
+    if (!D || !D.oppBy) { if (t) t.textContent = D && D.kind === "bot" ? "Bot" : ""; return; }
+    const a = NET.follows.includes(D.oppBy), f = NET.followers.includes(D.oppBy);
+    if (t) t.textContent = a && f ? tr("Ihr folgt euch", "Mutual") : f ? tr("Folgt dir", "Follows you") : "";
+    if (!b) return;
+    b.textContent = a && f ? tr("Freunde ✓", "Friends ✓") : a ? tr("Du folgst ✓", "Following ✓") : f ? tr("Zurückfolgen", "Follow back") : tr("Folgen", "Follow");
+    b.disabled = a; b.classList.toggle("fol-ok", a);
+  }
+  function reUI() {
+    const b = $("rsRematch"), st = $("rsReSt"), D = CUR_DUEL;
+    if (!b || !st || !D || D.kind !== "live") return;
+    b.classList.remove("pulse"); b.disabled = false; st.className = "restat";
+    const nm = RE.opp ? RE.opp.name : D.oppName;
+    if (!RE.open || !RE.opp) { b.disabled = true; b.textContent = tr("Revanche", "Rematch"); st.textContent = tr("Der Gegner ist nicht mehr da.", "Your opponent is gone."); return; }
+    if (RE.theirs) { b.textContent = tr("Revanche annehmen", "Accept rematch"); b.classList.add("pulse"); st.textContent = nm + tr(" will eine Revanche!", " wants a rematch!"); st.className = "restat hot"; return; }
+    if (RE.mine) { b.disabled = true; b.textContent = tr("Warte auf ", "Waiting for ") + nm + " …"; st.textContent = tr("Anfrage ist raus.", "Request sent."); return; }
+    if (!NET.peers.some((p) => p.peer === RE.opp.peer)) { b.disabled = true; b.textContent = tr("Revanche", "Rematch"); st.textContent = nm + tr(" ist offline.", " is offline."); return; }
+    b.textContent = tr("Revanche", "Rematch"); st.textContent = RE.msg || "";
+  }
+  function reWithdraw() {
+    const inv = RE.mine; if (!inv) return;
+    if (NET.room) NET.room.emit("invite", { to: inv.to, room: inv.room, cancel: true }).catch(() => {});
+    if (NET.inviting === inv) NET.inviting = null;
+    RE.mine = null; clearTimeout(RE.timer);
+  }
+  function reClick() {
+    if (!RE.open || !RE.opp || !NET.room) return;
+    if (RE.theirs) { reAccept(); return; }
+    const inv = NET.inviting = { to: RE.opp.peer, by: RE.opp.by, mode: RE.mode, room: "m-" + rid(), seed: rand32(), nm: RE.opp.name, re: true };
+    RE.mine = inv; RE.msg = "";
+    NET.room.emit("invite", { to: inv.to, mode: inv.mode, room: inv.room, seed: inv.seed, re: true }).catch(() => {});
+    clearTimeout(RE.timer);
+    RE.timer = setTimeout(() => { if (RE.mine !== inv) return; reWithdraw(); RE.msg = tr("Keine Antwort.", "No answer."); reUI(); }, 20000);
+    reUI();
+  }
+  function reAccept() {
+    const t = RE.theirs; if (!t || !NET.room) return;
+    RE.theirs = null;
+    NET.room.emit("reply", { to: t.peer, room: t.room, ok: true }).catch(() => {});
+    leaveDuel(false); closeLayer();
+    joinMatch(t.room, t.seed, t.mode, { peer: t.peer, by: t.by });
+  }
+  function leaveDuel(decline) {
+    if (decline && RE.theirs && NET.room) NET.room.emit("reply", { to: RE.theirs.peer, room: RE.theirs.room, ok: false }).catch(() => {});
+    reWithdraw();
+    RE.open = false; RE.opp = null; RE.theirs = null; RE.msg = ""; CUR_DUEL = null;
+  }
+  function showDuelResult(info) {
+    const D = info.duel, m = MODES[D.mode];
+    if (D.won) SFX.win(); else if (D.draw) SFX.coin(); else SFX.lose();
+    buzz(D.won ? [20, 40, 20] : 60);
+    const cls = D.won ? "dwin" : D.draw ? "ddraw" : "dlose";
+    const unit = info.unit ? "<small>" + esc(info.unit) + "</small>" : "";
+    const canFollow = !!(D.oppBy && NET.ok && D.oppBy !== NET.me);
+    const reLabel = D.kind === "live" ? tr("Revanche", "Rematch") : D.kind === "bot" ? tr("Revanche gegen Bot", "Bot rematch") : D.oppBy ? tr("Revanche fordern", "Challenge back") : tr("Nochmal", "Play again");
+    const oppWin = !D.won && !D.draw;
+    const B = (id, txt) => '<button class="btn ghost" id="' + id + '" type="button">' + txt + "</button>";
+    openLayer('<span class="eyebrow">Online · ' + esc(m.name) + '</span><h2 class="' + cls + '">' + esc(info.title) + "</h2>" +
+      '<div class="duel"><div class="dside me' + (D.won ? " win" : oppWin ? " lose" : "") + '">' + (D.won ? CROWN : "") + '<img id="dMeAv" alt=""><b id="dMeName"></b><div class="dval">' + esc(info.text) + unit + '</div><span class="dtag">' + tr("Du", "You") + "</span></div>" +
+      '<div class="dvs">VS</div>' +
+      '<div class="dside op' + (oppWin ? " win" : D.won ? " lose" : "") + '">' + (oppWin ? CROWN : "") + '<img id="dOpAv" alt=""><b id="dOpName"></b><div class="dval">' + esc(D.oppV == null ? "–" : fmtN(D.oppV)) + unit + '</div><span class="dtag" id="dOpTag"></span></div></div>' +
+      (D.gone ? "<p>" + esc(D.oppName) + tr(" hat das Spiel verlassen.", " left the match.") + "</p>" : "") +
+      earnHTML(info) +
+      '<button class="btn" id="rsRematch" type="button">' + reLabel + '</button><div class="restat" id="rsReSt"></div>' +
+      (canFollow
+        ? '<div class="row2">' + B("rsFollow", "") + B("rsNew", tr("Neuer Gegner", "New opponent")) + '</div><div class="row2">' + B("rsShare", tr("Teilen", "Share")) + B("rsMenu", tr("Menü", "Menu")) + "</div>"
+        : '<div class="row2">' + B("rsNew", tr("Neuer Gegner", "New opponent")) + B("rsMenu", tr("Menü", "Menu")) + "</div>" + B("rsShare", tr("Teilen", "Share"))), "duelres");
+    const me = meCard(); vsAvatar($("dMeAv"), me); const mn = $("dMeName"); mn.textContent = me.name; appendFlags(mn, me.flags);
+    const op = D.oppProf || { name: D.oppName }; vsAvatar($("dOpAv"), op); const on2 = $("dOpName"); on2.textContent = op.name || D.oppName; if (op.flags) appendFlags(on2, op.flags);
+    if (D.kind === "live" && !(RE.open && RE.opp && RE.opp.peer === D.oppPeer)) {
+      leaveDuel(false);
+      RE.open = !!D.oppPeer; RE.opp = D.oppPeer ? { peer: D.oppPeer, by: D.oppBy, name: D.oppName } : null; RE.mode = D.mode;
+    }
+    CUR_DUEL = D;
+    paintFollow(D); reUI();
+    on("rsRematch", () => {
+      if (D.kind === "live") { reClick(); return; }
+      leaveDuel(false); closeLayer();
+      if (D.kind === "bot") launchBot(D.mode);
+      else if (D.oppBy) asyncChallenge(D.oppBy, D.mode, D.oppName);
+      else startSeek(D.mode);
+    });
+    on("rsFollow", () => { follow(D.oppBy); paintFollow(D); });
+    on("rsNew", () => { leaveDuel(true); closeLayer(); startSeek(D.mode); });
+    on("rsMenu", () => { leaveDuel(true); toMenu(); });
+    on("rsShare", () => shareOut(info.share, appLink(), () => showResult(info)));
+  }
+
   function showResult(info) {
+    if (info.duel) { showDuelResult(info); return; }
     const m = E.mode, L = info.level;
     const good = info.isRec || info.first || (info.stars > 0) || /gewonnen|gewinnt|geschlagen|geschafft|won|wins|beaten|cleared|win/i.test(info.title || "");
     const bad = info.stars === 0 || /verloren|verfehlt|besser|lost|missed|better/i.test(info.title || "");
@@ -2067,13 +2224,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // =====================================================
   const layer = $("layer"), sheet = $("sheet");
   let adTimer = 0;
+  let VS_T = [];
   let layerAt = 0;
   function openLayer(html, cls) {
     clearInterval(adTimer);
+    VS_T.forEach(clearTimeout); VS_T = [];
+    layer.className = "layer" + (cls === "vs" ? " vsl" : "");
     sheet.className = "sheet " + (cls || ""); sheet.innerHTML = html; layer.hidden = false; layerAt = Date.now();
     const f = sheet.querySelector(".btn:not([disabled])"); if (f && !E.active && !FINE()) f.focus({ preventScroll: true });
   }
-  function closeLayer() { clearInterval(adTimer); CD_ON = false; layer.hidden = true; sheet.innerHTML = ""; }
+  function closeLayer() { clearInterval(adTimer); VS_T.forEach(clearTimeout); VS_T = []; CD_ON = false; layer.hidden = true; layer.className = "layer"; sheet.innerHTML = ""; }
   function on(id, fn) { const e = $(id); if (e) e.addEventListener("click", fn); }
   function note(title, text) { openLayer("<h2>" + esc(title) + "</h2><p>" + esc(text) + '</p><button class="btn" id="ntOk" type="button">OK</button>'); on("ntOk", closeLayer); }
   function appLink() { return ONLINE ? "https://playzack.io/" : location.origin + location.pathname; }
@@ -2111,6 +2271,49 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     try { navigator.clipboard.writeText(text).then(() => { btn.textContent = tr("Kopiert", "Copied"); }, fb); } catch (e) { fb(); }
   }
   let CD_ON = false;
+  // ---------- VS-Intro vor Online-Runden: du gegen Gegner, Name + Skin, dann 3-2-1 ----------
+  const BOT_AV = "data:image/svg+xml;charset=utf-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#232030"/><path d="M32 17 L32 10" stroke="#63d9ff" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="9" r="3.6" fill="#ff4632"/><rect x="13" y="17" width="38" height="30" rx="10" fill="#d6d9e0"/><rect x="18" y="23" width="28" height="14" rx="7" fill="#17151b"/><circle cx="25.5" cy="30" r="3.4" fill="#63d9ff"/><circle cx="38.5" cy="30" r="3.4" fill="#63d9ff"/><rect x="25" y="40.5" width="14" height="3" rx="1.5" fill="#8a8794"/><rect x="21" y="47" width="22" height="6" rx="3" fill="#d6d9e0"/><rect x="9" y="27" width="4" height="10" rx="2" fill="#8a8794"/><rect x="51" y="27" width="4" height="10" rx="2" fill="#8a8794"/></svg>');
+  function meCard() { const pr = profile() || {}; return { name: pr.uname ? "@" + pr.uname : tr("Du", "You"), av: pr.av, photo: pr.photo, sk: pr.sk, flags: pr.flags, lvl: W.lvl, bests: {} }; }
+  function playerSub(p, mode, isMe) {
+    if (!p) return "";
+    const best = isMe ? store.get("best:" + mode, null) : (p.bests || {})[mode];
+    const parts = [];
+    if (p.lvl) parts.push(tr("Stufe ", "Rank ") + p.lvl);
+    if (typeof best === "number" && isFinite(best)) parts.push(tr("Rekord ", "Best ") + fmtVal(mode, best));
+    return parts.join(" · ");
+  }
+  function vsAvatar(img, p) { if (p && p.bot) img.src = BOT_AV; else paintAvatar(img, p || {}); }
+  function vsSide(cls, p, tag, sub) {
+    const d = h("div", "vs-half " + cls), img = h("img"); img.alt = ""; vsAvatar(img, p);
+    const tx = h("div", "vs-tx"), i = h("i"), b = h("b"), sp = h("span");
+    i.textContent = tag; b.textContent = (p && p.name) || tr("Gegner", "Opponent"); if (p && p.flags) appendFlags(b, p.flags); sp.textContent = sub || "";
+    tx.append(i, b, sp); d.append(img, tx); return d;
+  }
+  function vsIntro(o, go) {
+    CD_ON = true;
+    openLayer("", "vs");
+    const opp = o.opp || { name: tr("Gegner", "Opponent") };
+    sheet.appendChild(vsSide("vs-me", meCard(), tr("Du", "You"), playerSub(meCard(), o.mode, true)));
+    sheet.appendChild(vsSide("vs-op" + (opp.bot ? " bot" : ""), opp, o.oppTag || tr("Gegner", "Opponent"), o.oppSub != null ? o.oppSub : playerSub(opp, o.mode, false)));
+    const mid = h("div", "vs-mid"), w = h("div", "vs-word"), md = h("div", "vs-mode"), cd = h("div", "vs-cd");
+    w.textContent = "VS"; md.textContent = MODES[o.mode].name + (o.tag ? " · " + o.tag : ""); mid.append(w, md, cd);
+    sheet.append(mid, h("div", "vs-flash"));
+    sheet.classList.add("shake");
+    SFX.swoosh();
+    const T = (ms, f) => VS_T.push(setTimeout(f, ms));
+    T(470, () => { SFX.vs(); buzz(60); });
+    let n = 3;
+    const show = (txt) => { cd.textContent = txt; cd.classList.remove("pop"); void cd.offsetWidth; cd.classList.add("pop"); };
+    T(1750, () => {
+      show(n); SFX.tick();
+      adTimer = setInterval(() => {
+        n--;
+        if (n > 0) { show(n); SFX.tick(); buzz(10); return; }
+        clearInterval(adTimer); show(tr("LOS!", "GO!")); SFX.go(); buzz(40);
+        T(380, () => { closeLayer(); go(); });
+      }, 760);
+    });
+  }
   function countdownSheet(title, sub, go) {
     let n = 3;
     CD_ON = true;
@@ -2350,6 +2553,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         const mine = ch.peers.find((p) => p.sameTab); if (mine) NET.myPeer = mine.peer;
         if (NET.seeking) tryPair();
         if (NET.match && ch.left.some((p) => p.peer === NET.match.opp.peer)) { NET.match.gone = true; maybeEndOnline(); }
+        if (RE.open) reUI();
         renderOnline();
       }, () => { NET.ok = false; renderOnline(); });
       room.on("match", onMatchMsg, () => {});
@@ -2360,7 +2564,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (db && NET.me) {
       const ign = () => {};
       db.doc("follows/" + NET.me).onSnapshot((s) => { const d = s.exists ? s.data() : null; NET.follows = d && Array.isArray(d.ids) ? d.ids.filter((x) => typeof x === "string").slice(0, 300) : []; renderOnline(); }, ign);
-      db.collection("follows").where("ids", "array-contains", NET.me).limit(300).onSnapshot((q) => { NET.followers = q.docs.map((d) => d.id); renderOnline(); }, ign);
+      db.collection("follows").where("ids", "array-contains", NET.me).limit(300).onSnapshot((q) => { NET.followers = q.docs.map((d) => d.id); renderOnline(); if (CUR_DUEL) paintFollow(CUR_DUEL); }, ign);
       db.collection("challenges").where("to", "==", NET.me).limit(60).onSnapshot((q) => { NET.incoming = q.docs.map((d) => Object.assign({ id: d.id }, d.data())).filter(validChal); renderOnline(); }, ign);
       db.collection("challenges").where("from", "==", NET.me).limit(60).onSnapshot((q) => { NET.sent = q.docs.map((d) => Object.assign({ id: d.id }, d.data())).filter(validChal); renderOnline(); }, ign);
       db.collection("players").orderBy("seen", "desc").limit(40).onSnapshot((q) => { NET.recent = q.docs.map((d) => d.id); renderOnline(); }, ign);
@@ -2389,7 +2593,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           const x = d.exists ? d.data() : null;
           if (x && typeof x.uname === "string" && UNAME_RE.test(x.uname)) {
             const photo = typeof x.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(x.photo) && x.photo.length < 60000 ? x.photo : null;
-            p = { id, name: "@" + x.uname, avatarUrl: photo || avatarURL(Number.isInteger(x.av) ? x.av : 0), flags: cleanFlags(x.flags), av: Number.isInteger(x.av) ? x.av : 0, photo, sk: skinValid(x.sk) ? x.sk : null };
+            const bests = {}; ORDER.forEach((m) => { const v = x["b_" + m]; if (typeof v === "number" && isFinite(v) && v > 0) bests[m] = v; });
+            p = { id, name: "@" + x.uname, avatarUrl: photo || avatarURL(Number.isInteger(x.av) ? x.av : 0), flags: cleanFlags(x.flags), av: Number.isInteger(x.av) ? x.av : 0, photo, sk: skinValid(x.sk) ? x.sk : null, lvl: Number.isInteger(x.lvl) && x.lvl > 0 && x.lvl < 10000 ? x.lvl : null, bests };
           }
         }
       } catch (e) {}
@@ -2476,9 +2681,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     M.offs.push(r.onPeers((ch) => { if (ch.left.some((p) => p.peer === opp.peer)) { M.gone = true; maybeEndOnline(); } }, () => {}));
     setPresence({ st: "play", mode });
     const ps = await names([opp.by]);
-    const oppName = opp.by ? nameOf(ps[opp.by]) : tr("Gegner", "Opponent");
-    countdownSheet(tr("Gegner gefunden", "Opponent found"), oppName + " · " + MODES[mode].name + " · live", () => {
-      startMode(mode, { seed, online: { kind: "live", oppName, oppBy: opp.by } });
+    const oppProf = opp.by ? ps[opp.by] : null;
+    const oppName = opp.by ? nameOf(oppProf) : tr("Gegner", "Opponent");
+    if (NET.match !== M || M.done) return;
+    vsIntro({ mode, opp: oppProf || { name: oppName }, tag: "Live" }, () => {
+      startMode(mode, { seed, online: { kind: "live", oppName, oppBy: opp.by, oppPeer: opp.peer, oppProf } });
       E.again = () => startSeek(mode);
     });
   }
@@ -2542,8 +2749,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function launchBot(mode) {
     const b = makeBot(mode);
-    countdownSheet(tr("Gegen Bot", "Vs. Bot"), MODES[mode].name + " · " + tr("passt sich deinem Niveau an", "adapts to your level"), () => {
-      startMode(mode, { online: { kind: "bot", oppName: "Bot", oppT: b.t, oppValue: b.v, oppEnd: b.end } });
+    vsIntro({ mode, opp: { bot: true, name: "Bot" }, oppTag: "Bot", oppSub: tr("passt sich deinem Niveau an", "adapts to your level"), tag: "Bot" }, () => {
+      startMode(mode, { online: { kind: "bot", oppName: "Bot", oppT: b.t, oppValue: b.v, oppEnd: b.end, oppProf: { bot: true, name: "Bot" } } });
       E.again = () => launchBot(mode);
     });
   }
@@ -2600,6 +2807,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (wonFlag && info.earn) { W.coins += 20; info.earn.coins += 20; renderWallet(); }
     info.sub = o.oppName + ": " + (oppV == null ? "–" : oppV + " " + info.unit);
     info.followId = o.oppBy; info.followName = o.oppName;
+    info.duel = { mode: E.id, kind: o.kind, me, oppV, won: wonFlag && !(me != null && me === oppV), draw: me != null && me === oppV, gone, oppBy: o.oppBy || null, oppName: o.oppName, oppProf: o.oppProf || (o.kind === "bot" ? { bot: true, name: "Bot" } : null), oppPeer: o.kind === "live" && !gone ? o.oppPeer : null };
     if (!info.againLabel) info.againLabel = tr("Neuer Gegner", "New opponent");
     info.share = tr("Online bei ZACK! (", "Online at ZACK! (") + m.name + "): " + res.text + " " + info.unit + " · " + title;
     setPresence({ st: "menu" });
@@ -2638,10 +2846,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (p && p.presence && p.presence.st === "menu" && NET.myPeer) inviteLive(p, id, mode, nm);
     else asyncChallenge(id, mode, nm);
   }
-  function asyncChallenge(id, mode, nm) {
+  async function asyncChallenge(id, mode, nm) {
     closeLayer();
-    countdownSheet(tr("Herausforderung an ", "Challenge to ") + nm, tr("Spiel vor. ", "Set the score. ") + nm + tr(" bekommt genau dieselbe Runde.", " gets exactly the same round."), () => {
-      startMode(mode, { online: { kind: "chal-send", to: id, oppName: nm } });
+    const ps = await names([id]);
+    vsIntro({ mode, opp: ps[id] || { name: nm }, tag: tr("Herausforderung", "Challenge"), oppSub: tr("spielt danach dieselbe Runde", "plays the same round after you") }, () => {
+      startMode(mode, { online: { kind: "chal-send", to: id, oppName: nm, oppProf: ps[id] || null } });
       E.again = openSocial;
     });
   }
@@ -2663,7 +2872,18 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   async function onInviteMsg(m) {
     const d = m.data || {};
     if (m.isMe || d.to !== NET.myPeer) return;
-    if (!MODES[d.mode] || !ROOM_RE.test(String(d.room)) || !Number.isInteger(d.seed)) return;
+    if (!ROOM_RE.test(String(d.room))) return;
+    if (d.cancel && RE.theirs && RE.theirs.room === d.room) { RE.theirs = null; RE.msg = tr("Revanche zurückgezogen.", "Rematch withdrawn."); reUI(); return; }
+    if (!d.cancel && (!MODES[d.mode] || !Number.isInteger(d.seed))) return;
+    if (d.re && !d.cancel) {
+      if (!RE.open || !RE.opp || RE.opp.peer !== m.peer || d.mode !== RE.mode || (E.active && E.players[0] && !E.players[0].run.ended) || CD_ON) { NET.room.emit("reply", { to: m.peer, room: d.room, ok: false, busy: true }).catch(() => {}); return; }
+      const t = { room: d.room, seed: d.seed >>> 0, mode: d.mode, peer: m.peer, by: m.by || RE.opp.by };
+      if (RE.mine) {
+        if (NET.myPeer < m.peer) return; // beide gleichzeitig: meine Anfrage gilt, der andere nimmt sie an
+        reWithdraw(); RE.theirs = t; reAccept(); return;
+      }
+      RE.theirs = t; SFX.coin(); buzz([20, 40, 20]); reUI(); return;
+    }
     if (d.cancel) { if (NET.pendInv === d.room) { NET.pendInv = null; closeLayer(); note(tr("Einladung zurückgezogen", "Invite withdrawn"), tr("Die Live-Herausforderung wurde abgebrochen.", "The live challenge was cancelled.")); } else if (NET.match && NET.match.roomName === d.room && !E.active) { leaveMatch(); toMenu(); note(tr("Einladung zurückgezogen", "Invite withdrawn"), tr("Die Live-Herausforderung wurde abgebrochen.", "The live challenge was cancelled.")); } return; }
     const busy = CD_ON || (E.active && E.players[0] && !E.players[0].run.ended) || NET.seeking || NET.match || NET.inviting || !layer.hidden;
     if (busy) { NET.room.emit("reply", { to: m.peer, room: d.room, ok: false, busy: true }).catch(() => {}); return; }
@@ -2679,15 +2899,22 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (m.isMe || d.to !== NET.myPeer) return;
     if (!inv || d.room !== inv.room) { if (d.ok) NET.room.emit("invite", { to: m.peer, room: d.room, cancel: true }).catch(() => {}); return; }
     NET.inviting = null; clearTimeout(NET.inviteTimer);
+    if (inv.re) {
+      clearTimeout(RE.timer); RE.mine = null;
+      if (d.ok) { leaveDuel(false); closeLayer(); joinMatch(inv.room, inv.seed, inv.mode, { peer: m.peer, by: inv.by }); }
+      else { RE.msg = inv.nm + (d.busy ? tr(" ist gerade beschäftigt.", " is busy right now.") : tr(" will gerade nicht.", " declined.")); reUI(); }
+      return;
+    }
     if (d.ok) joinMatch(inv.room, inv.seed, inv.mode, { peer: m.peer, by: inv.by });
     else {
       openLayer("<h2>" + (d.busy ? tr("Gerade beschäftigt", "Busy right now") : tr("Abgelehnt", "Declined")) + "</h2><p>" + esc(inv.nm) + (d.busy ? tr(" spielt gerade.", " is playing right now.") : tr(" will gerade nicht.", " declined.")) + tr(' Schick die Runde zeitversetzt.</p><button class="btn" id="rpA" type="button">Zeitversetzt herausfordern</button><button class="link" id="rpC" type="button">Abbrechen</button>', " Send the round async.</p><button class=\"btn\" id=\"rpA\" type=\"button\">Challenge async</button><button class=\"link\" id=\"rpC\" type=\"button\">Cancel</button>"));
       on("rpA", () => asyncChallenge(inv.by, inv.mode, inv.nm)); on("rpC", closeLayer);
     }
   }
-  function acceptChallenge(c, nm) {
-    countdownSheet(nm + tr(" fordert dich heraus", " challenges you"), MODES[c.mode].name + tr(" · gleiche Runde · ", " · same round · ") + (c.v == null ? "–" : c.v + " " + MODES[c.mode].unit) + tr(" zu schlagen", " to beat"), () => {
-      startMode(c.mode, { seed: c.s >>> 0, online: { kind: "chal-accept", id: c.id, oppName: nm, oppBy: c.from, oppT: unflatTL(c.t), oppValue: c.v } });
+  async function acceptChallenge(c, nm) {
+    const ps = await names([c.from]);
+    vsIntro({ mode: c.mode, opp: ps[c.from] || { name: nm }, tag: tr("Herausforderung", "Challenge"), oppSub: tr("Zu schlagen: ", "To beat: ") + (c.v == null ? "–" : fmtVal(c.mode, c.v)) }, () => {
+      startMode(c.mode, { seed: c.s >>> 0, online: { kind: "chal-accept", id: c.id, oppName: nm, oppBy: c.from, oppT: unflatTL(c.t), oppValue: c.v, oppProf: ps[c.from] || null } });
       E.again = openSocial;
     });
   }
