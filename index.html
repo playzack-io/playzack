@@ -2637,14 +2637,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     toMenuQuiet();
     NET.seeking = { mode, since: Date.now(), pairing: false, secs: 0 };
     setPresence({ st: "seek", mode, since: NET.seeking.since });
-    openLayer('<span class="eyebrow">Online · ' + MODES[mode].name + tr('</span><h2>Suche Gegner …</h2><p id="skInfo">', "</span><h2>Finding opponent …</h2><p id=\"skInfo\">") + onlineCount() + tr(' online</p><div class="big" id="skSec">0</div><p class="note">Findet sich niemand live, spielst du gegen einen Bot, der sich deinem Niveau anpasst.</p><button class="btn ghost" id="skCancel" type="button">Abbrechen</button>', " online</p><div class=\"big\" id=\"skSec\">0</div><p class=\"note\">If nobody is live, you play a bot that adapts to your level.</p><button class=\"btn ghost\" id=\"skCancel\" type=\"button\">Cancel</button>"));
+    openLayer('<span class="eyebrow">Online · ' + MODES[mode].name + tr('</span><h2>Suche Gegner …</h2><p id="skInfo">', "</span><h2>Finding opponent …</h2><p id=\"skInfo\">") + onlineCount() + tr(' online</p><div class="big" id="skSec">0</div><button class="btn ghost" id="skCancel" type="button">Abbrechen</button>', " online</p><div class=\"big\" id=\"skSec\">0</div><button class=\"btn ghost\" id=\"skCancel\" type=\"button\">Cancel</button>"));
     on("skCancel", () => { clearSeek(true); closeLayer(); });
     NET.seekTimer = setInterval(() => {
       const s = NET.seeking; if (!s) return;
       s.secs++;
       const a = $("skSec"), b = $("skInfo"); if (a) a.textContent = s.secs; if (b) b.textContent = onlineCount() + " online";
       tryPair();
-      if (s.secs >= 8 && !s.pairing) { clearSeek(true); goAsync(mode); }
+      // niemand gefunden: direkt der Bot als Gegner, ohne Zwischenmeldung (bei 0 online schneller)
+      if (s.secs >= (onlineCount() > 0 ? 8 : 3) && !s.pairing) { clearSeek(true); launchBot(mode); }
     }, 1000);
     tryPair();
   }
@@ -2712,10 +2713,6 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     onlineCompare(res, info, oppV, gone);
   }
 
-  function goAsync(mode) {
-    openLayer("<h2>" + tr("Niemand live da", "Nobody live") + "</h2><p>" + tr("Du spielst gegen einen Bot, der sich deinem Niveau anpasst.", "You'll play a bot that adapts to your level.") + "</p>");
-    setTimeout(() => launchBot(mode), 900);
-  }
 
   // ---------- Bot: passt sich deinem Niveau an, bleibt aber knapp vor dir ----------
   const BOT_BASE = { ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
