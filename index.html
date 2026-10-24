@@ -245,6 +245,10 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .root.tower { background: #18161d; }
 .tw-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .root.tower .hint { z-index: 2; }
+.root.balloon .hint { bottom: 46px; }
+.pf-rm { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 2px 0 6px; }
+.bl-key { position: absolute; left: 8px; right: 8px; bottom: 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; font-size: 12px; color: var(--muted); z-index: 2; pointer-events: none; }
+.bl-key span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--c); margin-right: 5px; vertical-align: 0; }
 
 /* Lanes */
 .root.lanes { display: grid; grid-template-columns: repeat(3, 1fr); }
@@ -1095,6 +1099,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       };
     }
     SFX.holdDone = function () { if (!on()) return; [784, 988, 1175, 1568].forEach((fr, i) => tone(fr, 0.32, "triangle", 0.2, 1, i * 0.045)); tone(2349, 0.5, "sine", 0.08, 1, 0.18); noise(0.3, 0.06, 0.05, null, 7000); };
+    SFX.pop = function () { if (!on()) return; noise(0.24, 0.6, 0, null, 1400); noise(0.1, 0.35, 0, null, 6000); tone(110, 0.22, "sine", 0.45, 0.45); };
     return { unlock, tone, SFX, startMusic, stopMusic, duck, ensure, holdTone, setTheme, setIntensity };
   })();
   const SFX = AU.SFX;
@@ -1214,13 +1219,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     farbwort:    { name: ["Farbwort", "Color Word"], kind: ["Endlos", "Endless"], desc: ["Tippe die Farbe der Schrift, nicht das Wort.", "Tap the color of the ink, not the word."], unit: ["richtig", "correct"], bestLabel: ["Rekord", "Best"] },
     lanes:       { name: ["Lanes", "Lanes"], kind: ["Endlos", "Endless"], desc: ["Blöcke fallen in drei Spuren. Tippen, bevor sie unten sind. 2× gibt doppelte Punkte, lange Blöcke gedrückt halten.", "Blocks fall in three lanes. Tap them before they hit the bottom. 2× gives double points, hold the long ones."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     augenwinkel: { name: ["Augenwinkel", "Side Eye"], kind: ["Endlos", "Endless"], desc: ["Blick aufs Kreuz. Punkte blitzen kurz am Rand auf.", "Eyes on the cross. Dots flash briefly at the edge."], unit: ["Treffer", "hits"], bestLabel: ["Rekord", "Best"] },
-    turm:        { name: ["Turm", "Tower"], kind: ["Endlos · neu", "Endless · new"], desc: ["Der Block schwingt hin und her. Tippen zum Absetzen. Was übersteht, fällt ab.", "The block swings back and forth. Tap to drop it. Whatever hangs over falls off."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
+    ballon:      { name: ["Ballon", "Balloon"], kind: ["10 Ballons · neu", "10 balloons · new"], desc: ["Pump den Ballon auf und lass rechtzeitig los. Je größer, desto mehr Punkte. Platzt er, gibt's 0.", "Pump the balloon and let go in time. Bigger means more points. If it pops, you get 0."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
+    turm:        { name: ["Turm", "Tower"], kind: ["Endlos", "Endless"], desc: ["Der Block schwingt hin und her. Tippen zum Absetzen. Was übersteht, fällt ab.", "The block swings back and forth. Tap to drop it. Whatever hangs over falls off."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     praezision:  { name: ["Präzision", "Precision"], kind: ["30 Sek.", "30 sec"], desc: ["Ein bewegtes Ziel. Je näher an der Mitte, desto mehr Punkte.", "A moving target. The closer to the center, the more points."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] }
   };
   const MODE_DEF = {
     ziele: { revive: true, make: makeZiele }, startampel: { lower: true, bestUnit: " ms", make: makeAmpel }, stoppuhr: { bestUnit: " %", make: makeStoppuhr },
     taeuschung: { revive: true, make: makeTaeuschung }, farbwort: { revive: true, make: makeFarbwort }, lanes: { revive: true, make: makeLanes },
-    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }, turm: { revive: true, make: makeTurm }
+    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }, turm: { revive: true, make: makeTurm }, ballon: { make: makeBallon }
   };
   const MODES = {};
   for (const id of Object.keys(MODE_TXT)) {
@@ -1228,7 +1234,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     for (const k of Object.keys(MODE_TXT[id])) Object.defineProperty(m, k, { get: () => L(MODE_TXT[id][k]), enumerable: true });
     MODES[id] = m;
   }
-  const ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
+  const ORDER = ["ziele", "ballon", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
   const DAILY = ["ziele", "farbwort", "taeuschung", "lanes", "augenwinkel", "praezision", "startampel"];
   const COURSES = [{ name: ["Strecke A", "Track A"], seed: 1101 }, { name: ["Strecke B", "Track B"], seed: 2202 }, { name: ["Strecke C", "Track C"], seed: 3303 }];
   const offNote = () => tr("Online braucht die geteilte Version mit Anmeldung", "Online needs the shared version while signed in");
@@ -1241,6 +1247,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Grün antippen", "1 Punkt"], ["Andere Farbe oder Trick-Wort", "1 Leben weg"], ["Grün verpasst oder zu früh", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     farbwort: [["Richtige Schriftfarbe", "1 Punkt"], ["Falsch oder zu langsam", "1 Leben weg"], ["Ab 20 Punkten", "Knöpfe werden gemischt"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block antippen", "doppelte Punkte: 2"], ["Langen Block gedrückt halten, bis er voll ist", "3 bis 6 Punkte, je länger desto mehr"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
+    ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Gold", "doppelte Punkte"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
     turm: [["Block absetzen", "1 Punkt"], ["Perfekt auf den Turm", "+1 extra, ab 3 in Folge wächst der Block wieder"], ["Überstand", "fällt ab, der Turm wird schmaler"], ["Komplett daneben", "1 Leben weg"]],
     augenwinkel: [["Punkt am Rand antippen", "1 Punkt"], ["Verpasst", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     praezision: [["Gelbe Mitte", "10 Punkte"], ["Roter Ring", "5 Punkte"], ["Weißer Rand", "2 Punkte"], ["Daneben", "0 Punkte"], ["Zeit", "30 Sekunden"]]
@@ -1252,6 +1259,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Tap green", "1 point"], ["Other color or trick word", "lose 1 life"], ["Missed green or too early", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     farbwort: [["Right ink color", "1 point"], ["Wrong or too slow", "lose 1 life"], ["From 20 points", "buttons get shuffled"], ["Streak", "sound and vibration, no extra points"]],
     lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block", "double points: 2"], ["Hold a long block until it's full", "3 to 6 points, longer gives more"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
+    ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Gold", "double points"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
     turm: [["Drop a block", "1 point"], ["Perfect on the tower", "+1 extra, 3 in a row make the block grow back"], ["Overhang", "falls off, the tower gets narrower"], ["Missed completely", "lose 1 life"]],
     augenwinkel: [["Tap a dot at the edge", "1 point"], ["Missed", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     praezision: [["Yellow center", "10 points"], ["Red ring", "5 points"], ["White edge", "2 points"], ["Miss", "0 points"], ["Time", "30 seconds"]]
@@ -1443,9 +1451,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function photoBadge(photo, sk, skinU) {
     const key = sk + "|" + photo.length + "|" + photo.slice(-32);
     if (BADGE[key]) return BADGE[key];
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="pc"><circle cx="32" cy="32" r="32"/></clipPath><clipPath id="bc"><circle cx="49" cy="15" r="10.2"/></clipPath></defs>' +
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="pc"><circle cx="32" cy="32" r="32"/></clipPath><clipPath id="bc"><circle cx="46" cy="46" r="10.4"/></clipPath></defs>' +
       '<image href="' + photo + '" xlink:href="' + photo + '" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#pc)"/>' +
-      '<circle cx="49" cy="15" r="12.4" fill="#17151b"/><image href="' + skinU + '" xlink:href="' + skinU + '" x="38.8" y="4.8" width="20.4" height="20.4" clip-path="url(#bc)"/></svg>';
+      '<circle cx="46" cy="46" r="12.6" fill="#17151b"/><image href="' + skinU + '" xlink:href="' + skinU + '" x="35.6" y="35.6" width="20.8" height="20.8" clip-path="url(#bc)"/></svg>';
     const keys = Object.keys(BADGE); if (keys.length > 60) delete BADGE[keys[0]];
     return (BADGE[key] = svgURL(svg));
   }
@@ -1456,7 +1464,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const base = photo || avatarURL(Number.isInteger(d.av) ? d.av : 0);
     if (!skinValid(d.sk)) { img.src = base; return; }
     if (photo) {
-      // eigenes Foto bleibt sichtbar, der Skin sitzt klein und rund oben rechts
+      // eigenes Foto bleibt sichtbar, der Skin sitzt klein und rund unten rechts
       const withBadge = (u) => { img.src = photoBadge(photo, d.sk, u); };
       if (d.sk.startsWith("s:")) { withBadge(skinURL(d.sk)); return; }
       if (SKINURL[d.sk]) { withBadge(SKINURL[d.sk]); return; }
@@ -1743,13 +1751,21 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       (first ? "" : '<button class="btn ghost pf-skins" id="pfSkins" type="button">' + tr("Skins ansehen", "Browse skins") + "<small>" + (sk ? tr("Aktiv: ", "Equipped: ") + esc(skinName(sk)) : tr("Gold, Neon, Galaxie, Länder-Helme …", "Gold, neon, galaxy, country helmets …")) + "</small></button>") +
       '<label class="btn ghost pf-photo" for="pfFile">' + tr("Eigenes Foto", "Own photo") + '</label><input id="pfFile" type="file" accept="image/*" hidden>' +
       '<button class="link" id="pfRecrop" type="button" hidden>' + tr("Ausschnitt ändern", "Change crop") + "</button>" +
+      '<div class="pf-rm" id="pfRm"></div>' +
       '<p class="msg-bad" id="pfErr" hidden></p>' +
       '<button class="btn" id="pfSave" type="button">' + (first ? tr("Los geht's", "Let's go") : tr("Speichern", "Save")) + "</button>" +
       (first ? '<button class="link" id="pfHave" type="button">' + tr("Ich hab schon ein Konto · Anmelden", "I already have an account · Sign in") + "</button>" : '<button class="btn ghost" id="pfAcct" type="button">' + (AUTH().current() ? tr("Konto · angemeldet", "Account · signed in") : tr("Konto & Passwort", "Account & password")) + "<small>" + (AUTH().current() ? esc(AUTH().current().email) : tr("Fortschritt auf allen Geräten sichern", "Keep your progress on every device")) + "</small></button>" + '<button class="link" id="pfCancel" type="button">' + tr("Abbrechen", "Cancel") + "</button>") +
       '<p class="note">' + (ONLINE ? tr("Jeder Benutzername gibt es nur einmal. Das wird beim Speichern geprüft.", "Every username exists only once. It's checked when you save.") : tr("Ob der Name frei ist, prüft die App, sobald Online aktiv ist.", "The app checks that the name is free once online is active.")) + "</p>");
     const inp = $("pfName"), hint = $("pfHint"), err = $("pfErr"), grid = $("pfGrid");
     inp.value = pr.uname || "";
-    const preview = () => { paintAvatar($("pfImg"), { av, photo, sk }); const ps_ = $("pfShow"); ps_.textContent = "@" + (inp.value.trim().toLowerCase() || tr("deinname", "yourname")); if (typeof flags !== "undefined") appendFlags(ps_, flags); };
+    const drawRm = () => {
+      const box = $("pfRm"); if (!box) return; box.innerHTML = "";
+      const add = (label, fn) => { const b = h("button", "sbtn quiet"); b.type = "button"; b.textContent = label; b.addEventListener("click", fn); box.appendChild(b); };
+      if (photo) add(tr("Profilbild löschen", "Delete photo"), () => { photo = null; const rc = $("pfRecrop"); if (rc) rc.hidden = true; drawGrid(); preview(); });
+      if (sk) add(tr("Skin ablegen", "Remove skin"), () => { sk = null; const s2 = $("pfSkins"); if (s2 && s2.lastChild) s2.lastChild.textContent = tr("Gold, Neon, Galaxie, Länder-Helme …", "Gold, neon, galaxy, country helmets …"); drawGrid(); preview(); });
+      box.hidden = !box.children.length;
+    };
+    const preview = () => { drawRm(); paintAvatar($("pfImg"), { av, photo, sk }); const ps_ = $("pfShow"); ps_.textContent = "@" + (inp.value.trim().toLowerCase() || tr("deinname", "yourname")); if (typeof flags !== "undefined") appendFlags(ps_, flags); };
     const drawGrid = () => {
       grid.innerHTML = "";
       AVATARS.forEach((_, i) => {
@@ -2006,7 +2022,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // Münzen pro Runde aus der Leistung (pro Modus vergleichbar gemacht)
   const EARN = {
     ziele: (v) => v, farbwort: (v) => v * 2, taeuschung: (v) => v * 2, lanes: (v) => v, augenwinkel: (v) => v * 2,
-    turm: (v) => v * 1.5, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
+    turm: (v) => v * 1.5, ballon: (v) => v / 12, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
   };
   function gainXP(x) {
     const ups = []; let xp = W.xp + x, l = W.lvl;
@@ -2181,8 +2197,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // ---------- Tastatur (Desktop) ----------
   const FINE = () => { try { return matchMedia("(pointer: fine)").matches; } catch (e) { return false; } };
   function keyHint(id, two) {
-    const one = { turm: tr("Leertaste", "Space"), startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
-    const duo = { turm: "A · L", startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
+    const one = { ballon: tr("Leertaste halten", "Hold Space"), turm: tr("Leertaste", "Space"), startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
+    const duo = { ballon: "A · L", turm: "A · L", startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
     const k = two ? duo : one;
     return k ? '<p class="note keyhint">' + (two ? tr("Zu zweit am Computer: ", "Two players on a computer: ") : tr("Am Computer: ", "On a computer: ")) + "<kbd>" + k + "</kbd>" + (id === "farbwort" && !two ? tr(" (Knöpfe von links nach rechts)", " (buttons left to right)") : "") + "</p>" : "";
   }
@@ -2217,12 +2233,19 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (id === "startampel" && E.opts && E.opts.local2) { const r = E.players[0] && E.players[0].root; if (!r) return; const lk = k === " " ? "a" : k === "Enter" ? "l" : k; fire(r.querySelector(lk in L1 ? ".half.p1" : ".half.p2")); e.preventDefault(); return; }
     const P = E.players[pi]; if (!P || !P.root) return;
     const r = P.root;
-    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung" || id === "turm") { fire(r); e.preventDefault(); return; }
+    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung" || id === "turm" || id === "ballon") { fire(r); e.preventDefault(); return; }
     if (id === "lanes") { if (idx <= 2) laneTap(r, idx); e.preventDefault(); return; }
     if (id === "farbwort") { const bs = visBtns(r, "button[data-i]"); if (bs[idx]) fire(bs[idx]); e.preventDefault(); return; }
   });
   document.addEventListener("keyup", (e) => {
-    if (!E.active || E.id !== "lanes") return;
+    if (!E.active) return;
+    if (E.id === "ballon") {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key, two = E.players.length > 1;
+      const pi = two ? ("asdf ".includes(k) ? 0 : "hjkl".includes(k) || k === "Enter" ? 1 : -1) : 0;
+      const P = E.players[pi]; if (P && P.root && P.root.__blUp) P.root.__blUp();
+      return;
+    }
+    if (E.id !== "lanes") return;
     let ev; try { ev = new PointerEvent("pointerup", { bubbles: true, pointerId: 0 }); } catch (x) { ev = new MouseEvent("pointerup", { bubbles: true }); }
     window.dispatchEvent(ev);
   });
@@ -3075,7 +3098,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
 
   // ---------- Bot: passt sich deinem Niveau an, bleibt aber knapp vor dir ----------
-  const BOT_BASE = { turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
+  const BOT_BASE = { ballon: [430, 32000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
   function recordSkill(mode, value, dur) {
     if (value == null || !BOT_BASE[mode]) return;
     const sk = store.get("skill:" + mode, []); sk.push(value); store.set("skill:" + mode, sk.slice(-6));
@@ -3290,7 +3313,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   const tourId = (t) => t.host + "-" + t.created;
   const tuEnded = (t) => !t || Date.now() >= t.ends;
-  const tuSeed = (t, m) => (t.seed ^ Math.imul(ORDER.indexOf(m) + 1, 2654435761)) >>> 0;
+  // feste Reihenfolge für Turnier-Seeds (neue Spiele hinten anhängen, damit laufende Turniere gleich bleiben)
+  const SEED_ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision", "ballon"];
+  const tuSeed = (t, m) => (t.seed ^ Math.imul(SEED_ORDER.indexOf(m) + 1, 2654435761)) >>> 0;
   function cleanEntry(d) {
     if (!d || typeof d.t !== "string" || typeof d.uname !== "string" || !UNAME_RE.test(d.uname)) return null;
     const r = {};
@@ -4602,6 +4627,137 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       },
       revive() { lives = 1; perfect = 0; ctx.lives(lives, max); ctx.info(""); spawn(); lastT = null; },
       result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: stack.length - 1 + tr(" Etagen", " floors") })
+    };
+  }
+
+  // =====================================================
+  // MODE: Ballon (aufpumpen, rechtzeitig loslassen; platzt er, gibt's 0)
+  // =====================================================
+  function makeBallon(ctx) {
+    const r = ctx.root; r.classList.add("tower", "balloon");
+    r.innerHTML = '<canvas class="tw-cv"></canvas><div class="hint">' + tr("Gedrückt halten zum Aufpumpen. Loslassen kassiert. Platzt er, gibt's 0.", "Hold to pump. Let go to cash in. If it pops, you get 0.") + "</div>" +
+      '<div class="bl-key"><span style="--c:#3ee27a">' + tr("robust", "sturdy") + '</span><span style="--c:#ffd23f">' + tr("normal", "normal") + '</span><span style="--c:#ff5a4e">' + tr("empfindlich", "fragile") + '</span><span style="--c:#f6c453">Gold ×2</span></div>';
+    const cv = r.firstChild, g = cv.getContext("2d"), hint = r.querySelector(".hint");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+    const size = () => { const w = ctx.W(), hh = ctx.H(); if (w === W && hh === H) return; W = w; H = hh; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); };
+    size();
+    const N = 10;
+    const KINDS = {
+      green: { lo: 55, c1: "#7cf3a6", c2: "#1f9c55", name: ["Robust", "Sturdy"] },
+      yellow: { lo: 33, c1: "#ffe68a", c2: "#d19a00", name: ["Normal", "Normal"] },
+      red: { lo: 12, c1: "#ff9a8f", c2: "#c4271b", name: ["Empfindlich", "Fragile"] },
+      gold: { lo: 25, c1: "#fff1b8", c2: "#b9860b", name: ["Gold ×2", "Gold ×2"], x2: true }
+    };
+    // Alle Ballons stehen vorher fest (gleicher Seed = gleiche Ballons im Duell)
+    const balloons = Array.from({ length: N }, (_, i) => {
+      const q = ctx.rng(), kind = q < 0.34 ? "green" : q < 0.69 ? "yellow" : q < 0.9 ? "red" : "gold", k = KINDS[kind];
+      return { kind, pop: Math.round(k.lo + ctx.rng() * (100 - k.lo)), T: Math.max(1500, 2500 - i * 90 - ctx.boost * 10) };
+    });
+    let idx = 0, total = 0, popped = 0, cur = null, state = "wait", nextAt = ctx.t() + 500, holdId = null, downAt = 0, snd = null, fx = [], parts = [], lastT = null, shown = 0;
+    ctx.score(0); ctx.side("1/" + N);
+    const sizeAt = (b, ms) => Math.min(100, 100 * Math.pow(Math.max(0, ms) / b.T, 1.25));
+    function next() { cur = { b: balloons[idx], s: 0, y: 0, a: 1 }; state = "ready"; ctx.side(idx + 1 + "/" + N); }
+    function startPump(e) {
+      if (!ctx.live() || state !== "ready") return;
+      hint.hidden = true; holdId = e ? e.pointerId : 0; downAt = e ? ctx.evT(e) : ctx.t(); state = "pump";
+      snd = AU.holdTone(); snd.set(0); hapticHold();
+    }
+    function stopSnd(ok) { if (snd) { snd.stop(ok); snd = null; } hapticStop(); }
+    function pop(at) {
+      const b = cur.b; state = "gone"; stopSnd(false); cur.s = b.pop; popped++; balloons[idx].res = 0;
+      const cx = W / 2, cy = H * 0.44, rad = radius(b.pop);
+      for (let i = 0; i < 26; i++) { const a = Math.random() * Math.PI * 2, v = 160 + Math.random() * 420; parts.push({ x: cx + Math.cos(a) * rad * 0.7, y: cy + Math.sin(a) * rad * 0.7, vx: Math.cos(a) * v, vy: Math.sin(a) * v, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 14, life: 0.9, c: KINDS[b.kind].c2 }); }
+      SFX.pop(); buzz([40, 30, 70]); r.classList.remove("hurt"); void r.offsetWidth; r.classList.add("hurt");
+      ctx.float(cx, cy - 30, tr("PENG! 0", "POP! 0"), "bad");
+      fx.push({ text: tr("Geplatzt bei ", "Popped at ") + b.pop, t: 0, bad: true });
+      after();
+    }
+    function bank(at) {
+      const b = cur.b, s = Math.max(1, Math.round(sizeAt(b, at - downAt)));
+      if (s >= b.pop) { pop(at); return; }
+      state = "fly"; stopSnd(true);
+      const close = b.pop - s <= 5, pts = s * (KINDS[b.kind].x2 ? 2 : 1) + (close ? 10 : 0);
+      cur.s = s; total += pts; ctx.score(total);
+      if (close) { ctx.milestone(tr("Nervenstark! +10", "Nerves of steel! +10"), 4); }
+      else { SFX.hit(Math.round(s / 8)); buzz(14); }
+      ctx.float(W / 2, H * 0.44 - radius(s) - 18, "+" + pts, "fast");
+      fx.push({ text: tr("Wäre bei ", "Would have popped at ") + b.pop + tr(" geplatzt", ""), t: 0, bad: false });
+      after();
+    }
+    function after() {
+      holdId = null; idx++;
+      if (idx >= N) { ctx.at(1300, () => { state = "done"; ctx.end(); }); return; }
+      nextAt = ctx.t() + 1150;
+    }
+    r.addEventListener("pointerdown", (e) => { e.preventDefault(); startPump(e); });
+    const up = (e) => {
+      if (!r.isConnected) { stopSnd(false); removeEventListener("pointerup", up); removeEventListener("pointercancel", up); return; }
+      if (state !== "pump" || (e.pointerId != null && holdId != null && e.pointerId !== holdId)) return; bank(ctx.evT(e));
+    };
+    addEventListener("pointerup", up); addEventListener("pointercancel", up);
+    const radius = (s) => Math.min(W * 0.42, H * 0.3) * (0.22 + 0.78 * Math.sqrt(s / 100));
+    r.__blUp = () => { if (state === "pump") bank(ctx.t()); };
+    r.__bl = () => ({ state, idx, cur: cur && { kind: cur.b.kind, pop: cur.b.pop, s: cur.s }, total, popped, balloons }); // für Tests
+    function drawBalloon(cx, cy, rad, k, alpha, wob) {
+      g.globalAlpha = alpha;
+      // Schnur
+      g.strokeStyle = "rgba(255,255,255,.45)"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(cx, cy + rad * 1.08);
+      g.bezierCurveTo(cx - 14, cy + rad * 1.08 + 40, cx + 14, cy + rad * 1.08 + 80, cx - 4, cy + rad * 1.08 + 120); g.stroke();
+      // Knoten
+      g.fillStyle = k.c2; g.beginPath(); g.moveTo(cx - 7, cy + rad * 1.1 + 6); g.lineTo(cx + 7, cy + rad * 1.1 + 6); g.lineTo(cx, cy + rad * 1.02); g.closePath(); g.fill();
+      // Körper
+      const gr = g.createRadialGradient(cx - rad * 0.35, cy - rad * 0.4, rad * 0.1, cx, cy, rad * 1.15);
+      gr.addColorStop(0, k.c1); gr.addColorStop(1, k.c2);
+      g.fillStyle = gr; g.beginPath(); g.ellipse(cx + wob, cy, rad * 0.93, rad * 1.08, 0, 0, Math.PI * 2); g.fill();
+      if (k.x2) { g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 2; g.stroke(); }
+      // Glanz
+      g.fillStyle = "rgba(255,255,255,.35)"; g.beginPath(); g.ellipse(cx - rad * 0.38 + wob, cy - rad * 0.45, rad * 0.16, rad * 0.28, -0.5, 0, Math.PI * 2); g.fill();
+      g.globalAlpha = 1;
+    }
+    function draw(t) {
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const k = cur ? KINDS[cur.b.kind] : KINDS.yellow, danger = state === "pump" ? cur.s / 100 : 0;
+      const bg = g.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "rgba(" + Math.round(40 + danger * 70) + ",22,38,1)"); bg.addColorStop(1, "#141218");
+      g.fillStyle = bg; g.fillRect(0, 0, W, H);
+      // Fortschritt: 10 kleine Ballons oben
+      for (let i = 0; i < N; i++) { const x = W / 2 + (i - (N - 1) / 2) * 22, y = 18, done = i < idx; g.fillStyle = done ? (balloons[i].res === 0 ? "#4a4654" : KINDS[balloons[i].kind].c2) : i === idx ? "#f3efe6" : "rgba(255,255,255,.18)"; g.beginPath(); g.arc(x, y, i === idx ? 6 : 5, 0, Math.PI * 2); g.fill(); }
+      if (cur && (state === "ready" || state === "pump" || state === "fly")) {
+        const s = state === "ready" ? 0 : cur.s, rad = radius(s), cx = W / 2;
+        const shake = state === "pump" && s > 55 ? (Math.random() - 0.5) * (s - 55) * 0.12 : 0;
+        const cy = H * 0.44 - cur.y;
+        drawBalloon(cx, cy, rad, k, cur.a, shake);
+        if (state !== "fly") {
+          g.fillStyle = "rgba(0,0,0,.45)"; g.font = "800 " + Math.round(Math.max(22, rad * 0.5)) + "px 'Barlow Condensed', 'Arial Narrow', sans-serif";
+          g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(String(Math.round(s)), cx + shake, cy + 2);
+        }
+        g.fillStyle = "rgba(243,239,230,.8)"; g.font = "700 13px sans-serif"; g.textAlign = "center"; if (state !== "fly") g.fillText(L(k.name).toUpperCase(), cx, Math.min(H - 84, H * 0.44 + Math.min(W * 0.42, H * 0.3) * 1.1 + 140));
+      }
+      for (const p of parts) { g.save(); g.translate(p.x, p.y); g.rotate(p.rot); g.globalAlpha = Math.max(0, p.life); g.fillStyle = p.c; g.fillRect(-6, -3, 12, 6); g.restore(); }
+      g.globalAlpha = 1;
+      const f = fx[fx.length - 1];
+      if (f && f.t < 1.6) { g.globalAlpha = Math.min(1, (1.6 - f.t) * 2); g.fillStyle = f.bad ? "#ff8a80" : "rgba(243,239,230,.85)"; g.font = "700 15px sans-serif"; g.textAlign = "center"; g.fillText(f.text, W / 2, H * 0.12); g.globalAlpha = 1; }
+    }
+    return {
+      tick(t) {
+        size();
+        if (lastT == null) lastT = t;
+        const dt = Math.min(50, t - lastT) / 1000; lastT = t;
+        if (state === "pump") {
+          const ms = t - downAt; cur.s = sizeAt(cur.b, ms);
+          if (snd) snd.set(cur.s / 100); hapticHold();
+          if (sizeAt(cur.b, ms - 60) >= cur.b.pop) pop(t);
+        }
+        if (state === "fly") { cur.y += dt * 520; cur.a = Math.max(0, cur.a - dt * 1.4); if (t >= nextAt) state = "wait"; }
+        if (state === "gone" && t >= nextAt) state = "wait";
+        if ((state === "wait") && idx < N && t >= nextAt) next();
+        for (const p of parts) { p.vy += 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt; p.life -= dt; }
+        parts = parts.filter((p) => p.life > 0);
+        for (const f of fx) f.t += dt;
+        draw(t);
+      },
+      result: () => ({ value: total, text: String(total), unit: tr("Punkte", "points"), sub: (N - popped) + tr(" kassiert · ", " cashed · ") + popped + tr(" geplatzt", " popped") })
     };
   }
 
