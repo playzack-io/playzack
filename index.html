@@ -249,17 +249,13 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .blk.red::after { content: "✕"; color: var(--housing); font-size: 28px; font-weight: 800; }
 .blk.dbl { background: linear-gradient(180deg, #ffe680, var(--volt) 55%, #e8b400); box-shadow: inset 0 0 0 3px #17151b, inset 0 0 0 6px rgba(255, 255, 255, .55); }
 .bl-x { position: relative; z-index: 1; font-family: var(--font-display); font-size: 30px; color: #17151b; line-height: 1; pointer-events: none; }
-.blk.dbl.cracked .bl-x { background: rgba(255, 255, 255, .92); border-radius: 999px; padding: 3px 12px 2px; font-size: 24px; }
-.blk.dbl.cracked { background: linear-gradient(180deg, #ffd23f, #d99a00); }
-.blk.dbl.cracked::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60' preserveAspectRatio='none'%3E%3Cpath d='M48 0 L54 18 L42 28 L56 40 L50 60 M54 18 L72 22 M42 28 L24 30 L14 44' fill='none' stroke='%2317151b' stroke-width='2.6' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat; }
-.blk.hitfx { animation: blkShake .22s; }
-@keyframes blkShake { 0%, 100% { translate: 0 0; } 25% { translate: -5px 0; } 50% { translate: 5px 0; } 75% { translate: -3px 0; } }
 .blk.hold { background: repeating-linear-gradient(135deg, rgba(255, 210, 63, .28) 0 10px, rgba(255, 210, 63, .16) 10px 20px); box-shadow: inset 0 0 0 3px var(--volt); overflow: hidden; }
 .bl-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: linear-gradient(0deg, var(--volt), #fff3b0); pointer-events: none; }
 .bl-hold { position: relative; font-family: var(--font-num); font-weight: 800; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; color: #17151b; background: rgba(255, 255, 255, .85); border-radius: 999px; padding: 4px 10px; pointer-events: none; }
 .blk.hold.on { box-shadow: inset 0 0 0 3px #fff, 0 0 22px rgba(255, 210, 63, .8); animation: holdGlow .5s ease-in-out infinite alternate; }
 @keyframes holdGlow { from { filter: brightness(1); } to { filter: brightness(1.25); } }
 .blk-burst { position: absolute; top: 0; border-radius: 12px; pointer-events: none; border: 3px solid var(--volt); box-sizing: border-box; animation: blkBurst .4s ease-out forwards; }
+.blk-burst.gold { border-color: #fff3b0; box-shadow: 0 0 26px rgba(255, 210, 63, .95), inset 0 0 18px rgba(255, 210, 63, .6); }
 .blk-burst.long { border-color: #fff; box-shadow: 0 0 24px rgba(255, 210, 63, .9); }
 @keyframes blkBurst { from { opacity: 1; scale: 1; } to { opacity: 0; scale: 1.35; } }
 
@@ -1050,7 +1046,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     stoppuhr:    { name: ["Stoppuhr", "Stopwatch"], kind: ["3 Versuche", "3 tries"], desc: ["Jede Runde eine neue Zielzeit von 3 bis 60 s. Ab 1 s ist die Uhr unsichtbar.", "A new target time from 3 to 60 s every round. After 1 s the clock goes blind."], unit: ["% genau", "% accurate"], bestLabel: ["Beste", "Best"] },
     taeuschung:  { name: ["Täuschung", "Fake Out"], kind: ["Endlos", "Endless"], desc: ["Nur bei Grün tippen. Alles andere ist eine Falle.", "Tap only on green. Everything else is a trap."], unit: ["richtig", "correct"], bestLabel: ["Rekord", "Best"] },
     farbwort:    { name: ["Farbwort", "Color Word"], kind: ["Endlos", "Endless"], desc: ["Tippe die Farbe der Schrift, nicht das Wort.", "Tap the color of the ink, not the word."], unit: ["richtig", "correct"], bestLabel: ["Rekord", "Best"] },
-    lanes:       { name: ["Lanes", "Lanes"], kind: ["Endlos", "Endless"], desc: ["Blöcke fallen in drei Spuren. Tippen, 2× doppelt tippen, lange Blöcke gedrückt halten.", "Blocks fall in three lanes. Tap them, double-tap 2× blocks, hold the long ones."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
+    lanes:       { name: ["Lanes", "Lanes"], kind: ["Endlos", "Endless"], desc: ["Blöcke fallen in drei Spuren. Tippen, bevor sie unten sind. 2× gibt doppelte Punkte, lange Blöcke gedrückt halten.", "Blocks fall in three lanes. Tap them before they hit the bottom. 2× gives double points, hold the long ones."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     augenwinkel: { name: ["Augenwinkel", "Side Eye"], kind: ["Endlos", "Endless"], desc: ["Blick aufs Kreuz. Punkte blitzen kurz am Rand auf.", "Eyes on the cross. Dots flash briefly at the edge."], unit: ["Treffer", "hits"], bestLabel: ["Rekord", "Best"] },
     praezision:  { name: ["Präzision", "Precision"], kind: ["30 Sek.", "30 sec"], desc: ["Ein bewegtes Ziel. Je näher an der Mitte, desto mehr Punkte.", "A moving target. The closer to the center, the more points."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] }
   };
@@ -1077,7 +1073,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     stoppuhr: [["Zielzeit", "jede Runde neu, 3 bis 60 s"], ["Wertung", "wie genau du triffst, in %"], ["Beispiel", "10 s Ziel, 9,9 s gestoppt = 99 %"], ["Ergebnis", "dein bester von 3 Versuchen"]],
     taeuschung: [["Grün antippen", "1 Punkt"], ["Andere Farbe oder Trick-Wort", "1 Leben weg"], ["Grün verpasst oder zu früh", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     farbwort: [["Richtige Schriftfarbe", "1 Punkt"], ["Falsch oder zu langsam", "1 Leben weg"], ["Ab 20 Punkten", "Knöpfe werden gemischt"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
-    lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block zweimal antippen", "2 Punkte"], ["Langen Block gedrückt halten, bis er voll ist", "3 Punkte"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
+    lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block antippen", "doppelte Punkte: 2"], ["Langen Block gedrückt halten, bis er voll ist", "3 Punkte"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     augenwinkel: [["Punkt am Rand antippen", "1 Punkt"], ["Verpasst", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     praezision: [["Gelbe Mitte", "10 Punkte"], ["Roter Ring", "5 Punkte"], ["Weißer Rand", "2 Punkte"], ["Daneben", "0 Punkte"], ["Zeit", "30 Sekunden"]]
   };
@@ -1087,7 +1083,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     stoppuhr: [["Target time", "new every round, 3 to 60 s"], ["Scoring", "how precise you are, in %"], ["Example", "10 s target, 9.9 s stopped = 99 %"], ["Result", "your best of 3 tries"]],
     taeuschung: [["Tap green", "1 point"], ["Other color or trick word", "lose 1 life"], ["Missed green or too early", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     farbwort: [["Right ink color", "1 point"], ["Wrong or too slow", "lose 1 life"], ["From 20 points", "buttons get shuffled"], ["Streak", "sound and vibration, no extra points"]],
-    lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block twice", "2 points"], ["Hold a long block until it's full", "3 points"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
+    lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block", "double points: 2"], ["Hold a long block until it's full", "3 points"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
     augenwinkel: [["Tap a dot at the edge", "1 point"], ["Missed", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     praezision: [["Yellow center", "10 points"], ["Red ring", "5 points"], ["White edge", "2 points"], ["Miss", "0 points"], ["Time", "30 seconds"]]
   };
@@ -3860,7 +3856,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const W = ctx.W(), H = ctx.H(), base = Math.max(64, H * 0.13), th = kind === "hold" ? base * 2.4 : base;
       const el = h("button", "blk" + (kind !== "norm" ? " " + kind : ""));
       el.type = "button";
-      el.setAttribute("aria-label", kind === "red" ? tr("Stein, nicht tippen", "Rock, don't tap") : kind === "dbl" ? tr("Doppelblock, zweimal tippen", "Double block, tap twice") : kind === "hold" ? tr("Langer Block, gedrückt halten", "Long block, press and hold") : "Block");
+      el.setAttribute("aria-label", kind === "red" ? tr("Stein, nicht tippen", "Rock, don't tap") : kind === "dbl" ? tr("Doppelte Punkte", "Double points") : kind === "hold" ? tr("Langer Block, gedrückt halten", "Long block, press and hold") : "Block");
       if (kind === "dbl") el.innerHTML = '<span class="bl-x">2×</span>';
       if (kind === "hold") el.innerHTML = '<span class="bl-fill"></span><span class="bl-hold">' + tr("Halten", "Hold") + "</span>";
       el.style.width = W / 3 - 10 + "px"; el.style.height = th + "px"; el.style.left = (lane * W) / 3 + 5 + "px";
@@ -3884,7 +3880,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     function burst(T) {
       // kurzer Zerspringen-Effekt an der Stelle des Blocks
-      const b = h("div", "blk-burst" + (T.kind === "hold" ? " long" : ""));
+      const b = h("div", "blk-burst" + (T.kind === "hold" ? " long" : T.kind === "dbl" ? " gold" : ""));
       b.style.cssText = "left:" + T.el.style.left + ";width:" + T.el.style.width + ";height:" + T.h + "px;transform:translateY(" + T.y + "px)";
       r.appendChild(b); setTimeout(() => b.remove(), 420);
     }
@@ -3892,13 +3888,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (!ctx.live() || !tiles.includes(T)) return;
       if (T.red) { remove(T); lose(cx(T), T.y + T.h / 2, tr("Stein!", "Rock!")); return; }
       if (T.kind === "hold") { T.holding = pid; T.el.classList.add("on"); buzz(8); return; }
-      if (T.kind === "dbl" && T.hits === 0) {
-        T.hits = 1; T.el.classList.add("cracked"); T.el.querySelector(".bl-x").textContent = "1×";
-        T.el.classList.remove("hitfx"); void T.el.offsetWidth; T.el.classList.add("hitfx");
-        beep(520 + T.lane * 120, 0.05); buzz(8); return;
-      }
       remove(T); burst(T);
-      if (T.kind === "dbl") { gain(T, 2, T.y + T.h / 2); beep(760 + T.lane * 120 + Math.min(combo, 20) * 10, 0.08); buzz(15); return; }
+      if (T.kind === "dbl") { gain(T, 2, T.y + T.h / 2); SFX.coin(); buzz(15); return; }
       gain(T, 1, T.y + T.h / 2);
       beep(560 + (T.lane * 120) + Math.min(combo, 20) * 10, 0.06); buzz(8);
     }
