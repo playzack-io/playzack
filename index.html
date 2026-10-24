@@ -169,8 +169,10 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .stage { position: relative; flex: 1; min-height: 0; }
 .root { position: absolute; inset: 0; border-radius: 20px; border: 1px solid var(--line); background: var(--asphalt-2); overflow: hidden; touch-action: none; }
 .root.grid { background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 32px 32px; }
-.root.hurt { animation: hurt .35s ease; }
-@keyframes hurt { 0% { box-shadow: inset 0 0 0 0 var(--signal); } 30% { box-shadow: inset 0 0 0 6px var(--signal); } 100% { box-shadow: inset 0 0 0 0 var(--signal); } }
+.root::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; box-shadow: inset 0 0 0 6px var(--signal); }
+.root.hurt::after { animation: edgeFx .35s ease; }
+.root.flash::after { box-shadow: inset 0 0 0 3px rgba(255, 210, 63, .7); animation: edgeFx .45s ease-out; }
+@keyframes edgeFx { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
 .hint { position: absolute; inset: auto 12px 18px; text-align: center; color: var(--muted); font-size: 14px; pointer-events: none; }
 .burst { position: absolute; border-radius: 50%; border: 3px solid var(--c, var(--volt)); pointer-events: none; animation: burst .35s ease-out forwards; }
 @keyframes burst { from { transform: scale(1); opacity: 1; } to { transform: scale(1.8); opacity: 0; } }
@@ -178,12 +180,10 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .float.fast { color: var(--go); } .float.bad { color: var(--signal); }
 .float.combo-pop { font-family: var(--font-display); font-weight: 400; font-size: clamp(40px, 13vw, 64px); color: var(--volt); text-shadow: 0 0 22px rgba(255, 210, 63, .55); z-index: 4; animation: combopop .95s cubic-bezier(.2, .9, .3, 1.2) forwards; }
 @keyframes combopop { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.4) rotate(-6deg); } 18% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(-4deg); } 70% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-4deg); } 100% { opacity: 0; transform: translate(-50%, -70%) scale(.95) rotate(-4deg); } }
-.root.flash { animation: flash .45s ease-out; }
-@keyframes flash { 0% { box-shadow: inset 0 0 0 0 rgba(255, 210, 63, 0); } 25% { box-shadow: inset 0 0 0 3px rgba(255, 210, 63, .7); } 100% { box-shadow: inset 0 0 0 0 rgba(255, 210, 63, 0); } }
 .combo, .mhud .mi { display: inline-block; transform-origin: center; }
 .combo.pop, .mhud .mi.pop { animation: hudpop .6s cubic-bezier(.2, .9, .3, 1.3); }
 @keyframes hudpop { 0% { transform: scale(1); } 30% { transform: scale(1.55); text-shadow: 0 0 14px rgba(255, 210, 63, .8); } 100% { transform: scale(1); text-shadow: none; } }
-@keyframes rise { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -42px; } }
+@keyframes rise { from { opacity: 1; translate: 0 0; } to { opacity: 0; translate: 0 -42px; } }
 @keyframes pop { from { transform: scale(.35); } to { transform: scale(1); } }
 
 /* Ziele */
@@ -244,17 +244,16 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .root.lanes { display: grid; grid-template-columns: repeat(3, 1fr); }
 .lane + .lane { border-left: 1px solid var(--line); }
 .hitline { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: var(--signal); opacity: .55; }
-.blk { position: absolute; top: 0; border: 0; padding: 0; border-radius: 12px; background: var(--volt); touch-action: none; display: grid; place-items: center; }
+.blk { position: absolute; top: 0; border: 0; padding: 0; border-radius: 12px; background: var(--volt); touch-action: none; display: grid; place-items: center; will-change: transform; backface-visibility: hidden; }
 .blk.red { background: var(--signal); }
 .blk.red::after { content: "✕"; color: var(--housing); font-size: 28px; font-weight: 800; }
 .blk.dbl { background: linear-gradient(180deg, #ffe680, var(--volt) 55%, #e8b400); box-shadow: inset 0 0 0 3px #17151b, inset 0 0 0 6px rgba(255, 255, 255, .55); }
 .bl-x { position: relative; z-index: 1; font-family: var(--font-display); font-size: 30px; color: #17151b; line-height: 1; pointer-events: none; }
 .blk.hold { background: repeating-linear-gradient(135deg, rgba(255, 210, 63, .28) 0 10px, rgba(255, 210, 63, .16) 10px 20px); box-shadow: inset 0 0 0 3px var(--volt); overflow: hidden; }
-.bl-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: linear-gradient(0deg, var(--volt), #fff3b0); pointer-events: none; }
+.bl-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; transform: scaleY(0); transform-origin: bottom; background: linear-gradient(0deg, var(--volt), #fff3b0); pointer-events: none; will-change: transform; }
 .bl-hold { position: relative; font-family: var(--font-num); font-weight: 800; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; color: #17151b; background: rgba(255, 255, 255, .85); border-radius: 999px; padding: 4px 10px; pointer-events: none; }
-.blk.hold.on { box-shadow: inset 0 0 0 3px #fff, 0 0 22px rgba(255, 210, 63, .8); animation: holdGlow .5s ease-in-out infinite alternate; }
-@keyframes holdGlow { from { filter: brightness(1); } to { filter: brightness(1.25); } }
-.blk-burst { position: absolute; top: 0; border-radius: 12px; pointer-events: none; border: 3px solid var(--volt); box-sizing: border-box; animation: blkBurst .4s ease-out forwards; }
+.blk.hold.on { box-shadow: inset 0 0 0 3px #fff, 0 0 22px rgba(255, 210, 63, .8); }
+.blk-burst { position: absolute; top: 0; border-radius: 12px; pointer-events: none; border: 3px solid var(--volt); box-sizing: border-box; will-change: transform, opacity; animation: blkBurst .4s ease-out forwards; }
 .blk-burst.gold { border-color: #fff3b0; box-shadow: 0 0 26px rgba(255, 210, 63, .95), inset 0 0 18px rgba(255, 210, 63, .6); }
 .blk-burst.long { border-color: #fff; box-shadow: 0 0 24px rgba(255, 210, 63, .9); }
 @keyframes blkBurst { from { opacity: 1; scale: 1; } to { opacity: 0; scale: 1.35; } }
@@ -398,7 +397,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .rn { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rv { font-family: var(--font-num); font-weight: 800; font-size: 19px; font-variant-numeric: tabular-nums; }
 /* Flaggen */
-img.flag-img { display: inline-block !important; width: 1.33em !important; height: 1em !important; flex: none; vertical-align: -0.08em; border: 0 !important; border-radius: 2px !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, .18); object-fit: cover; margin: 0; }
+img.flag-img { display: inline-block !important; width: 1.33em !important; height: 1em !important; flex: none; vertical-align: -0.08em; border: 0 !important; border-radius: 2px !important; box-shadow: none !important; background: none !important; filter: none !important; padding: 0 !important; object-fit: cover; margin: 0 0 0 .1em !important; }
 .flag-emo { font-size: 1.05em; }
 .flagrow { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .flagchip { border: 1px solid var(--line); background: var(--housing); border-radius: 999px; padding: 8px 12px; font-size: 14px; font-weight: 600; color: var(--chalk); }
@@ -612,13 +611,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .rrow.tvrow .tu-per { font-size: clamp(11px, 1.2vw, 16px); }
 
 /* ---------- Online: VS-Intro ---------- */
-.layer.vsl { padding: 0; background: #0b0a0e; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.layer.vsl { overflow: hidden; padding: 0; background: #0b0a0e; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .sheet.vs { max-width: none; width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0; padding: 0; background: transparent; position: relative; overflow: hidden; display: block; }
-.vs-half { position: absolute; left: 0; right: 0; height: 52%; display: flex; align-items: center; gap: clamp(14px, 3vw, 28px); padding: 0 max(24px, 7vw); box-sizing: border-box; }
+.vs-half { position: absolute; left: -24px; right: -24px; height: 52%; display: flex; align-items: center; gap: clamp(14px, 3vw, 28px); padding: 0 calc(max(24px, 7vw) + 24px); box-sizing: border-box; }
 .vs-me { top: 0; padding-top: env(safe-area-inset-top, 0px); background: linear-gradient(135deg, #ffd23f 0%, #f2a100 100%); color: #2a2000; clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%); animation: vsInL .45s cubic-bezier(.2, .9, .2, 1.08) both; }
 .vs-op { bottom: 0; padding-bottom: env(safe-area-inset-bottom, 0px); background: linear-gradient(135deg, #ff5a3c 0%, #b3172b 100%); color: #fff; flex-direction: row-reverse; text-align: right; clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%); animation: vsInR .45s .08s cubic-bezier(.2, .9, .2, 1.08) both; }
 .vs-op.bot { background: linear-gradient(135deg, #4f7dff 0%, #2a2f8f 100%); }
-.vs-half img { width: clamp(96px, 26vw, 176px); height: clamp(96px, 26vw, 176px); border-radius: 50%; flex: none; background: #17151b; box-shadow: 0 0 0 5px rgba(255, 255, 255, .92), 0 14px 34px rgba(0, 0, 0, .35); }
+.vs-half > img { width: clamp(96px, 26vw, 176px); height: clamp(96px, 26vw, 176px); border-radius: 50%; flex: none; background: #17151b; box-shadow: 0 0 0 5px rgba(255, 255, 255, .92), 0 14px 34px rgba(0, 0, 0, .35); }
 .vs-tx { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .vs-tx b { font-family: var(--font-num); font-weight: 800; font-size: clamp(26px, 7vw, 50px); line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .vs-tx span { font-family: var(--font-num); font-weight: 700; font-size: clamp(14px, 3.6vw, 18px); text-transform: uppercase; letter-spacing: .06em; opacity: .82; }
@@ -635,20 +634,20 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 @keyframes vsSlam { 0% { transform: scale(3.4) rotate(-8deg); opacity: 0; } 60% { opacity: 1; transform: scale(.9) rotate(-4deg); } 100% { transform: scale(1) rotate(-4deg); opacity: 1; } }
 @keyframes vsFlash { 0% { opacity: 0; } 12% { opacity: .6; } 100% { opacity: 0; } }
 @keyframes vsFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes vsShake { 0%, 100% { transform: none; } 20% { transform: translate(-9px, 5px); } 40% { transform: translate(8px, -6px); } 60% { transform: translate(-5px, 3px); } 80% { transform: translate(3px, -2px); } }
+@keyframes vsShake { 0%, 100% { transform: none; } 25% { transform: translate(-5px, 3px); } 50% { transform: translate(4px, -3px); } 75% { transform: translate(-2px, 1px); } }
 
 /* ---------- Online: Duell-Ergebnis ---------- */
 .sheet.duelres { max-width: 440px; gap: 14px; }
 .duel { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
 .dside { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px 12px; border-radius: 18px; background: var(--housing); border: 1px solid var(--line); min-width: 0; animation: skpop .4s cubic-bezier(.2, 1.4, .4, 1) both; }
 .dside.op { animation-delay: .12s; }
-.dside img { width: 76px; height: 76px; border-radius: 50%; background: #17151b; box-shadow: 0 0 0 3px rgba(255, 255, 255, .85); }
+.dside > img { width: 76px; height: 76px; border-radius: 50%; background: #17151b; box-shadow: 0 0 0 3px rgba(255, 255, 255, .85); }
 .dside b { font-family: var(--font-num); font-weight: 800; font-size: 15px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dside .dval { font-family: var(--font-num); font-weight: 800; font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums; }
 .dside .dval small { font-size: 13px; color: var(--muted); margin-left: 3px; }
 .dside .dtag { font-family: var(--font-num); font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ice); min-height: 13px; }
 .dside.win { border-color: var(--volt); background: linear-gradient(180deg, rgba(255, 210, 63, .2), var(--housing) 70%); box-shadow: 0 0 28px rgba(255, 210, 63, .22); }
-.dside.win img { box-shadow: 0 0 0 3px var(--volt), 0 0 22px rgba(255, 210, 63, .55); }
+.dside.win > img { box-shadow: 0 0 0 3px var(--volt), 0 0 22px rgba(255, 210, 63, .55); }
 .dside.lose { opacity: .62; filter: saturate(.6); }
 .dside .crown { position: absolute; top: -17px; left: 50%; width: 38px; height: 26px; transform: translateX(-50%) rotate(-8deg); animation: crownIn .5s .45s cubic-bezier(.2, 1.6, .4, 1) both; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .45)); }
 @keyframes crownIn { from { transform: translateX(-50%) translateY(-24px) scale(.3) rotate(-30deg); opacity: 0; } to { transform: translateX(-50%) rotate(-8deg); opacity: 1; } }
@@ -1802,6 +1801,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   function makeCtx(P, rng, opts) {
+    let cw = 0, ch = 0;
+    try { const ro = new ResizeObserver(() => { cw = P.root.clientWidth; ch = P.root.clientHeight; }); ro.observe(P.root); } catch (e) {}
     return {
       rng, root: P.root,
       boost: opts.level ? opts.level.tier * 5 : 0,
@@ -1810,7 +1811,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       live: () => E.active && !P.run.ended && clock.pausedAt == null,
       at(ms, fn) { P.events.push({ at: clock.t() + ms, fn }); },
       clearAt() { P.events = []; },
-      W: () => P.root.clientWidth, H: () => P.root.clientHeight,
+      W: () => cw || P.root.clientWidth, H: () => ch || P.root.clientHeight,
       local(e) { const rc = P.root.getBoundingClientRect(); return P.flipped ? { x: rc.right - e.clientX, y: rc.bottom - e.clientY } : { x: e.clientX - rc.left, y: e.clientY - rc.top }; },
       score(n) {
         P.run.score = n; P.hud.score.textContent = n;
@@ -3853,7 +3854,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       last = lane;
       const roll = s > 6 ? ctx.rng() : 1;
       const kind = roll < 0.15 ? "red" : s > 8 && roll < 0.29 ? "dbl" : s > 12 && roll < 0.39 ? "hold" : "norm";
-      const W = ctx.W(), H = ctx.H(), base = Math.max(64, H * 0.13), th = kind === "hold" ? base * 2.4 : base;
+      const W = ctx.W(), H = ctx.H(), base = Math.max(64, H * 0.13);
+      const len = kind === "hold" ? [1.8, 2.6, 3.6][Math.floor(ctx.rng() * 3)] : 1, th = base * len;
       const el = h("button", "blk" + (kind !== "norm" ? " " + kind : ""));
       el.type = "button";
       el.setAttribute("aria-label", kind === "red" ? tr("Stein, nicht tippen", "Rock, don't tap") : kind === "dbl" ? tr("Doppelte Punkte", "Double points") : kind === "hold" ? tr("Langer Block, gedrückt halten", "Long block, press and hold") : "Block");
@@ -3861,11 +3863,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (kind === "hold") el.innerHTML = '<span class="bl-fill"></span><span class="bl-hold">' + tr("Halten", "Hold") + "</span>";
       el.style.width = W / 3 - 10 + "px"; el.style.height = th + "px"; el.style.left = (lane * W) / 3 + 5 + "px";
       const T = { el, lane, y: -th, h: th, red: kind === "red", kind, hits: 0, prog: 0, need: 0, holding: null, tick: 0 };
-      if (kind === "hold") T.need = Math.max(500, Math.min(1200, (th / speed(s, H)) * 1000));
-      el.style.transform = "translateY(" + T.y + "px)";
+      if (kind === "hold") T.need = Math.max(500, Math.min(2600, (th / speed(s, H)) * 1000));
+      el.style.transform = "translate3d(0," + T.y + "px,0)";
       el.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); press(T, e.pointerId == null ? 0 : e.pointerId); });
       r.appendChild(el); tiles.push(T);
-      next = at + Math.max(320, 900 - s * 9) + (kind === "hold" ? 260 : 0);
+      next = at + Math.max(320, 900 - s * 9) + (kind === "hold" ? 200 * len : 0);
     }
     const remove = (T) => { T.el.remove(); tiles = tiles.filter((x) => x !== T); };
     const cx = (T) => (T.lane * ctx.W()) / 3 + ctx.W() / 6;
@@ -3908,11 +3910,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         const v = speed(s, H);
         for (const T of tiles.slice()) {
           T.y += (v * dt) / 1000;
-          T.el.style.transform = "translateY(" + T.y + "px)";
+          T.el.style.transform = "translate3d(0," + T.y + "px,0)";
           if (T.kind === "hold" && T.holding != null) {
             T.prog += dt; T.tick += dt;
             const f = Math.min(1, T.prog / T.need);
-            T.el.firstChild.style.height = f * 100 + "%";
+            T.el.firstChild.style.transform = "scaleY(" + f + ")";
             if (T.tick >= 160) { T.tick = 0; beep(480 + f * 600, 0.04); buzz(6); }
             if (f >= 1) { remove(T); burst(T); gain(T, 3, T.y + T.h / 2); SFX.fast(); buzz([20, 40, 20]); continue; }
           }
