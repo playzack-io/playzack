@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.5"></script>
-<script src="backend.js?v=1.8.5"></script>
+<script src="config.js?v=1.8.6"></script>
+<script src="backend.js?v=1.8.6"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -302,7 +302,10 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .vfx { background: var(--c1); }
 .vfx::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, .18), rgba(0, 0, 0, .34) 75%); }
 .vfx > * { z-index: 2; } .vfx > .vfx-rays { z-index: 0; }
-.vfx-rays { position: absolute; left: 50%; top: 42%; width: 300vmax; height: 300vmax; transform: translate(-50%, -50%); background: repeating-conic-gradient(from 0deg, var(--c1) 0deg 12deg, var(--c2) 12deg 24deg, var(--c3) 24deg 36deg); animation: vfxSpin 9s linear infinite; }
+@property --ra { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+/* Strahlen über den ganzen Bildschirm: das Element bleibt bildschirmgroß, nur der Winkel des Verlaufs dreht sich */
+.vfx-rays { position: absolute; inset: 0; background: repeating-conic-gradient(from var(--ra) at 50% 42%, var(--c1) 0deg 12deg, var(--c2) 12deg 24deg, var(--c3) 24deg 36deg); animation: vfxRayTurn 9s linear infinite; }
+@keyframes vfxRayTurn { to { --ra: 360deg; } }
 .vfx-lines b { position: absolute; left: 100%; top: var(--y); width: var(--w); height: 3px; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--c)); opacity: .9; animation: vfxLine .45s var(--d) linear 3; }
 .vfx-car { position: absolute; left: 50%; top: 42%; width: min(44vw, 200px); aspect-ratio: 1; transform: translate(-50%, -50%); animation: vfxCar 2.2s cubic-bezier(.4, 0, .2, 1) both; }
 .vfx-av { position: absolute; inset: 0; animation: vfxRev .12s linear .6s 5; }
