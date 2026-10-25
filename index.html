@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.7"></script>
-<script src="backend.js?v=1.8.7"></script>
+<script src="config.js?v=1.8.8"></script>
+<script src="backend.js?v=1.8.8"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -284,6 +284,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .rk-prog { width: 100%; align-self: stretch; height: 8px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; margin: 6px 0 4px; }
 .rk-prog i { display: block; height: 100%; background: var(--go); border-radius: 4px; }
 .rk-skins { grid-template-columns: repeat(3, 1fr); }
+.rk-skins .sk-card b { font-size: 14px; }
 .pic-seg { margin: 4px 0 8px; }
 .seg.pic-seg button.on { background: var(--volt); color: #1a1400; box-shadow: none; }
 .pic-panel { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
@@ -671,7 +672,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .sk-mtx small { color: #e8d9b8; font-size: 12.5px; line-height: 1.3; }
 .sk-mprice { align-self: flex-start; margin-top: 2px; font-family: var(--font-num); font-weight: 800; font-size: 19px; color: #3a2200; background: linear-gradient(90deg, #fff3b0, #ffd23f); padding: 3px 14px; border-radius: 999px; }
 .sk-tag.excl { background: linear-gradient(90deg, var(--cta-a), var(--cta-b)); color: #fff; }
-.sk-card.locked img { filter: grayscale(.85) brightness(.55); }
+.sk-card.locked img { filter: brightness(.72) saturate(.85); }
 .sk-card small.eur { color: #fff; background: linear-gradient(90deg, var(--cta-a), var(--cta-b)); padding: 2px 10px; border-radius: 999px; }
 .sk-sec { display: flex; flex-direction: column; gap: 6px; text-align: left; }
 .sk-sec .note { margin: 0; }
@@ -1515,7 +1516,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     { id: "bronze", n: ["Bronze", "Bronze"], r: "r", how: "rank", rank: 15 },
     { id: "silber", n: ["Silber", "Silver"], r: "e", how: "rank", rank: 25 },
     { id: "platin", n: ["Platin", "Platinum"], r: "e", how: "rank", rank: 40 },
-    { id: "obsidian", n: ["Obsidian", "Obsidian"], r: "l", how: "rank", rank: 60 }
+    { id: "obsidian", n: ["Obsidian", "Obsidian"], r: "l", how: "rank", rank: 60 },
+    { id: "champion", n: ["Champion", "Champion"], r: "m", how: "rank", rank: 100 }
   ];
   const BUNDLE = { ids: ["s:royal", "s:phantom", "s:diamond", "s:holo"], eur: 6.99, coins: 5000 };
   const eur = (v) => { const t = Number.isInteger(v) ? String(v) : v.toFixed(2); return S.lang === "en" ? "€" + t : t.replace(".", ",") + " €"; };
@@ -1574,6 +1576,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     silber: () => helmetSVG({ defs: metal("sv", "#ffffff", "#d7dce3", "#9aa3ae", "#4b525c"), bg: "#1d2127", ring: "#d7dce3", shell: "url(#sv)", visor: "#14171c", edge: "#ffffff", overlay: shine(3) }),
     platin: () => helmetSVG({ defs: metal("pt", "#f4fbff", "#bfe3ff", "#7fa7d4", "#34507a"), bg: "#0f1a2a", ring: "#bfe3ff", shell: "url(#pt)", visor: "#0b1422", edge: "#f4fbff", overlay: shine(2.4),
       after: '<circle cx="50" cy="16" r="1.4" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></circle>' }),
+    champion: () => helmetSVG({ defs: '<linearGradient id="chg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c2"/><stop offset=".35" stop-color="#ffcf33"/><stop offset=".65" stop-color="#ff7a1a"/><stop offset="1" stop-color="#b3130c"/></linearGradient>' +
+        '<linearGradient id="chr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4632"/><stop offset=".33" stop-color="#ffd23f"/><stop offset=".66" stop-color="#3ee27a"/><stop offset="1" stop-color="#63d9ff"/><animateTransform attributeName="gradientTransform" type="rotate" values="0 .5 .5;360 .5 .5" dur="3s" repeatCount="indefinite"/></linearGradient>',
+      bg: "#1a0805", ring: "url(#chr)", shell: "url(#chg)", visor: "#160604", edge: "#fff6c2",
+      overlay: '<path d="M14 40 L57 35 L57 39 L14 44 Z" fill="#160604" opacity=".55"/><text x="22" y="47" font-family="Arial Black, Arial" font-weight="900" font-size="9" fill="#fff6c2" stroke="#7a1a00" stroke-width=".4">100</text>' + shine(1.8),
+      after: '<path d="M24 10 L26.5 3 L30.5 7.5 L34 1.5 L37.5 7.5 L41.5 3 L44 10 Z" fill="#ffd23f" stroke="#7a4a00" stroke-width=".6"><animateTransform attributeName="transform" type="translate" values="0 0;0 -1.2;0 0" dur="1.4s" repeatCount="indefinite"/></path><circle cx="34" cy="5.5" r="1.2" fill="#ff4632"/>' +
+        [[8, 14], [56, 12], [10, 50], [55, 52]].map(([x, y], i) => '<path d="M' + x + " " + (y - 3) + " L" + (x + 1) + " " + (y - 1) + " L" + (x + 3) + " " + y + " L" + (x + 1) + " " + (y + 1) + " L" + x + " " + (y + 3) + " L" + (x - 1) + " " + (y + 1) + " L" + (x - 3) + " " + y + " L" + (x - 1) + " " + (y - 1) + ' Z" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="' + (1.2 + i * 0.35).toFixed(2) + 's" repeatCount="indefinite"/></path>').join("") }),
     obsidian: () => helmetSVG({ defs: '<linearGradient id="ob" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a855f7"/><stop offset=".5" stop-color="#22e8ff"/><stop offset="1" stop-color="#a855f7"/><animateTransform attributeName="gradientTransform" type="rotate" values="0 .5 .5;360 .5 .5" dur="5s" repeatCount="indefinite"/></linearGradient>', bg: "#07060c", ring: "url(#ob)", shell: "#0c0b12", visor: "#05040a", edge: "url(#ob)",
       overlay: '<g stroke="url(#ob)" stroke-width="1.2" fill="none" opacity=".9"><path d="M14 26 L22 30 L18 40"/><path d="M22 30 L32 24 L40 32 L50 28"/><path d="M40 32 L36 46"/></g>' }),
     racing: () => helmetSVG({ defs: '<pattern id="ck" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f3efe6"/><rect width="4" height="4" fill="#111"/><rect x="4" y="4" width="4" height="4" fill="#111"/></pattern>', bg: "#ff4632", shell: "url(#ck)", visor: "#ffd23f" }),
@@ -2413,7 +2421,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     fire: ["#ff7a1a", "#ffd23f", "#c3150f"], lava: ["#ff4632", "#ff6a1a", "#ffd23f"], ice: ["#8fe3ff", "#eafcff", "#3a8ed8"], pixel: ["#ff3df2", "#22e8ff", "#5b4bff"],
     holo: ["#ff7ac6", "#3ee27a", "#63d9ff"], phantom: ["#7c3aed", "#c4b5fd", "#a78bfa"], royal: ["#7b1fa2", "#ffd23f", "#fff3b0"], diamond: ["#9fe8ff", "#ffffff", "#5ab8ff"],
     racing: ["#ff4632", "#f3efe6", "#ffd23f"], carbon: ["#ff4632", "#8a8a95", "#34343a"], camo: ["#8a7d4f", "#556b2f", "#3b4a20"], chrome: ["#e9edf2", "#9aa3ad", "#1e3a8a"],
-    blitz: ["#ffd23f", "#7b5cff", "#fff3b0"], bronze: ["#d08a4a", "#ffd6a8", "#9a5a2a"], silber: ["#d7dce3", "#ffffff", "#9aa3ae"], platin: ["#bfe3ff", "#f4fbff", "#7fa7d4"], obsidian: ["#a855f7", "#22e8ff", "#7c3aed"]
+    blitz: ["#ffd23f", "#7b5cff", "#fff3b0"], bronze: ["#d08a4a", "#ffd6a8", "#9a5a2a"], silber: ["#d7dce3", "#ffffff", "#9aa3ae"], platin: ["#bfe3ff", "#f4fbff", "#7fa7d4"], obsidian: ["#a855f7", "#22e8ff", "#7c3aed"], champion: ["#ffcf33", "#ff4632", "#fff6c2"]
   };
   const NAMED_COL = { red: "#ff0000", white: "#ffffff", green: "#008000", blue: "#0000ff", yellow: "#ffff00", black: "#000000", orange: "#ffa500", navy: "#000080" };
   async function skinPalette(sk) {
@@ -3321,7 +3329,6 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const icoVib = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M4 8v8M20 8v8M1.5 10v4M22.5 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     openLayer("<h2>" + tr("Einstellungen", "Settings") + '</h2><div class="tgls">' +
       tg("stSound", "Sound", S.sound, icoSound) + tg("stMusic", tr("Musik", "Music"), S.music, icoMusic) + tg("stHapt", "Vibration", S.haptics, icoVib) + "</div>" +
-      (AD.device === "iOS" ? '<p class="note">' + tr("iPhone: Vibration braucht iOS 18. Ton kommt auch im Lautlos-Modus.", "iPhone: vibration needs iOS 18. Sound plays even in silent mode.") + "</p>" : "") +
       '<span class="eyebrow">' + tr("Sprache", "Language") + '</span><div class="langs"><button class="lang' + (S.lang === "de" ? " on" : "") + '" id="stDe" type="button">Deutsch</button><button class="lang' + (S.lang === "en" ? " on" : "") + '" id="stEn" type="button">English</button></div>' +
       '<button class="btn ghost" id="stPrem" type="button">' + (S.premium ? tr("Werbefrei aktiv", "Ad-free active") : tr("Werbefrei spielen", "Play ad-free")) + "</button>" +
       '<button class="btn ghost" id="stProf" type="button">' + tr("Profil bearbeiten", "Edit profile") + "</button>" +
