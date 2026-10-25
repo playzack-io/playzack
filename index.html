@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.4"></script>
-<script src="backend.js?v=1.8.4"></script>
+<script src="config.js?v=1.8.5"></script>
+<script src="backend.js?v=1.8.5"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -992,7 +992,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   <section id="career" class="screen scroll" aria-label="Karriere" hidden>
     <div class="subhead"><button class="pill" type="button" data-menu data-en="Menu">Menü</button><h2 data-en="Career">Karriere</h2><span class="eyebrow" id="carStars"></span></div>
-    <p class="explain" data-en="Eight modes in rotation, each round a bit harder. One star unlocks the next level.">Acht Modi im Wechsel, jede Runde etwas schwerer. Ein Stern schaltet das nächste Level frei.</p>
+    <p class="explain" data-en="All 12 games in rotation, each round a bit harder. One star unlocks the next level.">Alle 12 Spiele im Wechsel, jede Runde etwas schwerer. Ein Stern schaltet das nächste Level frei.</p>
     <div class="levels" id="levels"></div>
   </section>
 
@@ -1395,7 +1395,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     MODES[id] = m;
   }
   const ORDER = ["ziele", "klicks", "ballon", "merken", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
-  const DAILY = ["ziele", "farbwort", "taeuschung", "lanes", "augenwinkel", "praezision", "startampel"];
+  const DAILY = ["ziele", "farbwort", "klicks", "taeuschung", "ballon", "lanes", "merken", "augenwinkel", "turm", "praezision", "startampel"];
   const COURSES = [{ name: ["Strecke A", "Track A"], seed: 1101 }, { name: ["Strecke B", "Track B"], seed: 2202 }, { name: ["Strecke C", "Track C"], seed: 3303 }];
   const offNote = () => tr("Online braucht die geteilte Version mit Anmeldung", "Online needs the shared version while signed in");
 
@@ -2503,14 +2503,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   // ---------- career ----------
-  const CAREER = ["ziele", "startampel", "farbwort", "stoppuhr", "taeuschung", "lanes", "augenwinkel", "praezision"];
+  // alle 12 Spiele abwechselnd; 50 Level = gut 4 Runden durch alle Spiele, Ziele steigen pro Runde
+  const CAREER = ["ziele", "klicks", "startampel", "farbwort", "ballon", "stoppuhr", "turm", "taeuschung", "merken", "lanes", "augenwinkel", "praezision"];
   function level(n) {
-    const i = n - 1, mode = CAREER[i % CAREER.length], tier = Math.floor(i / CAREER.length);
+    const i = n - 1, mode = CAREER[i % CAREER.length], tier = Math.floor(i / CAREER.length), t = tier * 1.5;
     const goals = {
-      ziele: 10 + tier * 12, startampel: 420 - tier * 25, farbwort: 8 + tier * 5, stoppuhr: Math.round((90 + tier * 1.3) * 10) / 10,
-      taeuschung: 8 + tier * 5, lanes: 15 + tier * 12, augenwinkel: 8 + tier * 5, praezision: 40 + tier * 20
+      ziele: Math.round(10 + t * 12), startampel: Math.round(420 - t * 25), farbwort: Math.round(8 + t * 5), stoppuhr: Math.round((90 + t * 1.3) * 10) / 10,
+      taeuschung: Math.round(8 + t * 5), lanes: Math.round(15 + t * 12), augenwinkel: Math.round(8 + t * 5), praezision: Math.round(40 + t * 20),
+      klicks: Math.round(50 + t * 12), ballon: Math.round(250 + t * 60), turm: Math.round(8 + t * 6), merken: Math.round(7 + t * 6)
     };
-    return { n, mode, tier, goal: goals[mode], lower: !!MODES[mode].lower, target: mode === "stoppuhr" ? [3, 5, 8, 12, 20, 30, 45][Math.min(tier, 6)] : undefined };
+    return { n, mode, tier, goal: goals[mode], lower: !!MODES[mode].lower, target: mode === "stoppuhr" ? [3, 5, 8, 12, 20, 30, 45][Math.min(Math.round(t), 6)] : undefined };
   }
   const thresholds = (L) => L.mode === "stoppuhr" ? [L.goal, Math.round((L.goal + (100 - L.goal) * 0.4) * 10) / 10, Math.round((L.goal + (100 - L.goal) * 0.7) * 10) / 10] : L.lower ? [L.goal, Math.round(L.goal * 0.8), Math.round(L.goal * 0.65)] : [L.goal, Math.round(L.goal * 1.3), Math.round(L.goal * 1.6)];
   function calcStars(L, v) {
