@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.3"></script>
-<script src="backend.js?v=1.8.3"></script>
+<script src="config.js?v=1.8.4"></script>
+<script src="backend.js?v=1.8.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -2418,19 +2418,40 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (sk.startsWith("s:")) return SKIN_PAL[sk.slice(2)] || def;
     try {
       const f = await flagText(sk.slice(2)); if (!f) return def;
-      const cnt = {};
-      (f.inner.match(/fill(?:=|:)\s*"?(#[0-9a-fA-F]{3,6}|[a-z]+)/g) || []).forEach((m) => {
-        let c = m.replace(/^fill(?:=|:)\s*"?/, "").toLowerCase(); c = NAMED_COL[c] || c;
-        if (!/^#[0-9a-f]{3,6}$/.test(c)) return; if (c.length === 4) c = "#" + c[1] + c[1] + c[2] + c[2] + c[3] + c[3];
-        cnt[c] = (cnt[c] || 0) + 1;
-      });
-      // Reihenfolge wie in der Flagge (z. B. Kurdistan: Rot, Weiß, Grün), häufige Farben zuerst
-      const order = Object.keys(cnt);
-      let list = order.slice().sort((a, b) => cnt[b] - cnt[a] || order.indexOf(a) - order.indexOf(b)).slice(0, 3);
-      list.sort((a, b) => order.indexOf(a) - order.indexOf(b));
-      while (list.length < 3) list.push(list[list.length - 1] || def[list.length]);
-      return list;
+      return (FLAGPAL[sk] = FLAGPAL[sk] || flagColors(f));
     } catch (e) { return def; }
+  }
+  // Flaggenfarben nach Fläche: Flagge klein zeichnen und Pixel zählen (Streifen zählen mehr als Wappen-Details)
+  const FLAGPAL = {};
+  window.__zackPal = (sk) => skinPalette(sk); // für Tests
+  function flagColors(f) {
+    return new Promise((resolve) => {
+      const def = ["#ffd23f", "#3ee27a", "#ff4632"];
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="' + f.vb + '" width="64" height="48" preserveAspectRatio="none">' + f.inner + "</svg>";
+      const im = new Image();
+      im.onload = () => {
+        try {
+          const cv = document.createElement("canvas"); cv.width = 64; cv.height = 48;
+          const g = cv.getContext("2d"); g.drawImage(im, 0, 0, 64, 48);
+          const d = g.getImageData(0, 0, 64, 48).data, cnt = {}, first = {};
+          for (let i = 0, px = 0; i < d.length; i += 4, px++) {
+            if (d[i + 3] < 200) continue;
+            const k = ((d[i] >> 4) << 8) | ((d[i + 1] >> 4) << 4) | (d[i + 2] >> 4);
+            cnt[k] = (cnt[k] || 0) + 1; if (first[k] == null) first[k] = px;
+          }
+          const hex = (k) => "#" + [(k >> 8) & 15, (k >> 4) & 15, k & 15].map((v) => (v * 17).toString(16).padStart(2, "0")).join("");
+          const dist = (a, b) => { const A = [(a >> 8) & 15, (a >> 4) & 15, a & 15], B = [(b >> 8) & 15, (b >> 4) & 15, b & 15]; return Math.abs(A[0] - B[0]) + Math.abs(A[1] - B[1]) + Math.abs(A[2] - B[2]); };
+          const keys = Object.keys(cnt).map(Number).sort((a, b) => cnt[b] - cnt[a]), pick = [];
+          for (const k of keys) { if (cnt[k] < 64 * 48 * 0.03) break; if (pick.every((p) => dist(p, k) > 5)) pick.push(k); if (pick.length === 3) break; }
+          if (!pick.length) { resolve(def); return; }
+          pick.sort((a, b) => first[a] - first[b]); // Reihenfolge wie auf der Flagge (oben/links zuerst)
+          const out = pick.map(hex); while (out.length < 3) out.push(out[out.length % pick.length]);
+          resolve(out);
+        } catch (e) { resolve(def); }
+      };
+      im.onerror = () => resolve(def);
+      im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    });
   }
   const TAUNTS = [["{n}, zu langsam! 💨", "{n}, too slow! 💨"], ["Tschüss {n}! 💨", "Bye {n}! 💨"], ["{n} sieht nur noch Staub 🏁", "{n} only sees dust 🏁"], ["Nächstes Mal vielleicht, {n} 😏", "Maybe next time, {n} 😏"], ["Gas gegeben, {n} abgehängt 🏎️", "Full throttle, {n} left behind 🏎️"]];
   // Sieg-Moment: dein Helm rast rein, heult auf, rast davon – in den Farben deines Skins
