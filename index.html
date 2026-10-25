@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.6"></script>
-<script src="backend.js?v=1.8.6"></script>
+<script src="config.js?v=1.8.7"></script>
+<script src="backend.js?v=1.8.7"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -315,6 +315,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .vfx-trail { position: absolute; right: 62%; top: 22%; height: 56%; width: 0; display: flex; flex-direction: column; border-radius: 99px 0 0 99px; overflow: hidden; filter: blur(1px); animation: vfxTrail 2.2s cubic-bezier(.4, 0, .2, 1) both; }
 .vfx-trail span { flex: 1; } .vfx-trail span:nth-child(1) { background: linear-gradient(90deg, transparent, var(--c1)); } .vfx-trail span:nth-child(2) { background: linear-gradient(90deg, transparent, var(--c2)); } .vfx-trail span:nth-child(3) { background: linear-gradient(90deg, transparent, var(--c3)); }
 .vfx-t { position: absolute; left: 0; right: 0; top: calc(42% + min(22vw, 100px) + 22px); text-align: center; font-family: var(--font-display); font-size: clamp(30px, 9vw, 60px); white-space: nowrap; color: #fff; -webkit-text-stroke: 2px rgba(0, 0, 0, .55); paint-order: stroke fill; text-shadow: 0 5px 0 rgba(0, 0, 0, .5), 0 0 26px rgba(0, 0, 0, .45); animation: vfxText .55s .5s cubic-bezier(.2, 1.5, .4, 1) both; }
+.vfx-t.vfx-lose { font-size: clamp(22px, 7vw, 46px); }
 .vfx-taunt { position: absolute; left: 16px; right: 16px; top: calc(42% + min(22vw, 100px) + 22px + clamp(42px, 11vw, 74px)); text-align: center; font-family: var(--font-num); font-weight: 800; font-size: clamp(18px, 5.4vw, 28px); color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, .8); animation: vfxTaunt .5s 1.35s cubic-bezier(.2, 1.4, .4, 1) both; }
 .vfx i { position: absolute; top: -4%; left: var(--x); width: calc(9px * var(--s)); height: calc(15px * var(--s)); background: var(--c); border-radius: 2px; animation: vfxFall 1.8s var(--d) cubic-bezier(.3, .6, .5, 1) both; }
 @keyframes vfxIn { from { opacity: 0; } } @keyframes vfxOut { to { opacity: 0; } }
@@ -2458,27 +2459,31 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   const TAUNTS = [["{n}, zu langsam! 💨", "{n}, too slow! 💨"], ["Tschüss {n}! 💨", "Bye {n}! 💨"], ["{n} sieht nur noch Staub 🏁", "{n} only sees dust 🏁"], ["Nächstes Mal vielleicht, {n} 😏", "Maybe next time, {n} 😏"], ["Gas gegeben, {n} abgehängt 🏎️", "Full throttle, {n} left behind 🏎️"]];
   // Sieg-Moment: dein Helm rast rein, heult auf, rast davon – in den Farben deines Skins
-  async function victoryFX(kind, opp) {
+  // kind: "win" | "record" | "lose" (dann zeigt sie den Gegner: seinen Skin, sein Sieg, sein Spruch gegen dich)
+  async function victoryFX(kind, opp, who) {
     try {
       const old = document.querySelector(".vfx"); if (old) old.remove();
-      const pr = profile() || {}, sk = skinValid(pr.sk) ? pr.sk : null;
+      const lose = kind === "lose", w = lose ? who || {} : null;
+      const pr = lose ? w : profile() || {}, sk = skinValid(pr.sk) ? pr.sk : null;
       const pal = await skinPalette(sk);
       const v = h("div", "vfx");
       v.style.cssText = "--c1:" + pal[0] + ";--c2:" + pal[1] + ";--c3:" + pal[2];
       const t = TAUNTS[Math.floor(Math.random() * TAUNTS.length)];
-      const taunt = kind === "record" ? tr("Neuer Bestwert 🏁", "New personal best 🏁") : opp ? L(t).replace("{n}", opp) : tr("Gas gegeben! 🏎️", "Full throttle! 🏎️");
+      const meName = (profile() || {}).uname ? "@" + profile().uname : tr("du", "you");
+      const taunt = kind === "record" ? tr("Neuer Bestwert 🏁", "New personal best 🏁") : lose ? L(t).replace("{n}", meName) : opp ? L(t).replace("{n}", opp) : tr("Gas gegeben! 🏎️", "Full throttle! 🏎️");
+      const wName = lose ? (w.bot ? "Bot" : w.name || opp || tr("Gegner", "Opponent")) : "";
       const cols = pal.concat(["#ffffff", pal[0], pal[1]]);
       v.innerHTML = '<div class="vfx-rays"></div>' +
         '<div class="vfx-lines">' + Array.from({ length: 14 }, (_, i) => '<b style="--y:' + (8 + Math.random() * 84).toFixed(1) + "%;--d:" + (Math.random() * 0.9).toFixed(2) + "s;--w:" + (60 + Math.random() * 140).toFixed(0) + "px;--c:" + pal[i % 3] + '"></b>').join("") + "</div>" +
         '<div class="vfx-car"><div class="vfx-trail"><span></span><span></span><span></span></div><div class="vfx-av"><img alt=""></div></div>' +
-        '<div class="vfx-t">' + (kind === "record" ? tr("NEUER REKORD!", "NEW RECORD!") : tr("SIEG!", "VICTORY!")) + "</div>" +
+        '<div class="vfx-t' + (lose ? " vfx-lose" : "") + '">' + (kind === "record" ? tr("NEUER REKORD!", "NEW RECORD!") : lose ? esc(wName) + tr(" GEWINNT", " WINS") : tr("SIEG!", "VICTORY!")) + "</div>" +
         '<div class="vfx-taunt">' + esc(taunt) + "</div>" +
         Array.from({ length: 34 }, (_, i) => '<i style="--x:' + Math.round(Math.random() * 100) + "%;--d:" + (1.1 + Math.random() * 0.6).toFixed(2) + "s;--r:" + Math.round(Math.random() * 720 - 360) + "deg;--c:" + cols[i % cols.length] + ";--s:" + (0.7 + Math.random() * 0.8).toFixed(2) + '"></i>').join("");
       document.body.appendChild(v);
       const img = v.querySelector(".vfx-av img");
-      if (sk) paintAvatar(img, { sk }); else paintAvatar(img, meCard());
-      SFX.f1(); buzz([30, 60, 30, 60, 120]);
-      setTimeout(() => { SFX.winChord(); buzz([20, 30, 20]); }, 1650);
+      if (lose && w.bot) img.src = BOT_AV; else if (sk) paintAvatar(img, { sk }); else paintAvatar(img, lose ? w : meCard());
+      SFX.f1(); buzz(lose ? [20, 60, 20] : [30, 60, 30, 60, 120]);
+      setTimeout(() => { if (lose) SFX.lose(); else { SFX.winChord(); buzz([20, 30, 20]); } }, 1650);
       setTimeout(() => v.classList.add("out"), 2700);
       setTimeout(() => v.remove(), 3200);
     } catch (e) {}
@@ -2977,7 +2982,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function showDuelResult(info) {
     const D = info.duel, m = MODES[D.mode];
-    if (D.won) { setTimeout(() => victoryFX("win", D.oppName || (D.kind === "bot" ? "Bot" : "")), 30); } else if (D.draw) SFX.coin(); else SFX.lose();
+    if (D.won) { setTimeout(() => victoryFX("win", D.oppName || (D.kind === "bot" ? "Bot" : "")), 30); }
+    else if (D.draw) SFX.coin();
+    else { const op = D.kind === "bot" ? { bot: true, name: "Bot" } : Object.assign({}, D.oppProf || {}, { name: (D.oppProf && D.oppProf.name) || D.oppName }); setTimeout(() => victoryFX("lose", D.oppName, op), 30); }
     buzz(D.won ? [20, 40, 20, 40, 60] : 60);
     const cls = D.won ? "dwin" : D.draw ? "ddraw" : "dlose";
     const unit = info.unit ? "<small>" + esc(info.unit) + "</small>" : "";
