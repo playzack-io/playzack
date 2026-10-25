@@ -50,6 +50,24 @@
   function clean(d) { return JSON.parse(JSON.stringify(d, function (k, v) { return v === undefined ? null : v; })); }
   var db = {
     doc: function (p) { return wrapDoc(fs.doc(p)); },
+    // Benutzername dauerhaft reservieren (einmalig pro Name). Gibt true zurück, wenn er jetzt dir gehört.
+    claimName: function (name, old) {
+      var uid = user && user.uid; if (!uid) return Promise.resolve(false);
+      var ref = fs.doc("unames/" + name), oref = old && old !== name ? fs.doc("unames/" + old) : null;
+      return fs.runTransaction(function (tx) {
+        return tx.get(ref).then(function (s) {
+          return (oref ? tx.get(oref) : Promise.resolve(null)).then(function (os) {
+            var d = s.exists ? s.data() : null, now = Date.now();
+            if (d && d.uid && d.uid !== uid) return false;
+            if (d && !d.uid && d.holder && d.holder !== uid && d.exp > now) return false;
+            tx.set(ref, { uid: uid, at: now });
+            if (os && os.exists && os.data().uid === uid) tx.delete(oref);
+            return true;
+          });
+        });
+      });
+    },
+    nameOwner: function (name) { return fs.doc("unames/" + name).get().then(function (s) { var d = s.exists ? s.data() : null; return d && d.uid ? d.uid : null; }); },
     collection: function (p) {
       var c = fs.collection(p);
       var add = c.add.bind(c);
@@ -134,13 +152,35 @@
     }
   };
 
-  // ---------- Konto: E-Mail + Passwort ----------
+  // ---------- Konto: E-Mail + Passwort, Google, Apple ----------
+  function loadSave(u) { return fs.doc("saves/" + u.uid).get().then(function (d) { savedAt = d.exists ? d.data().at : null; return d.exists ? JSON.parse(d.data().snap || "{}") : null; }); }
+  function providerOf(u) { var p = (u && u.providerData || []).map(function (x) { return x.providerId; }); return p.indexOf("apple.com") >= 0 ? "apple" : p.indexOf("google.com") >= 0 ? "google" : "email"; }
   function wrap(e) { return { code: e && e.code ? String(e.code).replace("auth/", "") : "error" }; }
   function lang() { try { auth.languageCode = (localStorage.getItem("zack.lang") || '"de"').replace(/"/g, ""); } catch (e) {} }
   window.ZACK_AUTH = {
     kind: "firebase",
     ready: function () { return ready; },
-    current: function () { return user && !user.isAnonymous ? { email: user.email, savedAt: savedAt } : null; },
+    current: function () { if (!user || user.isAnonymous) return null; var em = user.email || ((user.providerData || []).map(function (x) { return x.email; }).filter(Boolean)[0]) || ""; return { email: em, savedAt: savedAt, provider: providerOf(user) }; },
+    providers: (window.ZACK_PROVIDERS || []).slice(),
+    // Mit Google / Apple: Gastkonto wird verknüpft (gleiche ID, Fortschritt bleibt). Gibt es das Konto schon, wird dort angemeldet.
+    signInWith: function (name) {
+      return ready.then(function () {
+        var prov;
+        if (name === "google") { prov = new firebase.auth.GoogleAuthProvider(); prov.setCustomParameters({ prompt: "select_account" }); }
+        else if (name === "apple") { prov = new firebase.auth.OAuthProvider("apple.com"); prov.addScope("email"); prov.addScope("name"); }
+        else throw { code: "unknown-provider" };
+        lang();
+        var cu = auth.currentUser;
+        var go = cu && cu.isAnonymous ? cu.linkWithPopup(prov).then(function (c) { user = c.user; return { created: true, snap: null }; }) : auth.signInWithPopup(prov).then(function (c) { user = c.user; return loadSave(user).then(function (snap) { return { created: false, snap: snap }; }); });
+        return go.catch(function (e) {
+          var code = e && e.code ? String(e.code) : "";
+          if (/credential-already-in-use|email-already-in-use|account-exists/.test(code) && e.credential) {
+            return auth.signInWithCredential(e.credential).then(function (c) { user = c.user; return loadSave(user).then(function (snap) { return { created: false, snap: snap }; }); });
+          }
+          throw e;
+        });
+      }).catch(function (e) { throw wrap(e); });
+    },
     signUp: function (email, pw) {
       return ready.then(function () {
         var cred = firebase.auth.EmailAuthProvider.credential(email, pw);
@@ -149,8 +189,7 @@
     },
     signIn: function (email, pw) {
       return ready.then(function () { return auth.signInWithEmailAndPassword(email, pw); })
-        .then(function (c) { user = c.user; return fs.doc("saves/" + user.uid).get(); })
-        .then(function (d) { savedAt = d.exists ? d.data().at : null; return d.exists ? JSON.parse(d.data().snap || "{}") : null; }, function (e) { throw wrap(e); });
+        .then(function (c) { user = c.user; return loadSave(user); }, function (e) { throw wrap(e); });
     },
     save: function (snap) { return ready.then(function () { if (!user || user.isAnonymous) return; var at = Date.now(); return fs.doc("saves/" + user.uid).set({ snap: JSON.stringify(snap), at: at }).then(function () { savedAt = at; }); }); },
     signOut: function () { return ready.then(function () { rooms.forEach(function (r) { try { r.leave(); } catch (e) {} }); return auth.signOut(); }).then(function () { user = null; }); },

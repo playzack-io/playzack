@@ -296,23 +296,42 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .sk-pick img, .sk-pick .sk-none { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; color: var(--muted); background: rgba(255,255,255,.06); }
 .sk-pick small { font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sk-pick.on { border-color: var(--volt); box-shadow: inset 0 0 0 1px var(--volt); }
-/* Sieg-Moment */
-.vfx { position: fixed; inset: 0; z-index: 80; pointer-events: none; display: grid; place-items: center; overflow: hidden; animation: vfxIn .25s ease-out both; }
-.vfx.out { animation: vfxOut .45s ease-in forwards; }
-.vfx::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, rgba(255, 210, 63, .32), rgba(10, 9, 13, .78) 62%); }
-.vfx-rays { position: absolute; left: 50%; top: 42%; width: 170vmax; height: 170vmax; transform: translate(-50%, -50%); background: repeating-conic-gradient(from 0deg, rgba(255, 220, 90, .22) 0deg 9deg, transparent 9deg 22deg); animation: vfxSpin 6s linear infinite; mask: radial-gradient(circle, #000 0 18%, transparent 55%); -webkit-mask: radial-gradient(circle, #000 0 18%, transparent 55%); }
-.vfx-av { position: absolute; left: 50%; top: 42%; width: min(46vw, 210px); aspect-ratio: 1; transform: translate(-50%, -50%); animation: vfxPop .7s cubic-bezier(.2, 1.6, .4, 1) both; }
-.vfx-av::before { content: ""; position: absolute; inset: -10%; border-radius: 50%; background: radial-gradient(circle, rgba(255, 210, 63, .7), transparent 68%); animation: vfxGlow 1.2s ease-in-out infinite alternate; }
-.vfx-av img { position: relative; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 5px #ffd23f, 0 0 40px rgba(255, 210, 63, .8); }
-.vfx-av img.pb { box-shadow: none; filter: drop-shadow(0 0 18px rgba(255, 210, 63, .9)); }
-.vfx-t { position: absolute; left: 0; right: 0; top: calc(42% + min(23vw, 105px) + 26px); text-align: center; font-family: var(--font-display); font-size: clamp(30px, 9vw, 60px); white-space: nowrap; color: var(--volt); text-shadow: 0 4px 0 #8a5a00, 0 0 30px rgba(255, 210, 63, .7); animation: vfxText .6s .18s cubic-bezier(.2, 1.5, .4, 1) both; }
-.vfx i { position: absolute; top: -4%; left: var(--x); width: calc(9px * var(--s)); height: calc(15px * var(--s)); background: var(--c); border-radius: 2px; animation: vfxFall 1.9s var(--d) cubic-bezier(.3, .6, .5, 1) both; }
-@keyframes vfxIn { from { opacity: 0; } } @keyframes vfxOut { to { opacity: 0; transform: scale(1.06); } }
+/* Sieg-Moment: Helm rast rein, heult auf, rast davon */
+.vfx { --c1: #ffd23f; --c2: #3ee27a; --c3: #ff4632; position: fixed; inset: 0; z-index: 80; pointer-events: none; overflow: hidden; animation: vfxIn .2s ease-out both; }
+.vfx.out { animation: vfxOut .5s ease-in forwards; }
+.vfx::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--c1) 38%, transparent), rgba(10, 9, 13, .86) 65%); }
+.vfx-rays { position: absolute; left: 50%; top: 42%; width: 170vmax; height: 170vmax; transform: translate(-50%, -50%); background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--c1) 30%, transparent) 0deg 8deg, transparent 8deg 15deg, color-mix(in srgb, var(--c2) 26%, transparent) 15deg 23deg, transparent 23deg 30deg); animation: vfxSpin 7s linear infinite; mask: radial-gradient(circle, #000 0 16%, transparent 56%); -webkit-mask: radial-gradient(circle, #000 0 16%, transparent 56%); opacity: 0; animation: vfxSpin 7s linear infinite, vfxRays .4s .45s ease-out forwards; }
+.vfx-lines b { position: absolute; left: 100%; top: var(--y); width: var(--w); height: 3px; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--c)); opacity: .9; animation: vfxLine .45s var(--d) linear 3; }
+.vfx-car { position: absolute; left: 50%; top: 42%; width: min(44vw, 200px); aspect-ratio: 1; transform: translate(-50%, -50%); animation: vfxCar 2.2s cubic-bezier(.4, 0, .2, 1) both; }
+.vfx-av { position: absolute; inset: 0; animation: vfxRev .12s linear .6s 5; }
+.vfx-av::before { content: ""; position: absolute; inset: -12%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--c1) 75%, transparent), transparent 68%); animation: vfxGlow .9s ease-in-out infinite alternate; }
+.vfx-av img { position: relative; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 5px var(--c1), 0 0 44px var(--c1); }
+.vfx-av img.pb { box-shadow: none; border-radius: 0; filter: drop-shadow(0 0 18px var(--c1)); }
+.vfx-trail { position: absolute; right: 62%; top: 22%; height: 56%; width: 0; display: flex; flex-direction: column; border-radius: 99px 0 0 99px; overflow: hidden; filter: blur(1px); animation: vfxTrail 2.2s cubic-bezier(.4, 0, .2, 1) both; }
+.vfx-trail span { flex: 1; } .vfx-trail span:nth-child(1) { background: linear-gradient(90deg, transparent, var(--c1)); } .vfx-trail span:nth-child(2) { background: linear-gradient(90deg, transparent, var(--c2)); } .vfx-trail span:nth-child(3) { background: linear-gradient(90deg, transparent, var(--c3)); }
+.vfx-t { position: absolute; left: 0; right: 0; top: calc(42% + min(22vw, 100px) + 22px); text-align: center; font-family: var(--font-display); font-size: clamp(30px, 9vw, 60px); white-space: nowrap; color: var(--c1); text-shadow: 0 4px 0 rgba(0, 0, 0, .55), 0 0 30px var(--c1); animation: vfxText .55s .5s cubic-bezier(.2, 1.5, .4, 1) both; }
+.vfx-taunt { position: absolute; left: 16px; right: 16px; top: calc(42% + min(22vw, 100px) + 22px + clamp(42px, 11vw, 74px)); text-align: center; font-family: var(--font-num); font-weight: 800; font-size: clamp(18px, 5.4vw, 28px); color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, .8); animation: vfxTaunt .5s 1.35s cubic-bezier(.2, 1.4, .4, 1) both; }
+.vfx i { position: absolute; top: -4%; left: var(--x); width: calc(9px * var(--s)); height: calc(15px * var(--s)); background: var(--c); border-radius: 2px; animation: vfxFall 1.8s var(--d) cubic-bezier(.3, .6, .5, 1) both; }
+@keyframes vfxIn { from { opacity: 0; } } @keyframes vfxOut { to { opacity: 0; } }
 @keyframes vfxSpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-@keyframes vfxPop { from { transform: translate(-50%, -50%) scale(.1) rotate(-25deg); opacity: 0; } }
-@keyframes vfxGlow { to { transform: scale(1.12); opacity: .6; } }
-@keyframes vfxText { from { transform: scale(2.2); opacity: 0; } }
+@keyframes vfxRays { to { opacity: 1; } }
+@keyframes vfxLine { from { transform: translateX(0); } to { transform: translateX(-140vw); } }
+@keyframes vfxCar {
+  0% { transform: translate(-190vw, -50%) skewX(-18deg) scale(.9); }
+  24% { transform: translate(-50%, -50%) skewX(10deg) scale(1.08); }
+  30% { transform: translate(-50%, -50%) skewX(-4deg) scale(1); }
+  34%, 55% { transform: translate(-50%, -50%) skewX(0) scale(1); }
+  60% { transform: translate(-58%, -50%) skewX(8deg) scale(1.02); }
+  78% { transform: translate(160vw, -50%) skewX(-22deg) scale(.95); }
+  100% { transform: translate(160vw, -50%) skewX(-22deg) scale(.95); }
+}
+@keyframes vfxTrail { 0% { width: 80vw; opacity: .9; } 24% { width: 30vw; } 32%, 56% { width: 0; opacity: 0; } 62% { width: 30vw; opacity: 1; } 78% { width: 120vw; opacity: .9; } 100% { width: 120vw; opacity: 0; } }
+@keyframes vfxRev { 25% { transform: translate(-2px, 1px) rotate(-1deg); } 75% { transform: translate(2px, -1px) rotate(1deg); } }
+@keyframes vfxGlow { to { transform: scale(1.14); opacity: .6; } }
+@keyframes vfxText { from { transform: scale(2.4); opacity: 0; } }
+@keyframes vfxTaunt { from { transform: translateY(16px) scale(.8); opacity: 0; } }
 @keyframes vfxFall { to { transform: translateY(110vh) rotate(var(--r)); } }
+img.pb { box-shadow: none !important; border: 0 !important; background: transparent !important; outline: 0 !important; }
 /* Münzen fliegen ins Guthaben */
 .fly-coin { position: fixed; left: 0; top: 0; z-index: 70; pointer-events: none; margin: -11px 0 0 -11px; }
 .fly-coin .coin { width: 22px; height: 22px; display: block; filter: drop-shadow(0 2px 6px rgba(255, 190, 40, .8)); }
@@ -669,6 +688,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 @keyframes skpop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 /* Konto */
 .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sso { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 2px; }
+.sso-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border-radius: 14px; padding: 13px 14px; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer; border: 1px solid transparent; }
+.sso-btn svg { width: 20px; height: 20px; flex: none; }
+.sso-btn.apple { background: #fff; color: #000; }
+.sso-btn.google { background: #fff; color: #1f1f1f; border-color: #dadce0; }
+.sso-btn:disabled { opacity: .6; }
+.sso-or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
+.sso-or::before, .sso-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .acct-form { display: flex; flex-direction: column; gap: 6px; text-align: left; }
 .acct-l { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 4px; }
 .acct-f { display: flex; align-items: center; background: var(--housing); border: 1px solid var(--line); border-radius: 12px; }
@@ -1035,7 +1062,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // ---------- storage (best effort) ----------
   const store = {
     get(k, d) { try { const v = localStorage.getItem("zack." + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem("zack." + k, JSON.stringify(v)); } catch (e) {} }
+    set(k, v) { try { localStorage.setItem("zack." + k, JSON.stringify(v)); } catch (e) {} if (!/^(premium|plan|sound|music|haptics|lang|ads|mig:)/.test(k)) { try { acctAutosave(); } catch (e) {} } }
   };
   const S = {
     premium: store.get("premium", false), sound: store.get("sound", true), music: store.get("music", true), haptics: store.get("haptics", true),
@@ -1192,6 +1219,34 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       [2093, 2637, 3136, 2349, 2794, 3520].forEach((f, i) => tone(f, 0.18, "sine", 0.07, 1.1, t0 + 0.12 + i * 0.07));
       noise(0.5, 0.06, t0 + 0.1, null, 7000);
     };
+    // Formel-1-Motor: drei Gänge hochschalten, kurz aufheulen, dann mit Doppler vorbeirasen
+    SFX.f1 = function () {
+      if (!on()) return;
+      const a = ensure(); if (!a) return;
+      const t = a.currentTime + 0.02;
+      const o1 = a.createOscillator(), o2 = a.createOscillator(), o3 = a.createOscillator(), ws = a.createWaveShaper(), f = a.createBiquadFilter(), g = a.createGain();
+      const pan = a.createStereoPanner ? a.createStereoPanner() : null;
+      const curve = new Float32Array(256); for (let i = 0; i < 256; i++) { const x = i / 128 - 1; curve[i] = Math.tanh(x * 3.2); } ws.curve = curve;
+      o1.type = "sawtooth"; o2.type = "square"; o3.type = "sawtooth"; o2.detune.value = 9; o3.detune.value = -7;
+      f.type = "lowpass"; f.frequency.value = 2400; f.Q.value = 2;
+      const F = (o, k) => {
+        const p = o.frequency; p.setValueAtTime(95 * k, t);
+        p.exponentialRampToValueAtTime(270 * k, t + 0.3); p.setValueAtTime(175 * k, t + 0.32);
+        p.exponentialRampToValueAtTime(340 * k, t + 0.56); p.setValueAtTime(240 * k, t + 0.58);
+        // Aufheulen im Stand
+        p.exponentialRampToValueAtTime(430 * k, t + 0.72); p.exponentialRampToValueAtTime(300 * k, t + 0.86); p.exponentialRampToValueAtTime(460 * k, t + 1.0); p.exponentialRampToValueAtTime(330 * k, t + 1.12);
+        // Vollgas und vorbei (Doppler: erst hoch, dann tief)
+        p.exponentialRampToValueAtTime(560 * k, t + 1.38); p.exponentialRampToValueAtTime(330 * k, t + 1.75); p.exponentialRampToValueAtTime(260 * k, t + 2.05);
+      };
+      F(o1, 1); F(o2, 0.5); F(o3, 2);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + 0.08); g.gain.setValueAtTime(0.16, t + 1.1);
+      g.gain.exponentialRampToValueAtTime(0.3, t + 1.4); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.1);
+      [o1, o2, o3].forEach((o) => o.connect(ws)); ws.connect(f); f.connect(g);
+      if (pan) { pan.pan.setValueAtTime(-0.2, t); pan.pan.setValueAtTime(-0.2, t + 1.15); pan.pan.linearRampToValueAtTime(0.9, t + 1.9); g.connect(pan); pan.connect(sfx); } else g.connect(sfx);
+      [o1, o2, o3].forEach((o) => { o.start(t); o.stop(t + 2.2); });
+      noise(0.5, 0.18, 1.15, null, 4500);
+    };
+    SFX.winChord = function () { if (!on()) return; [523, 659, 784, 1047].forEach((fr) => tone(fr, 0.8, "triangle", 0.13, 1)); [2093, 2637, 3136, 2794].forEach((fr, i) => tone(fr, 0.18, "sine", 0.07, 1.1, 0.08 + i * 0.07)); };
     SFX.coinTick = function (i) { if (!on()) return; const f = 1180 + Math.min(i || 0, 16) * 55; tone(f, 0.05, "square", 0.08, 1.2); tone(f * 1.5, 0.08, "triangle", 0.1, 1, 0.03); };
     SFX.levelup = function () {
       if (!on()) return;
@@ -1748,22 +1803,43 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       return q.docs.some((d) => d.id !== NET.me);
     } catch (e) { return null; }
   }
-  async function claimUname(n) {
-    // kurze Sperre auf den Namen, dann prüfen, dann im eigenen Profil speichern
+  // Ergebnis: true = gehört dir, false = vergeben, "offline" = gerade nicht prüfbar
+  async function claimUname(n, old) {
     if (!ONLINE || !NET.ready) return true;
     await NET.ready;
-    if (!NET.ok) return true;
+    if (!NET.ok) return "offline";
     try {
-      const lease = await NET.db.doc("unames/" + n).acquire({ holder: NET.me, ttlMs: 8000 });
-      if (!lease.acquired) return false;
-      if (await unameTaken(n)) return false;
+      if (typeof NET.db.claimName === "function") {
+        const owner = await NET.db.nameOwner(n).catch(() => null);
+        if (owner && owner !== NET.me) return false;
+        if (!owner && (await unameTaken(n))) return false; // alter Name ohne Reservierung
+        if (!(await NET.db.claimName(n, old))) return false;
+      } else {
+        const lease = await NET.db.doc("unames/" + n).acquire({ holder: NET.me, ttlMs: 8000 });
+        if (!lease.acquired) return false;
+        if (await unameTaken(n)) return false;
+      }
       await pushProfile();
       return true;
-    } catch (e) { return false; }
+    } catch (e) { return "offline"; }
+  }
+  // Beim Start: eigenen Namen reservieren. Hat ihn schon jemand anderes, neuen wählen lassen.
+  async function ensureName() {
+    const pr = profile(); if (!pr || !pr.uname || !NET.ok || typeof NET.db.claimName !== "function") return;
+    try {
+      const owner = await NET.db.nameOwner(pr.uname);
+      if (owner === NET.me) return;
+      if (!owner && (await NET.db.claimName(pr.uname))) return;
+      if (owner && owner !== NET.me) setTimeout(() => {
+        if (!layer.hidden) return;
+        openLayer('<span class="eyebrow">' + tr("Benutzername", "Username") + "</span><h2>" + tr("Neuen Namen wählen", "Pick a new name") + "</h2><p>" + tr("@" + pr.uname + " gehört schon jemand anderem. Jeder Name gibt es nur einmal, such dir bitte einen neuen aus.", "@" + pr.uname + " already belongs to someone else. Every name exists only once, please pick a new one.") + '</p><button class="btn" id="nmNew" type="button">' + tr("Namen ändern", "Change name") + "</button>");
+        on("nmNew", () => showProfile(false));
+      }, 1200);
+    } catch (e) {}
   }
   function playerDoc() {
     const pr = profile() || {};
-    const d = { seen: Date.now(), uname: pr.uname || null, unameLc: pr.uname || null, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags), lvl: W.lvl };
+    const d = { seen: Date.now(), uname: pr.uname || null, unameLc: pr.uname || null, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags), lvl: W.lvl, own: ownedSkins().slice(0, 300), fown: flagsOwned().slice(0, 300) };
     ORDER.forEach((id) => { const b = store.get("best:" + id, null); if (typeof b === "number" && isFinite(b)) d["b_" + id] = b; });
     const wk = weekId();
     [wk, wk - 1].forEach((w) => ORDER.forEach((id) => { const b = store.get("wbest:" + w + ":" + id, null); if (typeof b === "number" && isFinite(b) && b > 0) d["w" + w + "_" + id] = b; }));
@@ -1777,6 +1853,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     try { const sn = await NET.db.doc("players/" + NET.me).get(); server = sn.exists ? sn.data() : null; } catch (e) {}
     const wk = weekId();
     if (server) ORDER.forEach((id) => ["b_" + id, "w" + wk + "_" + id, "w" + (wk - 1) + "_" + id].forEach((f) => { const a = local[f], b = server[f]; if (typeof b === "number" && isFinite(b) && b > 0 && (a == null || (MODES[id].lower ? b < a : b > a))) local[f] = b; }));
+    if (server) {
+      const sk_ = Array.isArray(server.own) ? server.own.filter(skinValid) : [], fl_ = Array.isArray(server.fown) ? server.fown.filter(isFlag) : [];
+      if (sk_.some((x) => !ownedSkins().includes(x))) { grantSkins(sk_); local.own = ownedSkins().slice(0, 300); }
+      if (fl_.some((x) => !hasFlag(x))) { fl_.forEach(grantFlag); local.fown = flagsOwned().slice(0, 300); }
+    }
     await NET.db.doc("players/" + NET.me).set(local);
   }
   async function pushProfile() {
@@ -2001,11 +2082,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const showPh = pm === "photo" && photo, showSk = pm === "avatar" ? null : sk;
       store.set("profile", { uname: v, av, photo: showPh ? photo : null, photoKeep: showPh ? null : photo, sk: pm === "skin" && !sk ? null : showSk, flags: cleanFlags(flags) });
       const changed = !prev || prev.uname !== v;
-      const ok = changed ? await claimUname(v) : (await pushProfile(), true);
-      if (!ok) {
+      const ok = changed ? await claimUname(v, prev && prev.uname) : (await pushProfile(), true);
+      if (ok !== true) {
         if (prev) store.set("profile", prev); else store.set("profile", null);
         btn.disabled = false; btn.textContent = first ? tr("Los geht's", "Let's go") : tr("Speichern", "Save");
-        err.hidden = false; err.textContent = tr("@" + v + " ist schon vergeben. Probier einen anderen Namen.", "@" + v + " is already taken. Try another name.");
+        err.hidden = false; err.textContent = ok === "offline" ? tr("Keine Verbindung. Ob der Name frei ist, lässt sich gerade nicht prüfen. Versuch es gleich nochmal.", "No connection. We can't check if the name is free right now. Try again in a moment.") : tr("@" + v + " ist schon vergeben. Probier einen anderen Namen.", "@" + v + " is already taken. Try another name.");
         return;
       }
       SFX.coin(); renderProfileChip(); acctAutosave();
@@ -2066,7 +2147,29 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   let acctSaveT = 0;
   function acctAutosave() {
     const A = AUTH(); if (!A.current()) return;
-    clearTimeout(acctSaveT); acctSaveT = setTimeout(() => { A.save(snapshot()).catch(() => {}); }, 1500);
+    clearTimeout(acctSaveT); acctSaveT = setTimeout(() => { acctSaveT = 0; A.save(snapshot()).catch(() => {}); }, 1500);
+  }
+  // beim Verlassen der App sofort sichern
+  const acctFlush = () => { if (!acctSaveT) return; clearTimeout(acctSaveT); acctSaveT = 0; try { const A = AUTH(); if (A.current()) A.save(snapshot()).catch(() => {}); } catch (e) {} };
+  addEventListener("pagehide", acctFlush);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") acctFlush(); });
+  // Spielstand vom Konto mit dem auf diesem Gerät zusammenführen: nichts Gekauftes oder Erspieltes geht verloren
+  function mergeSnap(srv, loc) {
+    const out = Object.assign({}, loc, srv), J = (x) => { try { return JSON.parse(x); } catch (e) { return null; } };
+    const S_ = (k) => J(srv["zack." + k]), L_ = (k) => J(loc["zack." + k]), put = (k, v) => { out["zack." + k] = JSON.stringify(v); };
+    ["skins", "flagsOwned"].forEach((k) => { const a = S_(k), b = L_(k); if (Array.isArray(a) || Array.isArray(b)) put(k, Array.from(new Set([].concat(a || [], b || [])))); });
+    ["coins", "tokens"].forEach((k) => { const a = S_(k), b = L_(k); if (typeof a === "number" || typeof b === "number") put(k, Math.max(a || 0, b || 0)); });
+    const la = S_("lvl") || 1, lb = L_("lvl") || 1, xa = S_("xp") || 0, xb = L_("xp") || 0;
+    if (lb > la || (lb === la && xb > xa)) { put("lvl", lb); put("xp", xb); }
+    const ca = S_("career") || {}, cb = L_("career") || {}, cm = Object.assign({}, ca);
+    Object.keys(cb).forEach((n) => { cm[n] = Math.max(cm[n] || 0, cb[n] || 0); }); if (Object.keys(cm).length) put("career", cm);
+    Object.keys(loc).forEach((key) => {
+      const m = key.match(/^zack\.(w?best):(?:\d+:)?([a-z]+)$/); if (!m || !MODES[m[2]]) return;
+      const a = J(srv[key]), b = J(loc[key]); if (typeof b !== "number") return;
+      if (typeof a !== "number" || (MODES[m[2]].lower ? b < a : b > a)) out[key] = loc[key];
+    });
+    if (!srv["zack.profile"] && loc["zack.profile"]) out["zack.profile"] = loc["zack.profile"];
+    return out;
   }
   const acctErr = (e) => {
     const c = (e && e.code) || "";
@@ -2087,7 +2190,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const testNote = A.kind === "local" ? '<p class="note acct-test">' + tr("Testmodus: Das Konto wird nur auf diesem Gerät gespeichert. Sobald der Server läuft, gilt dasselbe Konto auf jedem Handy und Computer.", "Test mode: the account is stored only on this device. Once the server runs, the same account works on every phone and computer.") + (ONLINE ? tr(" Im Claude-Link bist du für Online sowieso über dein Claude-Konto angemeldet.", " In the Claude link you're signed in through your Claude account for online play anyway.") : "") + "</p>" : "";
     const cur = A.current();
     if (cur) {
-      openLayer('<span class="eyebrow">' + tr("Konto", "Account") + "</span><h2>" + tr("Du bist angemeldet", "You're signed in") + '</h2><p class="acct-mail">' + esc(cur.email) + "</p>" +
+      openLayer('<span class="eyebrow">' + tr("Konto", "Account") + "</span><h2>" + tr("Du bist angemeldet", "You're signed in") + '</h2><p class="acct-mail">' + (cur.provider === "apple" ? " Apple · " : cur.provider === "google" ? "Google · " : "") + esc(cur.email || "") + "</p>" +
+        '<p class="note">' + tr("Alles wird automatisch gesichert: Skins, Münzen, Stufe, Rekorde und dein Benutzername.", "Everything is saved automatically: skins, coins, rank, records and your username.") + "</p>" +
         "<p>" + tr("Spielstand gesichert: ", "Progress saved: ") + "<strong>" + fmtAgo(cur.savedAt) + "</strong></p>" +
         '<button class="btn" id="acSave" type="button">' + tr("Spielstand jetzt sichern", "Save progress now") + "</button>" +
         '<button class="btn ghost" id="acOut" type="button">' + tr("Abmelden", "Sign out") + "</button>" + testNote +
@@ -2106,7 +2210,10 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const field = (id, label, type, ac, ph) => '<label class="acct-l" for="' + id + '">' + label + '</label><div class="acct-f"><input id="' + id + '" type="' + type + '" autocomplete="' + ac + '" autocapitalize="none" spellcheck="false"' + (ph ? ' placeholder="' + esc(ph) + '"' : "") + ">" + (type === "password" ? '<button class="acct-eye" type="button" data-eye="' + id + '" aria-label="' + tr("Passwort zeigen", "Show password") + '">👁</button>' : "") + "</div>";
     openLayer('<span class="eyebrow">' + tr("Konto", "Account") + '</span><h2>' + (reg ? tr("Konto erstellen", "Create account") : tr("Anmelden", "Sign in")) + "</h2>" +
       '<div class="seg two"><button type="button" id="acTabUp" class="' + (reg ? "on" : "") + '">' + tr("Registrieren", "Sign up") + '</button><button type="button" id="acTabIn" class="' + (reg ? "" : "on") + '">' + tr("Anmelden", "Sign in") + "</button></div>" +
-      (reg ? "<p>" + tr("Sichere deinen Fortschritt, Münzen und deinen Benutzernamen. Dann kannst du auf jedem Gerät weiterspielen.", "Secure your progress, coins and username. Then you can keep playing on any device.") + "</p>" : "") +
+      (reg ? "<p>" + tr("Sichere deine Skins, Münzen und deinen Benutzernamen. Dann kannst du auf jedem Gerät weiterspielen.", "Secure your skins, coins and username. Then you can keep playing on any device.") + "</p>" : "") +
+      ((A.providers || []).length ? '<div class="sso">' + (A.providers.includes("apple") ? '<button class="sso-btn apple" type="button" data-sso="apple"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.5 2-3.7 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9s-2-.9-3.3-.9c-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-4.3zM13.9 5.1c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>' + tr("Weiter mit Apple", "Continue with Apple") + "</button>" : "") +
+        (A.providers.includes("google") ? '<button class="sso-btn google" type="button" data-sso="google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.7-2.4 3.6v3h3.9c2.2-2.1 3.5-5.1 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1C3.4 21.4 7.4 24 12 24z"/><path fill="#FBBC05" d="M5.4 14.4c-.2-.7-.4-1.5-.4-2.4s.1-1.6.4-2.4V6.5H1.4C.5 8.2 0 10 0 12s.5 3.8 1.4 5.5l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4C17.9 1.2 15.2 0 12 0 7.4 0 3.4 2.6 1.4 6.5l4 3.1C6.3 6.9 8.9 4.8 12 4.8z"/></svg>' + tr("Weiter mit Google", "Continue with Google") + "</button>" : "") +
+        '<span class="sso-or">' + tr("oder mit E-Mail", "or with email") + "</span></div>" : "") +
       '<form class="acct-form" id="acForm" novalidate>' +
       field("acMail", tr("E-Mail", "Email"), "email", "email", "name@beispiel.de") +
       field("acPw", tr("Passwort", "Password"), "password", reg ? "new-password" : "current-password", reg ? tr("mind. 8 Zeichen, Buchstabe + Zahl", "8+ characters, letter + number") : "") +
@@ -2114,7 +2221,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<p class="msg-bad" id="acErr" hidden></p>' +
       '<button class="btn" id="acGo" type="submit">' + (reg ? tr("Konto erstellen", "Create account") : tr("Anmelden", "Sign in")) + "</button></form>" +
       (!reg ? '<button class="link" id="acForgot" type="button">' + tr("Passwort vergessen?", "Forgot password?") + "</button>" : "") +
-      (!reg && hasProgress() ? '<p class="note">' + tr("Beim Anmelden wird der Fortschritt auf diesem Gerät durch den Spielstand deines Kontos ersetzt.", "Signing in replaces the progress on this device with your account's progress.") + "</p>" : "") +
+      (!reg && hasProgress() ? '<p class="note">' + tr("Beim Anmelden wird dein Konto mit dem Spielstand auf diesem Gerät zusammengeführt. Skins und Münzen gehen nicht verloren.", "Signing in merges your account with the progress on this device. Skins and coins aren't lost.") + "</p>" : "") +
       testNote + '<button class="link" id="acBack" type="button">' + tr("Später", "Later") + "</button>");
     on("acTabUp", () => showAccount("up", back));
     on("acTabIn", () => showAccount("in", back));
@@ -2144,19 +2251,40 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           on("acOk", done);
         } else {
           const snap = await A.signIn(m, pw);
-          if (snap && Object.keys(snap).length) { restore(snap); location.reload(); return; }
+          if (snap && Object.keys(snap).length) { const mg = mergeSnap(snap, snapshot()); restore(mg); await A.save(mg).catch(() => {}); location.reload(); return; }
           await A.save(snapshot()).catch(() => {});
           if (A.kind !== "local") { location.reload(); return; } // neue Konto-ID: Online-Teil neu starten
           SFX.coin(); done();
         }
       } catch (e) { b.disabled = false; b.textContent = reg ? tr("Konto erstellen", "Create account") : tr("Anmelden", "Sign in"); err(acctErr(e)); }
     });
+    sheet.querySelectorAll("[data-sso]").forEach((bt) => bt.addEventListener("click", async () => {
+      const which = bt.dataset.sso; err("");
+      sheet.querySelectorAll("[data-sso]").forEach((x) => { x.disabled = true; });
+      try {
+        const r = await A.signInWith(which);
+        if (r && r.snap && Object.keys(r.snap).length) { const mg = mergeSnap(r.snap, snapshot()); restore(mg); await A.save(mg).catch(() => {}); location.reload(); return; }
+        await A.save(snapshot()).catch(() => {});
+        if (!r || !r.created) { location.reload(); return; } // bestehendes Konto ohne Spielstand: Online-Teil neu starten
+        SFX.record(); buzz([20, 40, 20]);
+        openLayer("<h2>" + tr("Konto verbunden", "Account connected") + "</h2><p>" + tr("Dein Spielstand ist jetzt mit " + (which === "apple" ? "Apple" : "Google") + " gesichert. Melde dich auf einem anderen Gerät genauso an, dann spielst du dort weiter.", "Your progress is now saved with " + (which === "apple" ? "Apple" : "Google") + ". Sign in the same way on another device to continue there.") + '</p><button class="btn" id="acOk" type="button">' + tr("Weiter", "Continue") + "</button>");
+        on("acOk", done);
+      } catch (e) {
+        sheet.querySelectorAll("[data-sso]").forEach((x) => { x.disabled = false; });
+        const c = (e && e.code) || "";
+        if (/popup-closed|cancelled-popup|user-cancel/.test(c)) return;
+        err(/popup-blocked/.test(c) ? tr("Das Anmeldefenster wurde blockiert. Erlaube Pop-ups und versuch es nochmal.", "The sign-in window was blocked. Allow pop-ups and try again.")
+          : /operation-not-allowed|unknown-provider|invalid-oauth|configuration/.test(c) ? tr("Diese Anmeldung ist noch nicht eingerichtet. Nimm vorerst E-Mail.", "This sign-in isn't set up yet. Use email for now.")
+          : /unauthorized-domain|operation-not-supported|web-storage/.test(c) ? tr("Hier geht diese Anmeldung nicht. Öffne playzack.io im Browser oder nimm E-Mail.", "This sign-in doesn't work here. Open playzack.io in your browser or use email.")
+          : acctErr(e));
+      }
+    }));
     setTimeout(() => { const i = $("acMail"); if (i) i.focus({ preventScroll: true }); }, 60);
   }
 
   function showAccountOffer(after) {
     const go = () => { closeLayer(); if (after) after(); };
-    openLayer('<span class="eyebrow">' + tr("Fast fertig", "Almost done") + "</span><h2>" + tr("Passwort festlegen?", "Set a password?") + "</h2><p>" + tr("Mit E-Mail und Passwort ist dein Benutzername gesichert und du spielst auf jedem Gerät weiter. Geht auch später im Profil.", "With email and password your username is secured and you can keep playing on any device. You can also do this later in your profile.") + "</p>" +
+    openLayer('<span class="eyebrow">' + tr("Fast fertig", "Almost done") + "</span><h2>" + tr("Konto sichern?", "Secure your account?") + "</h2><p>" + tr("Mit Apple, Google oder E-Mail sind deine Skins, Münzen und dein Benutzername gesichert und du spielst auf jedem Gerät weiter. Geht auch später im Profil.", "With Apple, Google or email your skins, coins and username are secured and you can keep playing on any device. You can also do this later in your profile.") + "</p>" +
       '<button class="btn" id="aoYes" type="button">' + tr("Konto erstellen", "Create account") + '</button><button class="link" id="aoNo" type="button">' + tr("Später", "Later") + "</button>");
     on("aoYes", () => showAccount("up", go));
     on("aoNo", go);
@@ -2272,18 +2400,59 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const t = h("div", "lvl-toast"); t.innerHTML = "<b>" + tr("Stufe ", "Rank ") + l + "!</b><small>+" + fmtN(rankCoins(l)) + tr(" Münzen", " coins") + (sp ? tr(" · Neuer Skin: ", " · New skin: ") + esc(L(sp.n)) : "") + "</small>";
     document.body.appendChild(t); setTimeout(() => t.remove(), 2600);
   }
-  // Sieg-Moment: dein Skin groß mit Strahlen und Konfetti, darunter bleibt das Ergebnis
-  function victoryFX(kind) {
+  const SKIN_PAL = {
+    gold: ["#ffd23f", "#c8920e", "#fff3b0"], zgold: ["#ffd23f", "#ff9d00", "#fffbe0"], neon: ["#ff3df2", "#22e8ff", "#7b5cff"], galaxy: ["#7b5cff", "#ff7ac6", "#a855f7"],
+    fire: ["#ff7a1a", "#ffd23f", "#c3150f"], lava: ["#ff4632", "#ff6a1a", "#ffd23f"], ice: ["#8fe3ff", "#eafcff", "#3a8ed8"], pixel: ["#ff3df2", "#22e8ff", "#5b4bff"],
+    holo: ["#ff7ac6", "#3ee27a", "#63d9ff"], phantom: ["#7c3aed", "#c4b5fd", "#a78bfa"], royal: ["#7b1fa2", "#ffd23f", "#fff3b0"], diamond: ["#9fe8ff", "#ffffff", "#5ab8ff"],
+    racing: ["#ff4632", "#f3efe6", "#ffd23f"], carbon: ["#ff4632", "#8a8a95", "#34343a"], camo: ["#8a7d4f", "#556b2f", "#3b4a20"], chrome: ["#e9edf2", "#9aa3ad", "#1e3a8a"],
+    blitz: ["#ffd23f", "#7b5cff", "#fff3b0"], bronze: ["#d08a4a", "#ffd6a8", "#9a5a2a"], silber: ["#d7dce3", "#ffffff", "#9aa3ae"], platin: ["#bfe3ff", "#f4fbff", "#7fa7d4"], obsidian: ["#a855f7", "#22e8ff", "#7c3aed"]
+  };
+  const NAMED_COL = { red: "#ff0000", white: "#ffffff", green: "#008000", blue: "#0000ff", yellow: "#ffff00", black: "#000000", orange: "#ffa500", navy: "#000080" };
+  async function skinPalette(sk) {
+    const def = ["#ffd23f", "#3ee27a", "#ff4632"];
+    if (!sk || !skinValid(sk)) return def;
+    if (sk.startsWith("s:")) return SKIN_PAL[sk.slice(2)] || def;
+    try {
+      const f = await flagText(sk.slice(2)); if (!f) return def;
+      const cnt = {};
+      (f.inner.match(/fill(?:=|:)\s*"?(#[0-9a-fA-F]{3,6}|[a-z]+)/g) || []).forEach((m) => {
+        let c = m.replace(/^fill(?:=|:)\s*"?/, "").toLowerCase(); c = NAMED_COL[c] || c;
+        if (!/^#[0-9a-f]{3,6}$/.test(c)) return; if (c.length === 4) c = "#" + c[1] + c[1] + c[2] + c[2] + c[3] + c[3];
+        cnt[c] = (cnt[c] || 0) + 1;
+      });
+      const lum = (c) => { const n = parseInt(c.slice(1), 16); return ((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000; };
+      let list = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]);
+      const colorful = list.filter((c) => lum(c) > 30 && lum(c) < 235);
+      list = colorful.concat(list.filter((c) => !colorful.includes(c) && lum(c) >= 235));
+      while (list.length < 3) list.push(list[0] || def[list.length]);
+      return list.slice(0, 3);
+    } catch (e) { return def; }
+  }
+  const TAUNTS = [["{n}, zu langsam! 💨", "{n}, too slow! 💨"], ["Tschüss {n}! 💨", "Bye {n}! 💨"], ["{n} sieht nur noch Staub 🏁", "{n} only sees dust 🏁"], ["Nächstes Mal vielleicht, {n} 😏", "Maybe next time, {n} 😏"], ["Gas gegeben, {n} abgehängt 🏎️", "Full throttle, {n} left behind 🏎️"]];
+  // Sieg-Moment: dein Helm rast rein, heult auf, rast davon – in den Farben deines Skins
+  async function victoryFX(kind, opp) {
     try {
       const old = document.querySelector(".vfx"); if (old) old.remove();
+      const pr = profile() || {}, sk = skinValid(pr.sk) ? pr.sk : null;
+      const pal = await skinPalette(sk);
       const v = h("div", "vfx");
-      const cols = ["#ffd23f", "#3ee27a", "#ff4632", "#63d9ff", "#a855f7", "#ffffff"];
-      v.innerHTML = '<div class="vfx-rays"></div><div class="vfx-av"><img alt=""></div><div class="vfx-t">' + (kind === "record" ? tr("NEUER REKORD!", "NEW RECORD!") : tr("SIEG!", "VICTORY!")) + "</div>" +
-        Array.from({ length: 34 }, (_, i) => '<i style="--x:' + Math.round(Math.random() * 100) + "%;--d:" + (Math.random() * 0.5).toFixed(2) + "s;--r:" + Math.round(Math.random() * 720 - 360) + "deg;--c:" + cols[i % cols.length] + ";--s:" + (0.7 + Math.random() * 0.8).toFixed(2) + '"></i>').join("");
+      v.style.cssText = "--c1:" + pal[0] + ";--c2:" + pal[1] + ";--c3:" + pal[2];
+      const t = TAUNTS[Math.floor(Math.random() * TAUNTS.length)];
+      const taunt = kind === "record" ? tr("Neuer Bestwert 🏁", "New personal best 🏁") : opp ? L(t).replace("{n}", opp) : tr("Gas gegeben! 🏎️", "Full throttle! 🏎️");
+      const cols = pal.concat(["#ffffff", pal[0], pal[1]]);
+      v.innerHTML = '<div class="vfx-rays"></div>' +
+        '<div class="vfx-lines">' + Array.from({ length: 14 }, (_, i) => '<b style="--y:' + (8 + Math.random() * 84).toFixed(1) + "%;--d:" + (Math.random() * 0.9).toFixed(2) + "s;--w:" + (60 + Math.random() * 140).toFixed(0) + "px;--c:" + pal[i % 3] + '"></b>').join("") + "</div>" +
+        '<div class="vfx-car"><div class="vfx-trail"><span></span><span></span><span></span></div><div class="vfx-av"><img alt=""></div></div>' +
+        '<div class="vfx-t">' + (kind === "record" ? tr("NEUER REKORD!", "NEW RECORD!") : tr("SIEG!", "VICTORY!")) + "</div>" +
+        '<div class="vfx-taunt">' + esc(taunt) + "</div>" +
+        Array.from({ length: 34 }, (_, i) => '<i style="--x:' + Math.round(Math.random() * 100) + "%;--d:" + (1.1 + Math.random() * 0.6).toFixed(2) + "s;--r:" + Math.round(Math.random() * 720 - 360) + "deg;--c:" + cols[i % cols.length] + ";--s:" + (0.7 + Math.random() * 0.8).toFixed(2) + '"></i>').join("");
       document.body.appendChild(v);
-      paintAvatar(v.querySelector("img"), meCard());
-      setTimeout(() => v.classList.add("out"), 1700);
-      setTimeout(() => v.remove(), 2200);
+      const img = v.querySelector(".vfx-av img");
+      if (sk) paintAvatar(img, { sk }); else paintAvatar(img, meCard());
+      SFX.f1(); buzz([30, 60, 30, 60, 120]);
+      setTimeout(() => { SFX.winChord(); buzz([20, 30, 20]); }, 1650);
+      setTimeout(() => v.classList.add("out"), 2700);
+      setTimeout(() => v.remove(), 3200);
     } catch (e) {}
   }
   // Was bringen Stufen?
@@ -2758,7 +2927,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function showDuelResult(info) {
     const D = info.duel, m = MODES[D.mode];
-    if (D.won) { SFX.victory(); setTimeout(() => victoryFX("win"), 30); } else if (D.draw) SFX.coin(); else SFX.lose();
+    if (D.won) { setTimeout(() => victoryFX("win", D.oppName || (D.kind === "bot" ? "Bot" : "")), 30); } else if (D.draw) SFX.coin(); else SFX.lose();
     buzz(D.won ? [20, 40, 20, 40, 60] : 60);
     const cls = D.won ? "dwin" : D.draw ? "ddraw" : "dlose";
     const unit = info.unit ? "<small>" + esc(info.unit) + "</small>" : "";
@@ -2803,7 +2972,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const good = info.isRec || info.first || (info.stars > 0) || /gewonnen|gewinnt|geschlagen|geschafft|won|wins|beaten|cleared|win/i.test(info.title || "");
     const bad = info.stars === 0 || /verloren|verfehlt|besser|lost|missed|better/i.test(info.title || "");
     const winish = info.isRec || (good && !info.first);
-    if (winish) { SFX.victory(); buzz([20, 40, 20, 40, 60]); setTimeout(() => victoryFX(info.isRec ? "record" : "win"), 30); }
+    if (winish) { setTimeout(() => victoryFX(info.isRec ? "record" : "win", info.followName || ""), 30); }
     else if (good) SFX.win(); else if (bad) SFX.lose(); else SFX.coin();
     const title = info.title || (info.isRec ? tr("Neuer Rekord!", "New record!") : info.first ? tr("Erster Rekord", "First record") : tr("Runde vorbei", "Round over"));
     const stars = info.stars != null ? '<div class="stars big-stars" aria-label="' + info.stars + tr(' Sterne">', " stars\">") + starStr(info.stars) + "</div>" : "";
@@ -3187,6 +3356,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       try { const s = await db.doc("runs/" + NET.me).get(); NET.myRuns = s.exists ? Object.assign({}, s.data()) : {}; } catch (e) {}
       try { await syncPlayer(); } catch (e) { NET.ok = false; }
       setTimeout(() => { claimWeekly().catch(() => {}); }, 2500);
+      setTimeout(() => { ensureName().catch(() => {}); }, 1500);
     }
     netReadyResolve();
     renderOnline();

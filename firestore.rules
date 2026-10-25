@@ -19,11 +19,15 @@ service cloud.firestore {
       allow delete: if signedIn() && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
     }
 
-    // Kurze Sperre beim Benutzernamen-Check
+    // Benutzernamen: jeder Name gehört genau einem Konto (uid). Alte kurze Sperren (holder/exp) dürfen übernommen werden.
     match /unames/{name} {
       allow read: if signedIn();
-      allow write: if signedIn() && request.resource.data.holder == request.auth.uid
-        && (resource == null || resource.data.holder == request.auth.uid || resource.data.exp < request.time.toMillis());
+      allow create: if signedIn() && name.matches('^[a-z0-9_.]{3,16}$')
+        && request.resource.data.keys().hasOnly(['uid', 'at']) && request.resource.data.uid == request.auth.uid;
+      allow update: if signedIn() && request.resource.data.keys().hasOnly(['uid', 'at']) && request.resource.data.uid == request.auth.uid
+        && (resource.data.get('uid', null) == request.auth.uid
+          || (resource.data.get('uid', null) == null && (resource.data.get('holder', '') == request.auth.uid || resource.data.get('exp', 0) < request.time.toMillis())));
+      allow delete: if signedIn() && resource.data.get('uid', null) == request.auth.uid;
     }
 
     // Turniere: eins pro Gastgeber, eine Teilnahme pro Spieler

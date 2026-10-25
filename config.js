@@ -7,3 +7,4 @@ window.ZACK_FIREBASE = {
   messagingSenderId: "213698084646",
   appId: "1:213698084646:web:58bc223e10e572447f0be7"
 };
+window.ZACK_PROVIDERS = ["google"];
