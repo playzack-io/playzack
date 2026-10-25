@@ -1512,9 +1512,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function countrySVG(f) {
     const flag = f ? '<svg x="11" y="10" width="47" height="41" viewBox="' + f.vb + '" preserveAspectRatio="xMidYMid slice">' + f.inner + "</svg>" : '<rect width="64" height="64" fill="#3ee27a"/>';
-    // Hintergrund: die Flagge füllt den ganzen Kreis (etwas abgedunkelt), kein heller Rand
-    const under = f ? '<g clip-path="url(#cc)"><svg x="0" y="0" width="64" height="64" viewBox="' + f.vb + '" preserveAspectRatio="xMidYMid slice">' + f.inner + '</svg><rect width="64" height="64" fill="#000" opacity=".42"/></g>' : "";
-    return helmetSVG({ defs: '<clipPath id="cc"><circle cx="32" cy="32" r="32"/></clipPath>', bg: "#17151b", under, shell: "#17151b", overlay: flag, visor: "#0e0d12", edge: "rgba(0,0,0,.55)" });
+    // nur der Helm trägt die Flagge, dunkler Hintergrund ohne hellen Rand
+    return helmetSVG({ bg: "#17151b", shell: "#17151b", overlay: flag, visor: "#0e0d12", edge: "rgba(0,0,0,.55)" });
   }
   const SKINURL = {};
   const svgURL = (s) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s);
