@@ -1,5 +1,5 @@
-// ZACK! 1.8.0 – offline cache
-const CACHE = "zack-1.8.0";
+// ZACK! 1.8.1 – offline cache
+const CACHE = "zack-1.8.1";
 const ASSETS = ["./", "index.html", "config.js", "backend.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
@@ -16,7 +16,7 @@ self.addEventListener("fetch", (e) => {
   if (req.mode === "navigate" || /\/(config|backend)\.js$/.test(url.pathname)) {
     const key = req.mode === "navigate" ? "index.html" : req;
     // neueste Version holen, offline aus dem Cache
-    e.respondWith(fetch(req).then((res) => { const cl = res.clone(); caches.open(CACHE).then((c) => c.put(key, cl)); return res; }).catch(() => caches.match(key)));
+    e.respondWith(fetch(req, { cache: "no-cache" }).then((res) => { const cl = res.clone(); caches.open(CACHE).then((c) => c.put(key, cl)); return res; }).catch(() => caches.match(key, { ignoreSearch: true })));
     return;
   }
   e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
