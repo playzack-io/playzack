@@ -167,7 +167,8 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 
 /* ---------- Stage ---------- */
 .stage { position: relative; flex: 1; min-height: 0; }
-.root { position: absolute; inset: 0; border-radius: 20px; border: 1px solid var(--line); background: var(--asphalt-2); overflow: hidden; touch-action: none; }
+.root { position: absolute; inset: 0; border-radius: 20px; border: 1px solid var(--line); background: var(--asphalt-2); overflow: hidden; touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.root * { -webkit-touch-callout: none; }
 .root.grid { background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 32px 32px; }
 .root::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; box-shadow: inset 0 0 0 6px var(--signal); }
 .root.hurt::after { animation: edgeFx .35s ease; }
@@ -1304,7 +1305,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block antippen", "doppelte Punkte: 2"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     klicks: [["Jeder Tipp", "1 Klick"], ["Zeit", "10 Sekunden ab dem ersten Tipp"], ["Mehrere Finger", "erlaubt"], ["Alle 25 Klicks", "Combo-Sound und Vibration"]],
     merken: [["Richtig angetippt", "1 Punkt"], ["Ganze Folge geschafft", "nächstes Level, eins mehr zu merken"], ["Falsche Reihenfolge", "1 Leben weg, neue Folge gleicher Länge"], ["Tempo", "mit jedem Level blitzen die Begriffe kürzer auf"]],
-    ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Gold", "doppelte Punkte"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
+    ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
     turm: [["Block absetzen", "1 Punkt"], ["Perfekt auf den Turm", "+1 extra, ab 3 in Folge wächst der Block wieder"], ["Überstand", "fällt ab, der Turm wird schmaler"], ["Komplett daneben", "1 Leben weg"]],
     augenwinkel: [["Punkt am Rand antippen", "1 Punkt"], ["Verpasst", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     praezision: [["Gelbe Mitte", "10 Punkte"], ["Roter Ring", "5 Punkte"], ["Weißer Rand", "2 Punkte"], ["Daneben", "0 Punkte"], ["Zeit", "30 Sekunden"]]
@@ -1318,7 +1319,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block", "double points: 2"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
     klicks: [["Every tap", "1 click"], ["Time", "10 seconds from your first tap"], ["Multiple fingers", "allowed"], ["Every 25 clicks", "combo sound and vibration"]],
     merken: [["Right tap", "1 point"], ["Whole sequence done", "next level, one more to remember"], ["Wrong order", "lose 1 life, new sequence of the same length"], ["Speed", "items flash shorter every level"]],
-    ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Gold", "double points"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
+    ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
     turm: [["Drop a block", "1 point"], ["Perfect on the tower", "+1 extra, 3 in a row make the block grow back"], ["Overhang", "falls off, the tower gets narrower"], ["Missed completely", "lose 1 life"]],
     augenwinkel: [["Tap a dot at the edge", "1 point"], ["Missed", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     praezision: [["Yellow center", "10 points"], ["Red ring", "5 points"], ["White edge", "2 points"], ["Miss", "0 points"], ["Time", "30 seconds"]]
@@ -1512,8 +1513,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function countrySVG(f) {
     const flag = f ? '<svg x="11" y="10" width="47" height="41" viewBox="' + f.vb + '" preserveAspectRatio="xMidYMid slice">' + f.inner + "</svg>" : '<rect width="64" height="64" fill="#3ee27a"/>';
-    // nur der Helm trägt die Flagge, dunkler Hintergrund ohne hellen Rand
-    return helmetSVG({ bg: "#17151b", shell: "#17151b", overlay: flag, visor: "#0e0d12", edge: "rgba(0,0,0,.55)" });
+    // Hintergrund: Flaggenfarben weich verschwommen, darauf der Helm mit der Flagge
+    const under = f ? '<g clip-path="url(#cc)"><g filter="url(#fb)"><svg x="-10" y="-10" width="84" height="84" viewBox="' + f.vb + '" preserveAspectRatio="xMidYMid slice">' + f.inner + '</svg></g><rect width="64" height="64" fill="#000" opacity=".48"/></g>' : "";
+    return helmetSVG({ defs: '<clipPath id="cc"><circle cx="32" cy="32" r="32"/></clipPath><filter id="fb" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>', bg: "#17151b", under, shell: "#17151b", overlay: flag, visor: "#0e0d12", edge: "rgba(0,0,0,.55)" });
   }
   const SKINURL = {};
   const svgURL = (s) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s);
@@ -4801,6 +4803,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (e && e.clientX != null && n % 2 === 0) { const p = ctx.local(e); ctx.burst(p.x - 18, p.y - 18, 36, "var(--volt)"); }
     }
     r.addEventListener("pointerdown", (e) => { e.preventDefault(); tap(e); });
+    r.addEventListener("touchstart", (e) => { e.preventDefault(); }, { passive: false });
+    r.addEventListener("contextmenu", (e) => e.preventDefault());
     const up = () => { if (!r.isConnected) { removeEventListener("pointerup", up); removeEventListener("pointercancel", up); return; } btn.classList.remove("p"); };
     addEventListener("pointerup", up); addEventListener("pointercancel", up);
     r.__ck = () => ({ n, done, started: t0 != null }); // für Tests
@@ -4916,7 +4920,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function makeBallon(ctx) {
     const r = ctx.root; r.classList.add("tower", "balloon");
     r.innerHTML = '<canvas class="tw-cv"></canvas><div class="hint">' + tr("Gedrückt halten zum Aufpumpen. Loslassen kassiert. Platzt er, gibt's 0.", "Hold to pump. Let go to cash in. If it pops, you get 0.") + "</div>" +
-      '<div class="bl-key"><span style="--c:#3ee27a">' + tr("robust", "sturdy") + '</span><span style="--c:#ffd23f">' + tr("normal", "normal") + '</span><span style="--c:#ff5a4e">' + tr("empfindlich", "fragile") + '</span><span style="--c:#f6c453">Gold ×2</span></div>';
+      '<div class="bl-key"><span style="--c:#3ee27a">' + tr("robust", "sturdy") + '</span><span style="--c:#ffd23f">' + tr("normal", "normal") + '</span><span style="--c:#ff5a4e">' + tr("empfindlich", "fragile") + '</span></div>';
     const cv = r.firstChild, g = cv.getContext("2d"), hint = r.querySelector(".hint");
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     let W = 0, H = 0;
@@ -4926,12 +4930,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const KINDS = {
       green: { lo: 55, c1: "#7cf3a6", c2: "#1f9c55", name: ["Robust", "Sturdy"] },
       yellow: { lo: 33, c1: "#ffe68a", c2: "#d19a00", name: ["Normal", "Normal"] },
-      red: { lo: 12, c1: "#ff9a8f", c2: "#c4271b", name: ["Empfindlich", "Fragile"] },
-      gold: { lo: 25, c1: "#fff1b8", c2: "#b9860b", name: ["Gold ×2", "Gold ×2"], x2: true }
+      red: { lo: 12, c1: "#ff9a8f", c2: "#c4271b", name: ["Empfindlich", "Fragile"] }
     };
     // Alle Ballons stehen vorher fest (gleicher Seed = gleiche Ballons im Duell)
     const balloons = Array.from({ length: N }, (_, i) => {
-      const q = ctx.rng(), kind = q < 0.34 ? "green" : q < 0.69 ? "yellow" : q < 0.9 ? "red" : "gold", k = KINDS[kind];
+      const q = ctx.rng(), kind = q < 0.37 ? "green" : q < 0.75 ? "yellow" : "red", k = KINDS[kind];
       return { kind, pop: Math.round(k.lo + ctx.rng() * (100 - k.lo)), T: Math.max(1500, 2500 - i * 90 - ctx.boost * 10) };
     });
     let idx = 0, total = 0, popped = 0, cur = null, state = "wait", nextAt = ctx.t() + 500, holdId = null, downAt = 0, snd = null, fx = [], parts = [], lastT = null, shown = 0;
@@ -4971,6 +4974,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       nextAt = ctx.t() + 1150;
     }
     r.addEventListener("pointerdown", (e) => { e.preventDefault(); startPump(e); });
+    r.addEventListener("touchstart", (e) => { e.preventDefault(); }, { passive: false }); // keine iOS-Lupe beim Gedrückthalten
+    r.addEventListener("contextmenu", (e) => e.preventDefault());
     const up = (e) => {
       if (!r.isConnected) { stopSnd(false); removeEventListener("pointerup", up); removeEventListener("pointercancel", up); return; }
       if (state !== "pump" || (e.pointerId != null && holdId != null && e.pointerId !== holdId)) return; bank(ctx.evT(e));
