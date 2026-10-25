@@ -246,6 +246,40 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .tw-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .root.tower .hint { z-index: 2; }
 .root.balloon .hint { bottom: 46px; }
+/* Klicks */
+.root.clicks { background: radial-gradient(120% 80% at 50% 45%, #2b2412 0%, #141218 70%); touch-action: none; }
+.ck-bar { position: absolute; left: 14px; right: 14px; top: 12px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; }
+.ck-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--volt), #ff9a3c); transform-origin: left; }
+.ck-rate { position: absolute; left: 0; right: 0; top: 9%; text-align: center; pointer-events: none; }
+.ck-rate b { display: block; font-family: var(--font-num); font-weight: 800; font-size: 44px; line-height: 1; color: var(--chalk); }
+.ck-rate small { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
+.ck-btn { position: absolute; left: 50%; top: 50%; width: min(66%, 46vh, 300px); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; display: grid; place-items: center; pointer-events: none;
+  background: radial-gradient(circle at 35% 30%, #fff3a6 0%, var(--volt) 38%, #ff9a3c 100%); box-shadow: 0 0 0 10px rgba(255, 214, 63, .12), 0 0 60px rgba(255, 190, 60, .35); transition: transform .06s ease-out; }
+.ck-btn.p { transform: translate(-50%, -50%) scale(.92); }
+.ck-btn b { font-family: var(--font-num); font-weight: 800; font-size: clamp(40px, 13vw, 84px); color: #2a1d00; }
+.ck-beat { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font-family: var(--font-num); font-weight: 800; font-size: 22px; text-transform: uppercase; color: var(--volt); pointer-events: none; }
+.ck-beat.rec { color: var(--go); }
+.split .ck-rate b { font-size: 30px; } .split .ck-beat { bottom: 34px; font-size: 16px; }
+/* Merken */
+.root.memory { background: radial-gradient(110% 70% at 50% 30%, #1c2236 0%, #141218 70%); }
+.mm-top { position: absolute; left: 0; right: 0; top: 14px; text-align: center; color: var(--muted); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; pointer-events: none; }
+.mm-show { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; pointer-events: none; }
+.mm-show b { font-size: clamp(44px, 14vw, 88px); line-height: 1.05; color: var(--chalk); font-weight: 800; opacity: 0; transform: scale(.7); }
+.mm-show.kn b { font-family: var(--font-num); color: var(--volt); } .mm-show.ka b { font-size: clamp(72px, 24vw, 130px); }
+.mm-show.in b { animation: mmIn .22s ease-out forwards; }
+.mm-show small { color: var(--muted); font-size: 13px; font-family: var(--font-num); letter-spacing: .08em; }
+@keyframes mmIn { to { opacity: 1; transform: none; } }
+@keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.mm-grid { position: absolute; left: 12px; right: 12px; top: 46px; bottom: 14px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: clamp(56px, 11vh, 96px); gap: 10px; align-content: center; }
+.mm-grid.n10, .mm-grid.n11, .mm-grid.n12 { grid-template-columns: repeat(3, 1fr); }
+.mm-t { position: relative; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.05); color: var(--chalk); font-size: 18px; font-weight: 700; padding: 4px; touch-action: manipulation; }
+.mm-t.ka span { font-size: 34px; } .mm-t.kn span { font-family: var(--font-num); font-size: 28px; color: var(--volt); }
+.mm-t:active { transform: scale(.96); }
+.mm-t.ok { border-color: var(--go); background: rgba(62, 226, 122, .16); }
+.mm-t.ok::after { content: attr(data-n); position: absolute; top: 4px; left: 6px; font-family: var(--font-num); font-weight: 800; font-size: 13px; color: var(--go); }
+.mm-t.bad { border-color: var(--signal); background: rgba(255, 70, 60, .2); animation: shake .3s; }
+.mm-t.hint { border-color: var(--go); box-shadow: 0 0 0 3px rgba(62, 226, 122, .45); }
+.split .mm-grid { grid-auto-rows: clamp(40px, 6vh, 64px); gap: 6px; top: 34px; } .split .mm-t { font-size: 14px; } .split .mm-t.ka span { font-size: 24px; } .split .mm-t.kn span { font-size: 20px; }
 .pf-rm { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 2px 0 6px; }
 .bl-key { position: absolute; left: 8px; right: 8px; bottom: 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; font-size: 12px; color: var(--muted); z-index: 2; pointer-events: none; }
 .bl-key span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--c); margin-right: 5px; vertical-align: 0; }
@@ -1219,6 +1253,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     farbwort:    { name: ["Farbwort", "Color Word"], kind: ["Endlos", "Endless"], desc: ["Tippe die Farbe der Schrift, nicht das Wort.", "Tap the color of the ink, not the word."], unit: ["richtig", "correct"], bestLabel: ["Rekord", "Best"] },
     lanes:       { name: ["Lanes", "Lanes"], kind: ["Endlos", "Endless"], desc: ["Blöcke fallen in drei Spuren. Tippen, bevor sie unten sind. 2× gibt doppelte Punkte, lange Blöcke gedrückt halten.", "Blocks fall in three lanes. Tap them before they hit the bottom. 2× gives double points, hold the long ones."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     augenwinkel: { name: ["Augenwinkel", "Side Eye"], kind: ["Endlos", "Endless"], desc: ["Blick aufs Kreuz. Punkte blitzen kurz am Rand auf.", "Eyes on the cross. Dots flash briefly at the edge."], unit: ["Treffer", "hits"], bestLabel: ["Rekord", "Best"] },
+    klicks:      { name: ["Klicks", "Clicks"], kind: ["10 Sek. · neu", "10 sec · new"], desc: ["Tippe 10 Sekunden lang so schnell du kannst. Wer schafft die meisten Klicks?", "Tap as fast as you can for 10 seconds. Who gets the most clicks?"], unit: ["Klicks", "clicks"], bestLabel: ["Rekord", "Best"] },
+    merken:      { name: ["Merken", "Memory"], kind: ["Endlos · neu", "Endless · new"], desc: ["Tiere, Wörter und Zahlen blitzen nacheinander auf. Tippe sie in derselben Reihenfolge. Jede Runde eins mehr.", "Animals, words and numbers flash one after another. Tap them in the same order. One more every round."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     ballon:      { name: ["Ballon", "Balloon"], kind: ["10 Ballons · neu", "10 balloons · new"], desc: ["Pump den Ballon auf und lass rechtzeitig los. Je größer, desto mehr Punkte. Platzt er, gibt's 0.", "Pump the balloon and let go in time. Bigger means more points. If it pops, you get 0."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     turm:        { name: ["Turm", "Tower"], kind: ["Endlos", "Endless"], desc: ["Der Block schwingt hin und her. Tippen zum Absetzen. Was übersteht, fällt ab.", "The block swings back and forth. Tap to drop it. Whatever hangs over falls off."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     praezision:  { name: ["Präzision", "Precision"], kind: ["30 Sek.", "30 sec"], desc: ["Ein bewegtes Ziel. Je näher an der Mitte, desto mehr Punkte.", "A moving target. The closer to the center, the more points."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] }
@@ -1226,7 +1262,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const MODE_DEF = {
     ziele: { revive: true, make: makeZiele }, startampel: { lower: true, bestUnit: " ms", make: makeAmpel }, stoppuhr: { bestUnit: " %", make: makeStoppuhr },
     taeuschung: { revive: true, make: makeTaeuschung }, farbwort: { revive: true, make: makeFarbwort }, lanes: { revive: true, make: makeLanes },
-    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }, turm: { revive: true, make: makeTurm }, ballon: { make: makeBallon }
+    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }, turm: { revive: true, make: makeTurm }, ballon: { make: makeBallon }, klicks: { make: makeKlicks }, merken: { revive: true, make: makeMerken }
   };
   const MODES = {};
   for (const id of Object.keys(MODE_TXT)) {
@@ -1234,7 +1270,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     for (const k of Object.keys(MODE_TXT[id])) Object.defineProperty(m, k, { get: () => L(MODE_TXT[id][k]), enumerable: true });
     MODES[id] = m;
   }
-  const ORDER = ["ziele", "ballon", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
+  const ORDER = ["ziele", "klicks", "ballon", "merken", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
   const DAILY = ["ziele", "farbwort", "taeuschung", "lanes", "augenwinkel", "praezision", "startampel"];
   const COURSES = [{ name: ["Strecke A", "Track A"], seed: 1101 }, { name: ["Strecke B", "Track B"], seed: 2202 }, { name: ["Strecke C", "Track C"], seed: 3303 }];
   const offNote = () => tr("Online braucht die geteilte Version mit Anmeldung", "Online needs the shared version while signed in");
@@ -1247,6 +1283,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Grün antippen", "1 Punkt"], ["Andere Farbe oder Trick-Wort", "1 Leben weg"], ["Grün verpasst oder zu früh", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     farbwort: [["Richtige Schriftfarbe", "1 Punkt"], ["Falsch oder zu langsam", "1 Leben weg"], ["Ab 20 Punkten", "Knöpfe werden gemischt"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block antippen", "doppelte Punkte: 2"], ["Langen Block gedrückt halten, bis er voll ist", "3 bis 6 Punkte, je länger desto mehr"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
+    klicks: [["Jeder Tipp", "1 Klick"], ["Zeit", "10 Sekunden ab dem ersten Tipp"], ["Mehrere Finger", "erlaubt"], ["Alle 25 Klicks", "Combo-Sound und Vibration"]],
+    merken: [["Richtig angetippt", "1 Punkt"], ["Ganze Folge geschafft", "nächstes Level, eins mehr zu merken"], ["Falsche Reihenfolge", "1 Leben weg, neue Folge gleicher Länge"], ["Tempo", "mit jedem Level blitzen die Begriffe kürzer auf"]],
     ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Gold", "doppelte Punkte"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
     turm: [["Block absetzen", "1 Punkt"], ["Perfekt auf den Turm", "+1 extra, ab 3 in Folge wächst der Block wieder"], ["Überstand", "fällt ab, der Turm wird schmaler"], ["Komplett daneben", "1 Leben weg"]],
     augenwinkel: [["Punkt am Rand antippen", "1 Punkt"], ["Verpasst", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
@@ -1259,6 +1297,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Tap green", "1 point"], ["Other color or trick word", "lose 1 life"], ["Missed green or too early", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     farbwort: [["Right ink color", "1 point"], ["Wrong or too slow", "lose 1 life"], ["From 20 points", "buttons get shuffled"], ["Streak", "sound and vibration, no extra points"]],
     lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block", "double points: 2"], ["Hold a long block until it's full", "3 to 6 points, longer gives more"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
+    klicks: [["Every tap", "1 click"], ["Time", "10 seconds from your first tap"], ["Multiple fingers", "allowed"], ["Every 25 clicks", "combo sound and vibration"]],
+    merken: [["Right tap", "1 point"], ["Whole sequence done", "next level, one more to remember"], ["Wrong order", "lose 1 life, new sequence of the same length"], ["Speed", "items flash shorter every level"]],
     ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Gold", "double points"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
     turm: [["Drop a block", "1 point"], ["Perfect on the tower", "+1 extra, 3 in a row make the block grow back"], ["Overhang", "falls off, the tower gets narrower"], ["Missed completely", "lose 1 life"]],
     augenwinkel: [["Tap a dot at the edge", "1 point"], ["Missed", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
@@ -2022,7 +2062,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // Münzen pro Runde aus der Leistung (pro Modus vergleichbar gemacht)
   const EARN = {
     ziele: (v) => v, farbwort: (v) => v * 2, taeuschung: (v) => v * 2, lanes: (v) => v, augenwinkel: (v) => v * 2,
-    turm: (v) => v * 1.5, ballon: (v) => v / 12, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
+    turm: (v) => v * 1.5, ballon: (v) => v / 12, klicks: (v) => v / 2.5, merken: (v) => v * 1.2, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
   };
   function gainXP(x) {
     const ups = []; let xp = W.xp + x, l = W.lvl;
@@ -2197,8 +2237,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // ---------- Tastatur (Desktop) ----------
   const FINE = () => { try { return matchMedia("(pointer: fine)").matches; } catch (e) { return false; } };
   function keyHint(id, two) {
-    const one = { ballon: tr("Leertaste halten", "Hold Space"), turm: tr("Leertaste", "Space"), startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
-    const duo = { ballon: "A · L", turm: "A · L", startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
+    const one = { klicks: tr("Leertaste", "Space"), ballon: tr("Leertaste halten", "Hold Space"), turm: tr("Leertaste", "Space"), startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
+    const duo = { klicks: "A · L", ballon: "A · L", turm: "A · L", startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
     const k = two ? duo : one;
     return k ? '<p class="note keyhint">' + (two ? tr("Zu zweit am Computer: ", "Two players on a computer: ") : tr("Am Computer: ", "On a computer: ")) + "<kbd>" + k + "</kbd>" + (id === "farbwort" && !two ? tr(" (Knöpfe von links nach rechts)", " (buttons left to right)") : "") + "</p>" : "";
   }
@@ -2233,7 +2273,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (id === "startampel" && E.opts && E.opts.local2) { const r = E.players[0] && E.players[0].root; if (!r) return; const lk = k === " " ? "a" : k === "Enter" ? "l" : k; fire(r.querySelector(lk in L1 ? ".half.p1" : ".half.p2")); e.preventDefault(); return; }
     const P = E.players[pi]; if (!P || !P.root) return;
     const r = P.root;
-    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung" || id === "turm" || id === "ballon") { fire(r); e.preventDefault(); return; }
+    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung" || id === "turm" || id === "ballon" || id === "klicks") { fire(r); e.preventDefault(); return; }
     if (id === "lanes") { if (idx <= 2) laneTap(r, idx); e.preventDefault(); return; }
     if (id === "farbwort") { const bs = visBtns(r, "button[data-i]"); if (bs[idx]) fire(bs[idx]); e.preventDefault(); return; }
   });
@@ -3098,7 +3138,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
 
   // ---------- Bot: passt sich deinem Niveau an, bleibt aber knapp vor dir ----------
-  const BOT_BASE = { ballon: [430, 32000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
+  const BOT_BASE = { klicks: [70, 10800], merken: [20, 60000], ballon: [430, 32000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
   function recordSkill(mode, value, dur) {
     if (value == null || !BOT_BASE[mode]) return;
     const sk = store.get("skill:" + mode, []); sk.push(value); store.set("skill:" + mode, sk.slice(-6));
@@ -3117,7 +3157,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       return { v: Math.max(floor, Math.round((lvl / adj) * wobble)), t: null, end: 0 };
     }
     const v = Math.max(3, Math.round(lvl * adj * wobble));
-    const D = mode === "praezision" ? 30000 : Math.max(12000, (du.length ? avgOf(du) : base[1]) * (0.9 + Math.random() * 0.25));
+    const D = mode === "praezision" ? 30000 : mode === "klicks" ? 10800 + Math.random() * 800 : Math.max(12000, (du.length ? avgOf(du) : base[1]) * (0.9 + Math.random() * 0.25));
     // Punkte über die Zeit verteilen: am Anfang etwas langsamer, wie ein echter Spieler
     const steps = mode === "praezision" ? [] : null;
     const t = [[0, 0]];
@@ -3314,7 +3354,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const tourId = (t) => t.host + "-" + t.created;
   const tuEnded = (t) => !t || Date.now() >= t.ends;
   // feste Reihenfolge für Turnier-Seeds (neue Spiele hinten anhängen, damit laufende Turniere gleich bleiben)
-  const SEED_ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision", "ballon"];
+  const SEED_ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision", "ballon", "klicks", "merken"];
   const tuSeed = (t, m) => (t.seed ^ Math.imul(SEED_ORDER.indexOf(m) + 1, 2654435761)) >>> 0;
   function cleanEntry(d) {
     if (!d || typeof d.t !== "string" || typeof d.uname !== "string" || !UNAME_RE.test(d.uname)) return null;
@@ -4627,6 +4667,145 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       },
       revive() { lives = 1; perfect = 0; ctx.lives(lives, max); ctx.info(""); spawn(); lastT = null; },
       result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: stack.length - 1 + tr(" Etagen", " floors") })
+    };
+  }
+
+  // =====================================================
+  // MODE: Klicks (10 Sekunden so schnell wie möglich tippen)
+  // =====================================================
+  function makeKlicks(ctx) {
+    const r = ctx.root; r.classList.add("clicks");
+    const DUR = 10000, best = store.get("best:klicks", null);
+    r.innerHTML = '<div class="ck-bar"><i></i></div><div class="ck-rate"><b>0,0</b><small>' + tr("Klicks/s", "clicks/s") + '</small></div>' +
+      '<div class="ck-btn"><b>' + tr("TIPP!", "TAP!") + '</b></div>' +
+      '<div class="ck-beat">' + (best ? tr("Zu schlagen: ", "To beat: ") + best : tr("Wie viele schaffst du?", "How many can you do?")) + "</div>" +
+      '<div class="hint">' + tr("Tippe so schnell du kannst. Die 10 Sekunden starten mit dem ersten Tipp. Mehrere Finger erlaubt.", "Tap as fast as you can. The 10 seconds start with your first tap. Multiple fingers allowed.") + "</div>";
+    const bar = r.querySelector(".ck-bar i"), rate = r.querySelector(".ck-rate b"), btn = r.querySelector(".ck-btn"), lbl = btn.firstChild, beat = r.querySelector(".ck-beat"), hint = r.querySelector(".hint");
+    let n = 0, t0 = null, last = -1e9, done = false, recent = [];
+    const fmt1 = (x) => x.toFixed(1).replace(".", S.lang === "en" ? "." : ",");
+    ctx.score(0); ctx.side("10,0 s".replace(",", S.lang === "en" ? "." : ","));
+    function tap(e) {
+      if (!ctx.live() || done) return;
+      const at = ctx.evT(e);
+      if (at - last < 30) return; // schneller als ~33 pro Sekunde ist kein Mensch
+      last = at;
+      if (t0 == null) { t0 = at; hint.hidden = true; }
+      if (at - t0 > DUR) return;
+      n++; recent.push(at); ctx.score(n); lbl.textContent = n;
+      btn.classList.add("p");
+      const k = Math.min(1, recent.length / 14);
+      AU.tone(520 + Math.min(n, 120) * 6, 0.05, "triangle", 0.16 + k * 0.08, 1.3); buzz(6);
+      if (best && n === best + 1) { beat.textContent = tr("Neuer Rekord!", "New record!"); beat.classList.add("rec"); SFX.record(); }
+      if (n % 25 === 0) ctx.milestone(n + tr(" Klicks", " clicks"), Math.min(6, 2 + n / 25));
+      if (e && e.clientX != null && n % 2 === 0) { const p = ctx.local(e); ctx.burst(p.x - 18, p.y - 18, 36, "var(--volt)"); }
+    }
+    r.addEventListener("pointerdown", (e) => { e.preventDefault(); tap(e); });
+    const up = () => { if (!r.isConnected) { removeEventListener("pointerup", up); removeEventListener("pointercancel", up); return; } btn.classList.remove("p"); };
+    addEventListener("pointerup", up); addEventListener("pointercancel", up);
+    r.__ck = () => ({ n, done, started: t0 != null }); // für Tests
+    return {
+      tick(t) {
+        if (t0 == null || done) return;
+        const el = Math.min(DUR, t - t0), left = Math.max(0, DUR - el);
+        bar.style.transform = "scaleX(" + left / DUR + ")";
+        ctx.side(fmt1(left / 1000) + " s");
+        recent = recent.filter((x) => t - x < 1000);
+        rate.textContent = fmt1(el > 300 ? Math.min(recent.length, n / (el / 1000)) : recent.length);
+        if (el >= DUR) {
+          done = true; rate.textContent = fmt1(n / (DUR / 1000)); btn.classList.remove("p"); lbl.textContent = n;
+          ctx.info(fmt1(n / 10) + tr(" Klicks/s", " clicks/s"));
+          ctx.at(900, () => ctx.end());
+        }
+      },
+      result: () => ({ value: n, text: String(n), unit: tr("Klicks", "clicks"), sub: fmt1(n / 10) + tr(" Klicks pro Sekunde", " clicks per second") })
+    };
+  }
+
+  // =====================================================
+  // MODE: Merken (Tiere, Wörter und Zahlen in der richtigen Reihenfolge)
+  // =====================================================
+  function makeMerken(ctx) {
+    const r = ctx.root; r.classList.add("memory");
+    r.innerHTML = '<div class="mm-top"></div><div class="mm-show"></div><div class="mm-grid"></div><div class="hint">' + tr("Merk dir alles, was erscheint. Dann in derselben Reihenfolge antippen.", "Remember everything that appears. Then tap it in the same order.") + "</div>";
+    const top = r.querySelector(".mm-top"), show = r.querySelector(".mm-show"), grid = r.querySelector(".mm-grid"), hint = r.querySelector(".hint");
+    const ANIMALS = ["🐶", "🐱", "🦁", "🐸", "🐵", "🐧", "🐘", "🦒", "🐢", "🐙", "🦊", "🐼", "🐨", "🐷", "🐮", "🦓", "🐝", "🦋", "🐬", "🦉"];
+    const WORDS = [["Haus", "House"], ["Baum", "Tree"], ["Auto", "Car"], ["Sonne", "Sun"], ["Buch", "Book"], ["Stuhl", "Chair"], ["Apfel", "Apple"], ["Uhr", "Clock"], ["Schuh", "Shoe"], ["Brot", "Bread"], ["Mond", "Moon"], ["Tür", "Door"], ["Lampe", "Lamp"], ["Glas", "Glass"], ["Hut", "Hat"], ["Zug", "Train"], ["Stern", "Star"], ["Kerze", "Candle"], ["Schlüssel", "Key"], ["Brücke", "Bridge"]].map(L);
+    let len = 3, lvl = 1, score = 0, lives = 3 + ctx.extraLife, seq = [], pos = 0, state = "idle", maxLen = 0;
+    const max = lives; ctx.lives(lives, max); ctx.score(0); ctx.info(tr("Level 1", "Level 1"));
+    const pick = (arr, k, not) => { const a = arr.filter((x) => !not.includes(x)), out = []; while (out.length < k && a.length) out.push(a.splice(Math.floor(ctx.rng() * a.length), 1)[0]); return out; };
+    function makeRound() {
+      const used = [], s = [];
+      for (let i = 0; i < len; i++) {
+        const q = ctx.rng();
+        let it;
+        if (q < 0.38) it = { k: "a", v: pick(ANIMALS, 1, used.map((x) => x.v))[0] };
+        else if (q < 0.72) it = { k: "w", v: pick(WORDS, 1, used.map((x) => x.v))[0] };
+        else { let v; do { v = String(10 + Math.floor(ctx.rng() * 90)); } while (used.some((x) => x.v === v)); it = { k: "n", v }; }
+        used.push(it); s.push(it);
+      }
+      // Ablenker aus denselben Gruppen
+      const extra = Math.min(12, len + Math.max(3, Math.ceil(len / 2))) - len, dis = [];
+      for (let i = 0; i < extra; i++) {
+        const k = s[Math.floor(ctx.rng() * s.length)].k, taken = used.concat(dis).map((x) => x.v);
+        if (k === "a") { const v = pick(ANIMALS, 1, taken)[0]; if (v) dis.push({ k, v }); }
+        else if (k === "w") { const v = pick(WORDS, 1, taken)[0]; if (v) dis.push({ k, v }); }
+        else { let v, g = 0; do { v = String(10 + Math.floor(ctx.rng() * 90)); g++; } while (taken.includes(v) && g < 50); dis.push({ k, v }); }
+      }
+      const tiles = s.concat(dis);
+      for (let i = tiles.length - 1; i > 0; i--) { const j = Math.floor(ctx.rng() * (i + 1)); [tiles[i], tiles[j]] = [tiles[j], tiles[i]]; }
+      return { s, tiles };
+    }
+    let tiles = [];
+    function startRound() {
+      if (!ctx.live()) return;
+      const R = makeRound(); seq = R.s; tiles = R.tiles; pos = 0; state = "show";
+      grid.innerHTML = ""; grid.hidden = true; show.hidden = false; show.className = "mm-show";
+      top.textContent = tr("Merk dir ", "Remember ") + len;
+      const per = Math.max(560, 1050 - lvl * 45);
+      seq.forEach((it, i) => ctx.at(500 + i * per, () => {
+        show.className = "mm-show k" + it.k; show.innerHTML = "<b>" + esc(it.v) + "</b><small>" + (i + 1) + " / " + len + "</small>";
+        void show.offsetWidth; show.classList.add("in"); AU.tone(440 + i * 40, 0.06, "sine", 0.12, 1.1);
+      }));
+      ctx.at(500 + len * per, () => { show.className = "mm-show"; show.innerHTML = ""; });
+      ctx.at(500 + len * per + 250, startInput);
+    }
+    function startInput() {
+      state = "input"; show.hidden = true; grid.hidden = false; hint.hidden = true;
+      top.textContent = tr("Jetzt in der richtigen Reihenfolge: ", "Now in the right order: ") + "0 / " + len;
+      grid.className = "mm-grid n" + Math.min(12, tiles.length);
+      grid.innerHTML = "";
+      tiles.forEach((it) => {
+        const b = h("button", "mm-t k" + it.k); b.type = "button"; b.innerHTML = "<span>" + esc(it.v) + "</span>";
+        b.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); choose(b, it); });
+        b.__it = it; grid.appendChild(b);
+      });
+    }
+    function choose(b, it) {
+      if (!ctx.live() || state !== "input" || b.classList.contains("ok")) return;
+      if (it === seq[pos]) {
+        pos++; score++; ctx.score(score); b.classList.add("ok"); b.dataset.n = pos;
+        SFX.hit(pos); buzz(8);
+        top.textContent = tr("Jetzt in der richtigen Reihenfolge: ", "Now in the right order: ") + pos + " / " + len;
+        if (pos >= len) {
+          state = "pause"; maxLen = Math.max(maxLen, len);
+          ctx.milestone(tr("Level ", "Level ") + lvl + tr(" geschafft", " cleared"), Math.min(6, 2 + lvl / 2));
+          lvl++; len++; ctx.info(tr("Level ", "Level ") + lvl);
+          ctx.at(1000, startRound);
+        }
+      } else {
+        state = "pause"; b.classList.add("bad");
+        const right = [...grid.children].find((x) => x.__it === seq[pos]); if (right) right.classList.add("hint");
+        lives--; ctx.lives(lives, max); ctx.hurt(); ctx.float(ctx.W() / 2, ctx.H() * 0.18, tr("Falsch!", "Wrong!"), "bad");
+        if (lives <= 0) { ctx.at(900, () => ctx.die()); return; }
+        ctx.at(1500, startRound); // gleiche Länge, neue Folge
+      }
+    }
+    r.__mm = () => ({ state, seq, pos, len, lvl, score, lives }); // für Tests
+    ctx.at(300, startRound);
+    return {
+      tick() {},
+      revive() { lives = 1; ctx.lives(lives, max); state = "pause"; ctx.at(400, startRound); },
+      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: tr("Level ", "Level ") + lvl + " · " + tr("bis zu ", "up to ") + Math.max(maxLen, 0) + tr(" gemerkt", " remembered") })
     };
   }
 
