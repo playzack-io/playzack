@@ -278,8 +278,23 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .mm-t.ok { border-color: var(--go); background: rgba(62, 226, 122, .16); }
 .mm-t.ok::after { content: attr(data-n); position: absolute; top: 4px; left: 6px; font-family: var(--font-num); font-weight: 800; font-size: 13px; color: var(--go); }
 .mm-t.bad { border-color: var(--signal); background: rgba(255, 70, 60, .2); animation: shake .3s; }
-.mm-t.hint { border-color: var(--go); box-shadow: 0 0 0 3px rgba(62, 226, 122, .45); }
+.mm-t.right { border-color: var(--go); background: rgba(62, 226, 122, .16); box-shadow: inset 0 0 0 2px rgba(62, 226, 122, .5); }
 .split .mm-grid { grid-auto-rows: clamp(40px, 6vh, 64px); gap: 6px; top: 34px; } .split .mm-t { font-size: 14px; } .split .mm-t.ka span { font-size: 24px; } .split .mm-t.kn span { font-size: 20px; }
+.rk-prog { width: 100%; align-self: stretch; height: 8px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; margin: 6px 0 4px; }
+.rk-prog i { display: block; height: 100%; background: var(--go); border-radius: 4px; }
+.rk-skins { grid-template-columns: repeat(3, 1fr); }
+.pic-seg { margin: 4px 0 8px; }
+.seg.pic-seg button.on { background: var(--volt); color: #1a1400; box-shadow: none; }
+.pic-panel { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+.pic-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.pic-row label.sbtn { cursor: pointer; }
+.pic-sub { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; text-align: center; }
+.sk-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 6px; scrollbar-width: none; }
+.sk-strip::-webkit-scrollbar { display: none; }
+.sk-pick { flex: none; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--chalk); }
+.sk-pick img, .sk-pick .sk-none { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; color: var(--muted); background: rgba(255,255,255,.06); }
+.sk-pick small { font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sk-pick.on { border-color: var(--volt); box-shadow: inset 0 0 0 1px var(--volt); }
 .pf-rm { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 2px 0 6px; }
 .bl-key { position: absolute; left: 8px; right: 8px; bottom: 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; font-size: 12px; color: var(--muted); z-index: 2; pointer-events: none; }
 .bl-key span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--c); margin-right: 5px; vertical-align: 0; }
@@ -405,6 +420,10 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 img.ring-on, img.ring-off { box-sizing: border-box; padding: 2px; border: 2px solid; background-clip: content-box; transition: border-color .3s, filter .3s; }
 img.ring-on { border-color: var(--go); box-shadow: 0 0 9px rgba(62, 226, 122, .55); }
 img.ring-off { border-color: #4a4654; filter: saturate(.55) brightness(.82); }
+/* Foto mit Skin-Abzeichen: Bild selbst rund, Abzeichen darf rausragen; Ring ist im Bild gezeichnet */
+img.pb { border-radius: 0 !important; background: transparent !important; object-fit: contain !important; }
+img.pb.ring-on, img.pb.ring-off { border: 0; padding: 0; box-shadow: none; }
+.pf-preview img.pb { border: 0; }
 .stext { flex: 1 1 140px; min-width: 0; display: flex; flex-direction: column; gap: 1px; overflow-wrap: anywhere; }
 .srow { flex-wrap: wrap; row-gap: 8px; }
 .srow .sbtns { margin-left: auto; }
@@ -509,7 +528,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .wbtn { display: inline-flex; align-items: center; gap: 6px; background: var(--asphalt-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 7px; font-family: var(--font-num); font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; }
 .rkbtn { padding: 6px 11px; }
 .rkbtn svg { width: 22px; height: 19px; display: block; }
-.wlvl { margin-left: auto; flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-family: var(--font-num); font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.wlvl { border: 0; background: transparent; padding: 4px 0; cursor: pointer; margin-left: auto; flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-family: var(--font-num); font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 .wbar { width: 84px; height: 6px; border-radius: 3px; background: var(--bulb-off); overflow: hidden; }
 .wbar i { display: block; height: 100%; background: var(--go); }
 .coin { display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: var(--volt); box-shadow: inset 0 0 0 3px #d9a400, inset 0 0 0 5px var(--volt); vertical-align: -3px; flex: none; }
@@ -863,7 +882,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       <button class="pchip" id="pChip" type="button"><img id="pAv" alt=""><span id="pName">Profil</span></button>
       <button class="wbtn" id="wCoins" type="button" aria-label="Münzen"><span class="coin" aria-hidden="true"></span><b id="wCoinsN">0</b></button>
       <button class="wbtn rkbtn" id="goRanks" type="button" aria-label="Rangliste" title="Rangliste"><svg viewBox="0 0 24 20" aria-hidden="true"><rect x="8.5" y="1" width="7" height="18" rx="1.6" fill="#ffd23f"/><rect x="0.5" y="6" width="7" height="13" rx="1.6" fill="#d6d9e0"/><rect x="16.5" y="10" width="7" height="9" rx="1.6" fill="#e59a5b"/></svg></button>
-      <div class="wlvl"><span id="wLvl">Stufe 1</span><span class="wbar"><i id="wXp"></i></span></div>
+      <button class="wlvl" id="wLvlBtn" type="button"><span id="wLvl">Stufe 1</span><span class="wbar"><i id="wXp"></i></span></button>
     </div>
     <div class="feature">
       <button class="wide hero" id="goCareer" type="button">
@@ -1382,7 +1401,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     { id: "camo", n: ["Camo", "Camo"], r: "r", how: "lvl", lvl: 20 },
     { id: "chrome", n: ["Chrom", "Chrome"], r: "r", how: "lvl", lvl: 30 },
     { id: "ice", n: ["Eis", "Ice"], r: "e", how: "lvl", lvl: 40 },
-    { id: "lava", n: ["Lava", "Lava"], r: "l", how: "lvl", lvl: 50 }
+    { id: "lava", n: ["Lava", "Lava"], r: "l", how: "lvl", lvl: 50 },
+    { id: "blitz", n: ["Blitz", "Bolt"], r: "r", how: "rank", rank: 10 },
+    { id: "bronze", n: ["Bronze", "Bronze"], r: "r", how: "rank", rank: 15 },
+    { id: "silber", n: ["Silber", "Silver"], r: "e", how: "rank", rank: 25 },
+    { id: "platin", n: ["Platin", "Platinum"], r: "e", how: "rank", rank: 40 },
+    { id: "obsidian", n: ["Obsidian", "Obsidian"], r: "l", how: "rank", rank: 60 }
   ];
   const BUNDLE = { ids: ["s:royal", "s:phantom", "s:diamond", "s:holo"], eur: 6.99, coins: 5000 };
   const eur = (v) => { const t = Number.isInteger(v) ? String(v) : v.toFixed(2); return S.lang === "en" ? "€" + t : t.replace(".", ",") + " €"; };
@@ -1424,7 +1448,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     // o: defs, bg, shell, overlay (über der Schale, auf Schale beschnitten), visor, ring, after
     return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="sh"><path d="' + SHELL + '"/></clipPath>' +
       '<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>' + (o.defs || "") + "</defs>" +
-      '<circle cx="32" cy="32" r="32" fill="' + (o.bg || "#17151b") + '"/>' + (o.ring ? '<circle cx="32" cy="32" r="30.5" fill="none" stroke="' + o.ring + '" stroke-width="3"/>' : "") +
+      '<circle cx="32" cy="32" r="32" fill="' + (o.bg || "#17151b") + '"/>' + (o.under || "") + (o.ring ? '<circle cx="32" cy="32" r="30.5" fill="none" stroke="' + o.ring + '" stroke-width="3"/>' : "") +
       '<path d="' + SHELL + '" fill="' + (o.shell || "#17151b") + '"/>' +
       '<g clip-path="url(#sh)">' + (o.overlay || "") + '<rect width="64" height="64" fill="url(#shade)"/></g>' +
       '<path d="' + SHELL + '" fill="none" stroke="' + (o.edge || "rgba(255,255,255,.35)") + '" stroke-width="1"/>' +
@@ -1433,7 +1457,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<rect x="18" y="50" width="32" height="5" rx="2.5" fill="#0e0d12"/>' + (o.after || "") + "</svg>";
   }
   const shine = (dur) => '<rect x="-30" y="0" width="14" height="64" fill="#fff" opacity=".45" transform="skewX(-20)"><animate attributeName="x" values="-30;80;80" dur="' + dur + 's" repeatCount="indefinite"/></rect>';
+  const metal = (id, a, b, c, d) => '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a + '"/><stop offset=".4" stop-color="' + b + '"/><stop offset=".75" stop-color="' + c + '"/><stop offset="1" stop-color="' + d + '"/></linearGradient>';
   const SPECIAL_SVG = {
+    blitz: () => helmetSVG({ bg: "#141026", ring: "#ffd23f", shell: "#231d3d", visor: "#0d0a1c", edge: "#ffd23f",
+      overlay: '<path d="M30 12 L20 34 L29 34 L24 52 L42 26 L32 26 L38 12 Z" fill="#ffd23f"><animate attributeName="opacity" values="1;.55;1" dur="1.4s" repeatCount="indefinite"/></path>' }),
+    bronze: () => helmetSVG({ defs: metal("bz", "#ffd6a8", "#d08a4a", "#9a5a2a", "#4d2810"), bg: "#2a170a", ring: "#cd7f32", shell: "url(#bz)", visor: "#1c1008", edge: "#ffd6a8" }),
+    silber: () => helmetSVG({ defs: metal("sv", "#ffffff", "#d7dce3", "#9aa3ae", "#4b525c"), bg: "#1d2127", ring: "#d7dce3", shell: "url(#sv)", visor: "#14171c", edge: "#ffffff", overlay: shine(3) }),
+    platin: () => helmetSVG({ defs: metal("pt", "#f4fbff", "#bfe3ff", "#7fa7d4", "#34507a"), bg: "#0f1a2a", ring: "#bfe3ff", shell: "url(#pt)", visor: "#0b1422", edge: "#f4fbff", overlay: shine(2.4),
+      after: '<circle cx="50" cy="16" r="1.4" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></circle>' }),
+    obsidian: () => helmetSVG({ defs: '<linearGradient id="ob" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a855f7"/><stop offset=".5" stop-color="#22e8ff"/><stop offset="1" stop-color="#a855f7"/><animateTransform attributeName="gradientTransform" type="rotate" values="0 .5 .5;360 .5 .5" dur="5s" repeatCount="indefinite"/></linearGradient>', bg: "#07060c", ring: "url(#ob)", shell: "#0c0b12", visor: "#05040a", edge: "url(#ob)",
+      overlay: '<g stroke="url(#ob)" stroke-width="1.2" fill="none" opacity=".9"><path d="M14 26 L22 30 L18 40"/><path d="M22 30 L32 24 L40 32 L50 28"/><path d="M40 32 L36 46"/></g>' }),
     racing: () => helmetSVG({ defs: '<pattern id="ck" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f3efe6"/><rect width="4" height="4" fill="#111"/><rect x="4" y="4" width="4" height="4" fill="#111"/></pattern>', bg: "#ff4632", shell: "url(#ck)", visor: "#ffd23f" }),
     carbon: () => helmetSVG({ defs: '<pattern id="cb" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#202024"/><rect width="2" height="2" fill="#34343a"/><rect x="2" y="2" width="2" height="2" fill="#34343a"/></pattern>', bg: "#2b2731", shell: "url(#cb)", visor: "#ff4632", overlay: '<path d="M14 44 L57 39 L57 42 L14 47 Z" fill="#ff4632"/>' }),
     camo: () => helmetSVG({ bg: "#3a4a2a", shell: "#556b2f", visor: "#1b1f14", overlay: '<g fill="#3b4a20"><ellipse cx="20" cy="22" rx="7" ry="4"/><ellipse cx="45" cy="16" rx="8" ry="4"/><ellipse cx="25" cy="40" rx="9" ry="5"/></g><g fill="#8a7d4f"><ellipse cx="36" cy="44" rx="6" ry="3"/><ellipse cx="18" cy="31" rx="4" ry="3"/></g><g fill="#1f2614"><ellipse cx="50" cy="45" rx="5" ry="3"/><ellipse cx="30" cy="20" rx="4" ry="2.5"/></g>' }),
@@ -1479,7 +1512,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function countrySVG(f) {
     const flag = f ? '<svg x="11" y="10" width="47" height="41" viewBox="' + f.vb + '" preserveAspectRatio="xMidYMid slice">' + f.inner + "</svg>" : '<rect width="64" height="64" fill="#3ee27a"/>';
-    return helmetSVG({ bg: "#17151b", ring: "#f3efe6", shell: "#17151b", overlay: flag, visor: "#0e0d12", edge: "rgba(255,255,255,.7)" });
+    // Hintergrund: die Flagge füllt den ganzen Kreis (etwas abgedunkelt), kein heller Rand
+    const under = f ? '<g clip-path="url(#cc)"><svg x="0" y="0" width="64" height="64" viewBox="' + f.vb + '" preserveAspectRatio="xMidYMid slice">' + f.inner + '</svg><rect width="64" height="64" fill="#000" opacity=".42"/></g>' : "";
+    return helmetSVG({ defs: '<clipPath id="cc"><circle cx="32" cy="32" r="32"/></clipPath>', bg: "#17151b", under, shell: "#17151b", overlay: flag, visor: "#0e0d12", edge: "rgba(0,0,0,.55)" });
   }
   const SKINURL = {};
   const svgURL = (s) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s);
@@ -1488,12 +1523,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     return svgURL(countrySVG(f));
   }
   const BADGE = {};
-  function photoBadge(photo, sk, skinU) {
-    const key = sk + "|" + photo.length + "|" + photo.slice(-32);
+  // Foto rund, Skin klein oben rechts – ragt über den Rand hinaus. ring: "on" (grün) / "off" (grau) / ""
+  function photoBadge(photo, sk, skinU, ring) {
+    const key = sk + "|" + (ring || "") + "|" + photo.length + "|" + photo.slice(-32);
     if (BADGE[key]) return BADGE[key];
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="pc"><circle cx="32" cy="32" r="32"/></clipPath><clipPath id="bc"><circle cx="46" cy="46" r="10.4"/></clipPath></defs>' +
-      '<image href="' + photo + '" xlink:href="' + photo + '" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#pc)"/>' +
-      '<circle cx="46" cy="46" r="12.6" fill="#17151b"/><image href="' + skinU + '" xlink:href="' + skinU + '" x="35.6" y="35.6" width="20.8" height="20.8" clip-path="url(#bc)"/></svg>';
+    const cx = 29, cy = 35, R = ring ? 24.5 : 26.5;
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><clipPath id="pc"><circle cx="' + cx + '" cy="' + cy + '" r="' + R + '"/></clipPath><clipPath id="bc"><circle cx="51.5" cy="12.5" r="10"/></clipPath></defs>' +
+      '<image href="' + photo + '" xlink:href="' + photo + '" x="' + (cx - R) + '" y="' + (cy - R) + '" width="' + R * 2 + '" height="' + R * 2 + '" preserveAspectRatio="xMidYMid slice" clip-path="url(#pc)"/>' +
+      (ring ? '<circle cx="' + cx + '" cy="' + cy + '" r="27" fill="none" stroke="' + (ring === "on" ? "#3ee27a" : "#4a4654") + '" stroke-width="2.4"/>' : "") +
+      '<circle cx="51.5" cy="12.5" r="12" fill="#17151b"/><image href="' + skinU + '" xlink:href="' + skinU + '" x="41.5" y="2.5" width="20" height="20" clip-path="url(#bc)"/></svg>';
     const keys = Object.keys(BADGE); if (keys.length > 60) delete BADGE[keys[0]];
     return (BADGE[key] = svgURL(svg));
   }
@@ -1502,10 +1540,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     d = d || {};
     const photo = typeof d.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(d.photo) && d.photo.length < 60000 ? d.photo : null;
     const base = photo || avatarURL(Number.isInteger(d.av) ? d.av : 0);
+    img.classList.remove("pb");
     if (!skinValid(d.sk)) { img.src = base; return; }
     if (photo) {
-      // eigenes Foto bleibt sichtbar, der Skin sitzt klein und rund unten rechts
-      const withBadge = (u) => { img.src = photoBadge(photo, d.sk, u); };
+      // eigenes Foto bleibt sichtbar, der Skin sitzt klein und rund oben rechts
+      img.classList.add("pb");
+      const ring = img.classList.contains("ring-on") ? "on" : img.classList.contains("ring-off") ? "off" : "";
+      const withBadge = (u) => { img.src = photoBadge(photo, d.sk, u, ring); };
       if (d.sk.startsWith("s:")) { withBadge(skinURL(d.sk)); return; }
       if (SKINURL[d.sk]) { withBadge(SKINURL[d.sk]); return; }
       img.src = photo;
@@ -1519,7 +1560,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   const ownedSkins = () => { const o = store.get("skins", []); return Array.isArray(o) ? o.filter(skinValid) : []; };
   const lvlDone = (sp) => (careerData()[sp.lvl] || 0) > 0;
-  const hasSkin = (sk) => ownedSkins().includes(sk) || (sk.startsWith("s:") && special(sk.slice(2)).how === "lvl" && lvlDone(special(sk.slice(2))));
+  const rankNow = () => store.get("lvl", 1);
+  const hasSkin = (sk) => ownedSkins().includes(sk) || (sk.startsWith("s:") && ((special(sk.slice(2)).how === "lvl" && lvlDone(special(sk.slice(2)))) || (special(sk.slice(2)).how === "rank" && rankNow() >= special(sk.slice(2)).rank)));
   function grantSkins(list) { store.set("skins", Array.from(new Set(ownedSkins().concat(list)))); }
   function equipSkin(sk) {
     const pr = profile(); if (!pr) return;
@@ -1532,6 +1574,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (hasSkin(sk)) return tr("Besitzt du", "Owned");
     const how = skinHow(sk);
     if (how === "lvl") return "🔒 Level " + special(sk.slice(2)).lvl;
+    if (how === "rank") return "🔒 " + tr("Stufe ", "Rank ") + special(sk.slice(2)).rank;
     if (how === "cash" && sk.startsWith("c:")) return dailyDeals().includes(sk) && !hasFlag(sk.slice(2)) ? eur(PAIR_EUR) : eur(HELM_EUR);
     if (how === "cash") return eur(special(sk.slice(2)).eur);
     return '<span class="coin" aria-hidden="true"></span> ' + fmtN(skinPrice(sk));
@@ -1540,7 +1583,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const pr = profile() || {}, deals = dailyDeals();
     const card = (sk) => {
       const r = RAR[skinRarity(sk)], isOn = pr.sk === sk, deal = deals.includes(sk), how = skinHow(sk);
-      const sp = sk.startsWith("s:") ? special(sk.slice(2)) : null, locked = how === "lvl" && !hasSkin(sk);
+      const sp = sk.startsWith("s:") ? special(sk.slice(2)) : null, locked = (how === "lvl" || how === "rank") && !hasSkin(sk);
       const tag = deal && !hasSkin(sk) ? '<span class="sk-tag deal">' + (sk === "c:" + myCountry() ? tr("Dein Land ", "Your country ") : "") + "-" + Math.round(DEAL_OFF * 100) + " %</span>" : sp && sp.tag === "myth" ? '<span class="sk-tag myth">' + tr("Mythisch", "Mythic") + "</span>" : sp && sp.tag === "excl" ? '<span class="sk-tag excl">' + tr("Exklusiv", "Exclusive") + "</span>" : sp && sp.tag === "hot" ? '<span class="sk-tag hot">' + tr("Beliebt", "Popular") + "</span>" : sp && sp.tag === "new" ? '<span class="sk-tag new">' + tr("Neu", "New") + "</span>" : "";
       return '<button class="sk-card' + (isOn ? " on" : "") + (locked ? " locked" : "") + (how === "cash" ? " cash" : "") + '" type="button" data-sk="' + esc(sk) + '" style="--rc:' + r[2] + '">' + tag + '<img alt="" data-skimg="' + esc(sk) + '"><b>' + esc(skinName(sk)) + "</b><small" + (how === "cash" && !hasSkin(sk) ? ' class="eur"' : "") + ">" + (isOn ? tr("Aktiv", "Equipped") : priceLabel(sk)) + "</small></button>";
     };
@@ -1561,6 +1604,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         (bundleOwned ? "" : '<button class="sk-bundle" id="skBundle" type="button"><span class="sk-bimgs">' + BUNDLE.ids.map((sk) => '<img alt="" data-skimg="' + sk + '">').join("") + '</span><span class="sk-btx"><b>' + tr("Legenden-Paket", "Legends bundle") + "</b><small>" + tr("4 exklusive Skins + ", "4 exclusive skins + ") + fmtN(BUNDLE.coins) + tr(" Münzen", " coins") + "</small></span><span class=\"sk-bprice\"><s>" + eur(BUNDLE.ids.reduce((a, sk) => a + special(sk.slice(2)).eur, 0)) + "</s>" + eur(BUNDLE.eur) + "</span></button>") +
         sec(tr("Exklusiv · nur im Shop", "Exclusive · shop only"), tr("Gibt es nicht für Münzen.", "Not available for coins."), by("cash").filter((sk) => sk !== "s:zgold")) +
         sec(tr("Mit Münzen", "With coins"), "", by("coin")) +
+        sec(tr("Durch Stufen freischalten", "Unlock with ranks"), tr("Du bist Stufe ", "You're rank ") + rankNow() + tr(". Jede Runde bringt Erfahrung, ab der Stufe gehört der Skin dir.", ". Every round earns XP, at that rank the skin is yours."), by("rank")) +
         sec(tr("Durch Karriere freischalten", "Unlock in career"), tr("Schaffe das Level in der Karriere, dann gehört der Skin dir.", "Clear the career level and the skin is yours."), by("lvl"));
     } else {
       const q = SKS.q.trim().toLowerCase(), flags = cleanFlags(pr.flags);
@@ -1604,6 +1648,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     let action;
     if (isOn) action = '<button class="btn" type="button" disabled>' + tr("Aktiv", "Equipped") + "</button>";
     else if (owned) action = '<button class="btn" id="skEq" type="button">' + tr("Ausrüsten", "Equip") + "</button>";
+    else if (how === "rank") action = '<p class="sk-lock">🔒 ' + tr("Ab Stufe " + sp.rank + " freigeschaltet. Du bist Stufe " + rankNow() + ".", "Unlocks at rank " + sp.rank + ". You're rank " + rankNow() + ".") + "</p>" +
+      '<div class="rk-prog"><i style="width:' + Math.min(100, Math.round((rankNow() / sp.rank) * 100)) + '%"></i></div><p class="note">' + tr("Jede Münze, die du in Spielen verdienst, zählt als Erfahrung.", "Every coin you earn in games counts as XP.") + "</p>";
     else if (how === "lvl") action = '<p class="sk-lock">🔒 ' + tr("Schaffe Level " + sp.lvl + " in der Karriere, um diesen Skin freizuschalten.", "Clear level " + sp.lvl + " in career to unlock this skin.") + "</p>" +
       '<button class="btn" id="skCar" type="button">' + tr("Zur Karriere", "Go to career") + "<small>" + tr("Du bist bei Level ", "You're at level ") + unlocked() + "</small></button>";
     else if (how === "cash" && !sp) {
@@ -1613,7 +1659,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     else if (how === "cash") action = '<button class="btn cashbtn" id="skCash" type="button">' + tr("Kaufen für ", "Buy for ") + eur(sp.eur) + "<small>" + tr("Exklusiv · nicht für Münzen", "Exclusive · not for coins") + "</small></button>";
     else action = '<button class="btn" id="skBuy" type="button"' + (can ? "" : " disabled") + ">" + tr("Kaufen für ", "Buy for ") + fmtN(price) + tr(" Münzen", " coins") + "</button>" + (can ? "" : '<button class="btn ghost" id="skGet" type="button">' + tr("Münzen holen", "Get coins") + "<small>" + tr("Dir fehlen ", "You need ") + fmtN(price - W.coins) + tr("", " more") + "</small></button>");
-    openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + (how === "cash" ? tr(" · Exklusiv", " · Exclusive") : "") + '</span><h2>' + esc(skinName(sk)) + '</h2><div class="sk-big' + (how === "lvl" && !owned ? " dim" : "") + '" style="--rc:' + r[2] + '"><img alt="" id="skBig"></div>' +
+    openLayer('<span class="eyebrow" style="color:' + r[2] + '">' + L(r) + (how === "cash" ? tr(" · Exklusiv", " · Exclusive") : "") + '</span><h2>' + esc(skinName(sk)) + '</h2><div class="sk-big' + ((how === "lvl" || how === "rank") && !owned ? " dim" : "") + '" style="--rc:' + r[2] + '"><img alt="" id="skBig"></div>' +
       (how === "coin" ? '<div class="wmini">' + coinIco + "<b>" + fmtN(W.coins) + "</b></div>" : "") + action +
       (!sp && !owned ? '<p class="note">' + tr("Mit Flagge erscheinst du auch in der Länder-Rangliste.", "With the flag you also appear on the country leaderboard.") + "</p>" : "") +
       '<p class="note">' + tr("Alle sehen deinen Skin: in der Rangliste, bei Freunden, im Turnier und bei Online-Duellen.", "Everyone sees your skin: on the leaderboard, with friends, in tournaments and online duels.") + "</p>" +
@@ -1777,7 +1823,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function showProfile(first, after) {
     const pr = profile() || { uname: "", av: Math.floor(Math.random() * AVATARS.length), photo: null };
-    let av = pr.av || 0, photo = pr.photo || null, sk = skinValid(pr.sk) ? pr.sk : null, checkTimer = 0;
+    let av = pr.av || 0, photo = pr.photo || pr.photoKeep || null, sk = skinValid(pr.sk) ? pr.sk : null, checkTimer = 0;
+    // Was ist das Profilbild? "photo" (Foto + Skin-Abzeichen), "skin" (nur Skin) oder "avatar"
+    let pm = pr.photo ? "photo" : sk ? "skin" : "avatar";
     let flags = cleanFlags(pr.flags).filter(hasFlag);
     openLayer('<span class="eyebrow">' + (first ? tr("Willkommen bei ZACK!", "Welcome to ZACK!") : tr("Profil", "Profile")) + "</span><h2>" + (first ? tr("Erstell dein Profil", "Create your profile") : tr("Profil bearbeiten", "Edit profile")) + "</h2>" +
       "<p>" + tr("Mit deinem Benutzernamen finden dich Freunde.", "Friends find you by your username.") + "</p>" +
@@ -1785,37 +1833,62 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<label class="eyebrow" for="pfName">' + tr("Benutzername", "Username") + '</label>' +
       '<div class="uname-row"><span>@</span><input id="pfName" maxlength="16" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="' + tr("deinname", "yourname") + '"></div>' +
       '<p class="note" id="pfHint">' + tr("3–16 Zeichen: a–z, 0–9, _ und Punkt.", "3–16 characters: a–z, 0–9, _ and dot.") + "</p>" +
-      '<span class="eyebrow">' + tr("Avatar wählen", "Pick an avatar") + '</span><div class="avgrid" id="pfGrid"></div>' +
+      '<span class="eyebrow">' + tr("Profilbild", "Profile picture") + '</span>' +
+      '<div class="seg three pic-seg"><button type="button" data-pm="photo">📷 ' + tr("Foto", "Photo") + '</button><button type="button" data-pm="skin">🪖 Skin</button><button type="button" data-pm="avatar">🙂 Avatar</button></div>' +
+      '<div class="pic-panel" id="picPanel"></div><input id="pfFile" type="file" accept="image/*" hidden>' +
       '<span class="eyebrow">' + tr("Dein Land", "Your country") + '</span><div class="flagrow" id="pfFlags"></div>' +
       '<div class="flagpick" id="pfPick" hidden><input class="search" id="pfFlagQ" autocomplete="off" placeholder="' + tr("Land suchen", "Search country") + '"><div class="flaglist" id="pfFlagList"></div></div>' +
-      (first ? "" : '<button class="btn ghost pf-skins" id="pfSkins" type="button">' + tr("Skins ansehen", "Browse skins") + "<small>" + (sk ? tr("Aktiv: ", "Equipped: ") + esc(skinName(sk)) : tr("Gold, Neon, Galaxie, Länder-Helme …", "Gold, neon, galaxy, country helmets …")) + "</small></button>") +
-      '<label class="btn ghost pf-photo" for="pfFile">' + tr("Eigenes Foto", "Own photo") + '</label><input id="pfFile" type="file" accept="image/*" hidden>' +
-      '<button class="link" id="pfRecrop" type="button" hidden>' + tr("Ausschnitt ändern", "Change crop") + "</button>" +
-      '<div class="pf-rm" id="pfRm"></div>' +
       '<p class="msg-bad" id="pfErr" hidden></p>' +
       '<button class="btn" id="pfSave" type="button">' + (first ? tr("Los geht's", "Let's go") : tr("Speichern", "Save")) + "</button>" +
       (first ? '<button class="link" id="pfHave" type="button">' + tr("Ich hab schon ein Konto · Anmelden", "I already have an account · Sign in") + "</button>" : '<button class="btn ghost" id="pfAcct" type="button">' + (AUTH().current() ? tr("Konto · angemeldet", "Account · signed in") : tr("Konto & Passwort", "Account & password")) + "<small>" + (AUTH().current() ? esc(AUTH().current().email) : tr("Fortschritt auf allen Geräten sichern", "Keep your progress on every device")) + "</small></button>" + '<button class="link" id="pfCancel" type="button">' + tr("Abbrechen", "Cancel") + "</button>") +
       '<p class="note">' + (ONLINE ? tr("Jeder Benutzername gibt es nur einmal. Das wird beim Speichern geprüft.", "Every username exists only once. It's checked when you save.") : tr("Ob der Name frei ist, prüft die App, sobald Online aktiv ist.", "The app checks that the name is free once online is active.")) + "</p>");
-    const inp = $("pfName"), hint = $("pfHint"), err = $("pfErr"), grid = $("pfGrid");
+    const inp = $("pfName"), hint = $("pfHint"), err = $("pfErr");
     inp.value = pr.uname || "";
-    const drawRm = () => {
-      const box = $("pfRm"); if (!box) return; box.innerHTML = "";
-      const add = (label, fn) => { const b = h("button", "sbtn quiet"); b.type = "button"; b.textContent = label; b.addEventListener("click", fn); box.appendChild(b); };
-      if (photo) add(tr("Profilbild löschen", "Delete photo"), () => { photo = null; const rc = $("pfRecrop"); if (rc) rc.hidden = true; drawGrid(); preview(); });
-      if (sk) add(tr("Skin ablegen", "Remove skin"), () => { sk = null; const s2 = $("pfSkins"); if (s2 && s2.lastChild) s2.lastChild.textContent = tr("Gold, Neon, Galaxie, Länder-Helme …", "Gold, neon, galaxy, country helmets …"); drawGrid(); preview(); });
-      box.hidden = !box.children.length;
+    const shown = () => pm === "photo" && photo ? { av, photo, sk } : pm === "skin" && sk ? { av, sk } : { av };
+    const preview = () => { paintAvatar($("pfImg"), shown()); const ps_ = $("pfShow"); ps_.textContent = "@" + (inp.value.trim().toLowerCase() || tr("deinname", "yourname")); if (typeof flags !== "undefined") appendFlags(ps_, flags); };
+    let lastFile = null;
+    const mineSkins = () => SPECIALS.map((x) => "s:" + x.id).filter(hasSkin).concat(ownedSkins().filter((k) => k.startsWith("c:")));
+    const strip = (allowNone) => {
+      const list = mineSkins();
+      if (!list.length) return '<p class="note">' + tr("Du hast noch keine Skins.", "You don't have any skins yet.") + "</p>";
+      return '<div class="sk-strip">' + (allowNone ? '<button type="button" class="sk-pick' + (!sk ? " on" : "") + '" data-pk=""><span class="sk-none">✕</span><small>' + tr("Keiner", "None") + "</small></button>" : "") +
+        list.map((k) => '<button type="button" class="sk-pick' + (sk === k ? " on" : "") + '" data-pk="' + esc(k) + '"><img alt="" data-skimg="' + esc(k) + '"><small>' + esc(skinName(k)) + "</small></button>").join("") + "</div>";
     };
-    const preview = () => { drawRm(); paintAvatar($("pfImg"), { av, photo, sk }); const ps_ = $("pfShow"); ps_.textContent = "@" + (inp.value.trim().toLowerCase() || tr("deinname", "yourname")); if (typeof flags !== "undefined") appendFlags(ps_, flags); };
-    const drawGrid = () => {
-      grid.innerHTML = "";
-      AVATARS.forEach((_, i) => {
-        const b = h("button", "av" + (!photo && !sk && i === av ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", tr("Avatar ", "Avatar ") + (i + 1));
+    const shopBtn = (first ? "" : '<button class="link" id="picShop" type="button">' + tr("Mehr Skins im Shop", "More skins in the shop") + "</button>");
+    function drawPanel() {
+      sheet.querySelectorAll("[data-pm]").forEach((b) => b.classList.toggle("on", b.dataset.pm === pm));
+      const box = $("picPanel"); let html = "";
+      if (pm === "photo") {
+        html = photo
+          ? '<div class="pic-row"><label class="sbtn" for="pfFile">' + tr("Foto ändern", "Change photo") + "</label>" + (lastFile ? '<button class="sbtn quiet" id="pfRecrop" type="button">' + tr("Ausschnitt", "Crop") + "</button>" : "") + '<button class="sbtn quiet" id="pfDelPh" type="button">' + tr("Foto löschen", "Delete photo") + "</button></div>" +
+            '<span class="pic-sub">' + tr("Skin-Abzeichen oben rechts", "Skin badge top right") + "</span>" + strip(true)
+          : '<label class="btn ghost pf-photo" for="pfFile">' + tr("Foto hochladen", "Upload photo") + "</label>" + '<p class="note">' + tr("Danach kannst du den Ausschnitt wählen. Dein Skin erscheint klein oben rechts.", "Then you can pick the crop. Your skin shows small at the top right.") + "</p>";
+      } else if (pm === "skin") {
+        html = '<p class="note">' + tr("Nur dein Skin ist dein Profilbild.", "Only your skin is your profile picture.") + (photo ? tr(" Dein Foto bleibt gespeichert.", " Your photo stays saved.") : "") + "</p>" + strip(false);
+      } else {
+        html = '<div class="avgrid" id="pfGrid"></div>' + (photo || sk ? '<p class="note">' + tr("Foto und Skin bleiben dir erhalten, du kannst jederzeit zurückwechseln.", "You keep your photo and skins, switch back any time.") + "</p>" : "");
+      }
+      box.innerHTML = html + (pm !== "avatar" ? shopBtn : "");
+      box.querySelectorAll("[data-skimg]").forEach((im) => paintAvatar(im, { sk: im.dataset.skimg }));
+      box.querySelectorAll("[data-pk]").forEach((b) => b.addEventListener("click", () => { sk = b.dataset.pk || null; drawPanel(); preview(); buzz(8); }));
+      const grid = $("pfGrid");
+      if (grid) AVATARS.forEach((_, i) => {
+        const b = h("button", "av" + (i === av ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", tr("Avatar ", "Avatar ") + (i + 1));
         const im = h("img"); im.alt = ""; im.src = avatarURL(i); b.appendChild(im);
-        b.addEventListener("click", () => { av = i; photo = null; sk = null; drawGrid(); preview(); });
+        b.addEventListener("click", () => { av = i; drawPanel(); preview(); });
         grid.appendChild(b);
       });
-    };
-    drawGrid(); preview();
+      on("pfDelPh", () => { photo = null; lastFile = null; drawPanel(); preview(); });
+      on("pfRecrop", () => { if (lastFile) doCrop(lastFile); });
+      on("picShop", () => { SKS.tab = "special"; showSkins(() => showProfile(false, after)); });
+    }
+    sheet.querySelectorAll("[data-pm]").forEach((b) => b.addEventListener("click", () => {
+      pm = b.dataset.pm;
+      if (pm === "skin" && !sk) { const m = mineSkins(); if (m.length) sk = m[0]; }
+      drawPanel(); preview();
+      if (pm === "photo" && !photo) $("pfFile").click();
+    }));
+    drawPanel(); preview();
     const drawFlags = () => {
       const box = $("pfFlags"); box.innerHTML = "";
       const openPick = () => { const pk = $("pfPick"); pk.hidden = !pk.hidden; if (!pk.hidden) { drawList(); $("pfFlagQ").focus(); } };
@@ -1865,13 +1938,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         else if (t === false) { hint.textContent = tr("@" + v + " ist frei.", "@" + v + " is available."); hint.classList.add("good"); }
       }, 400);
     });
-    let lastFile = null;
     const doCrop = async (f) => {
-      try { photo = await cropPhoto(f); lastFile = f; drawGrid(); preview(); const rb = $("pfRecrop"); if (rb) rb.hidden = false; }
+      try { photo = await cropPhoto(f); lastFile = f; pm = "photo"; drawPanel(); preview(); }
       catch (x) { if (x && x.message === "cancel") return; err.hidden = false; err.textContent = tr("Das Foto ließ sich nicht laden.", "Couldn't load that photo."); }
     };
     $("pfFile").addEventListener("change", (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ""; if (f) doCrop(f); });
-    on("pfRecrop", () => { if (lastFile) doCrop(lastFile); });
     on("pfCancel", closeLayer);
     on("pfSave", async () => {
       const v = inp.value.trim().toLowerCase(), prob = unameProblem(v);
@@ -1879,7 +1950,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (prob) { err.hidden = false; err.textContent = prob; return; }
       const btn = $("pfSave"); btn.disabled = true; btn.textContent = tr("Prüfe …", "Checking …");
       const prev = profile();
-      store.set("profile", { uname: v, av, photo, sk, flags: cleanFlags(flags) });
+      const showPh = pm === "photo" && photo, showSk = pm === "avatar" ? null : sk;
+      store.set("profile", { uname: v, av, photo: showPh ? photo : null, photoKeep: showPh ? null : photo, sk: pm === "skin" && !sk ? null : showSk, flags: cleanFlags(flags) });
       const changed = !prev || prev.uname !== v;
       const ok = changed ? await claimUname(v) : (await pushProfile(), true);
       if (!ok) {
@@ -1894,7 +1966,6 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     });
     on("pfHave", () => showAccount("in", () => showProfile(true, after)));
     on("pfAcct", () => showAccount(null, () => showProfile(false, after)));
-    on("pfSkins", () => { SKS.tab = "mine"; showSkins(() => showProfile(false, after)); });
     setTimeout(() => inp.focus({ preventScroll: true }), 50);
   }
   // =====================================================
@@ -2045,7 +2116,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function renderProfileChip() {
     const pr = profile(), im = $("pAv"), nm = $("pName");
     if (!im) return;
-    paintAvatar(im, pr); let on_ = false; try { on_ = !!NET.ok; } catch (e) {} im.classList.toggle("ring-on", on_); im.classList.toggle("ring-off", !on_); nm.textContent = pr && pr.uname ? "@" + pr.uname : tr("Profil", "Profile"); if (pr) appendFlags(nm, pr.flags);
+    let on_ = false; try { on_ = !!NET.ok; } catch (e) {} im.classList.toggle("ring-on", on_); im.classList.toggle("ring-off", !on_); paintAvatar(im, pr); nm.textContent = pr && pr.uname ? "@" + pr.uname : tr("Profil", "Profile"); if (pr) appendFlags(nm, pr.flags);
   }
 
   // ---------- Münzen, Verlängerungen, Stufen ----------
@@ -2056,6 +2127,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     get lvl() { return store.get("lvl", 1); }, set lvl(v) { store.set("lvl", v); }
   };
   const xpNeed = (l) => 100 + (l - 1) * 50;
+  const rankCoins = (l) => 50 + l * 10 + (l % 5 === 0 ? 100 : 0);
   const fmtN = (n) => Number(n).toLocaleString(S.lang === "en" ? "en-US" : "de-DE");
   const coinIco = '<span class="coin" aria-hidden="true"></span>';
   const tokIco = '<span class="tok" aria-hidden="true"></span>';
@@ -2066,9 +2138,18 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   };
   function gainXP(x) {
     const ups = []; let xp = W.xp + x, l = W.lvl;
-    while (xp >= xpNeed(l)) { xp -= xpNeed(l); l++; const c = 50 + l * 10 + (l % 5 === 0 ? 100 : 0); W.coins += c; ups.push({ l, c, t: 0 }); }
+    while (xp >= xpNeed(l)) { xp -= xpNeed(l); l++; const c = rankCoins(l); W.coins += c; const sp = SPECIALS.find((x) => x.how === "rank" && x.rank === l); ups.push({ l, c, t: 0, sk: sp ? L(sp.n) : null }); }
     W.xp = xp; W.lvl = l;
     return ups;
+  }
+  // Tagesbonus: steigt mit der Serie, jeder 7. Tag am Stück gibt zusätzlich eine Verlängerung
+  const dailyBonus = (streak) => 50 + 25 * Math.min(Math.max(1, streak), 10);
+  function dailyPay(info) {
+    const st = store.get("daily:streak", 1), c = dailyBonus(st);
+    let extra = "";
+    if (st % 7 === 0) { W.tokens += 1; extra = tr(" + 1 Verlängerung", " + 1 continue"); }
+    info.sub += (info.sub ? " · " : "") + tr("Tagesbonus +", "Daily bonus +") + c + tr(" Münzen", " coins") + extra;
+    return c;
   }
   function reward(id, value, extra) {
     if (value == null || !EARN[id]) return null;
@@ -2083,6 +2164,22 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     c.textContent = fmtN(W.coins);
     $("wLvl").textContent = tr("Stufe ", "Rank ") + W.lvl;
     $("wXp").style.width = Math.min(100, Math.round((W.xp / xpNeed(W.lvl)) * 100)) + "%";
+  }
+  // Was bringen Stufen?
+  function showRankInfo() {
+    const l = W.lvl, need = xpNeed(l), have = W.xp;
+    const next = [];
+    for (let k = l + 1; next.length < 6 && k <= l + 60; k++) { const sp = SPECIALS.find((x) => x.how === "rank" && x.rank === k); if (sp || k % 5 === 0 || next.length < 3) next.push({ k, c: rankCoins(k), sp }); }
+    const skins = SPECIALS.filter((x) => x.how === "rank");
+    openLayer('<span class="eyebrow">' + tr("Deine Stufe", "Your rank") + "</span><h2>" + tr("Stufe ", "Rank ") + l + "</h2>" +
+      '<div class="rk-prog"><i style="width:' + Math.min(100, Math.round((have / need) * 100)) + '%"></i></div><p class="note">' + fmtN(have) + " / " + fmtN(need) + tr(" Erfahrung bis Stufe ", " XP to rank ") + (l + 1) + "</p>" +
+      "<p>" + tr("Jede Münze, die du in Spielen verdienst, zählt auch als Erfahrung. Mit jeder Stufe bekommst du Münzen, alle 5 Stufen einen Bonus, und bei bestimmten Stufen einen Skin.", "Every coin you earn in games also counts as XP. Every rank gives you coins, every 5 ranks a bonus, and some ranks unlock a skin.") + "</p>" +
+      '<span class="eyebrow">' + tr("Skins für Stufen", "Rank skins") + '</span><div class="sk-grid rk-skins">' + skins.map((sp) => { const own = rankNow() >= sp.rank; return '<button class="sk-card' + (own ? "" : " locked") + '" type="button" data-rsk="s:' + sp.id + '" style="--rc:' + RAR[sp.r][2] + '"><img alt="" data-skimg="s:' + sp.id + '"><b>' + esc(L(sp.n)) + "</b><small>" + (own ? tr("Freigeschaltet", "Unlocked") : "🔒 " + tr("Stufe ", "Rank ") + sp.rank) + "</small></button>"; }).join("") + "</div>" +
+      '<span class="eyebrow">' + tr("Als Nächstes", "Coming up") + '</span><dl class="dl">' + next.map((x) => "<dt>" + tr("Stufe ", "Rank ") + x.k + "</dt><dd>+" + fmtN(x.c) + tr(" Münzen", " coins") + (x.sp ? tr(" · Skin ", " · skin ") + esc(L(x.sp.n)) : "") + "</dd>").join("") + "</dl>" +
+      '<button class="btn" id="rkOk" type="button">' + tr("Alles klar", "Got it") + "</button>");
+    sheet.querySelectorAll("[data-skimg]").forEach((im) => paintAvatar(im, { sk: im.dataset.skimg }));
+    sheet.querySelectorAll("[data-rsk]").forEach((b) => b.addEventListener("click", () => skinDetail(b.dataset.rsk, showRankInfo)));
+    on("rkOk", closeLayer);
   }
   function myCode() {
     let c = store.get("myCode", null);
@@ -2469,7 +2566,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       ? tr("Duell bei ZACK!: ", "Duel at ZACK!: ") + res.text + tr(". Wer traut sich gegen mich?", ". Who dares to take me on?")
       : tr("Ich hab bei ZACK! (", "ZACK! (") + m.name + ") " + res.text + " " + unit + tr(" geschafft. Schaffst du das?", ". Can you beat that?");
     recordSkill(E.id, res.value, clock.t());
-    info.earn = reward(E.id, res.value, (info.isRec ? 25 : 0) + (info.stars ? info.stars * 10 : 0) + (o.daily && store.get("daily:paid", null) !== todayKey() ? (store.set("daily:paid", todayKey()), 15) : 0));
+    info.earn = reward(E.id, res.value, (info.isRec ? 25 : 0) + (info.stars ? info.stars * 10 : 0) + (o.daily && store.get("daily:paid", null) !== todayKey() ? (store.set("daily:paid", todayKey()), dailyPay(info)) : 0));
     if (o.online) { onlineFinish(res, info, P); return; }
     if (o.tour) { tourFinish(res, info); showResult(info); return; }
     afterRun(info);
@@ -2488,7 +2585,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   let CUR_DUEL = null;
   function earnHTML(info) {
     return (info.earn ? '<div class="earn">' + coinIco + "<b>+" + fmtN(info.earn.coins) + "</b> " + tr("Münzen", "coins") + ' · <span class="earn-lvl">' + tr("Stufe ", "Rank ") + W.lvl + "</span></div>" +
-      info.earn.ups.map((u) => '<div class="lvlup">' + tr("Stufe ", "Rank ") + u.l + tr(" erreicht! ", " reached! ") + "+" + u.c + tr(" Münzen", " coins") + (u.t ? tr(" · +1 Verlängerung", " · +1 continue") : "") + "</div>").join("") : "");
+      info.earn.ups.map((u) => '<div class="lvlup">' + tr("Stufe ", "Rank ") + u.l + tr(" erreicht! ", " reached! ") + "+" + u.c + tr(" Münzen", " coins") + (u.t ? tr(" · +1 Verlängerung", " · +1 continue") : "") + (u.sk ? tr(" · Neuer Skin: ", " · New skin: ") + esc(u.sk) : "") + "</div>").join("") : "");
   }
   function paintFollow(D) {
     const b = $("rsFollow"), t = $("dOpTag");
@@ -2597,7 +2694,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<div class="big">' + esc(info.text) + (info.unit ? "<small>" + esc(info.unit) + "</small>" : "") + "</div>" +
       (info.sub ? "<p>" + esc(info.sub) + "</p>" : "") + best +
       (info.earn ? '<div class="earn">' + coinIco + "<b>+" + fmtN(info.earn.coins) + "</b> " + tr("Münzen", "coins") + ' · <span class="earn-lvl">' + tr("Stufe ", "Rank ") + W.lvl + "</span></div>" +
-        info.earn.ups.map((u) => '<div class="lvlup">' + tr("Stufe ", "Rank ") + u.l + tr(" erreicht! ", " reached! ") + "+" + u.c + tr(" Münzen", " coins") + (u.t ? tr(" · +1 Verlängerung", " · +1 continue") : "") + "</div>").join("") : "") +
+        info.earn.ups.map((u) => '<div class="lvlup">' + tr("Stufe ", "Rank ") + u.l + tr(" erreicht! ", " reached! ") + "+" + u.c + tr(" Münzen", " coins") + (u.t ? tr(" · +1 Verlängerung", " · +1 continue") : "") + (u.sk ? tr(" · Neuer Skin: ", " · New skin: ") + esc(u.sk) : "") + "</div>").join("") : "") +
       (info.miles && info.miles.length ? info.miles.map((x) => '<div class="lvlup mileup">🎁 ' + (x.kind === "k" ? tr("Neuer Skin freigeschaltet: ", "New skin unlocked: ") + esc(skinName(x.sk)) + "</div>" : (x.kind === "m" ? tr("Etappenziel " + x.e + " erreicht! ", "Milestone " + x.e + " reached! ") : tr("Alle 15 Sterne in Etappe " + x.e + "! ", "All 15 stars in stage " + x.e + "! ")) + "+" + fmtN(x.coins) + tr(" Münzen", " coins") + "</div>")).join("") : "") +
       (next ? tr('<button class="btn" id="rsNext" type="button">Nächstes Level</button>', "<button class=\"btn\" id=\"rsNext\" type=\"button\">Next level</button>") : "") +
       '<button class="btn' + (next ? " ghost" : "") + '" id="rsAgain" type="button">' + esc(info.againLabel || tr("Nochmal", "Play again")) + "</button>" + boost + followBtn +
@@ -3781,9 +3878,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function openSocial() { closeLayer(); stopEngine(); show("social"); renderSocial(); }
   function row(id, p, sub, buttons, online) {
     const r = h("div", "srow");
-    const img = h("img"); img.alt = ""; if (p) paintAvatar(img, p); else img.hidden = true;
+    const img = h("img"); img.alt = "";
+    if (p && online != null) img.classList.add(online ? "ring-on" : "ring-off");
+    if (p) paintAvatar(img, p); else img.hidden = true;
     let avEl = img;
-    if (p && online != null) { avEl = h("span", "avw"); img.classList.add(online ? "ring-on" : "ring-off"); img.title = online ? "online" : "offline"; avEl.append(img); }
+    if (p && online != null) { avEl = h("span", "avw"); img.title = online ? "online" : "offline"; avEl.append(img); }
     const tx = h("div", "stext"); const n = h("span", "sname"); n.textContent = nameOf(p); appendFlags(n, p && p.flags);
     const s = h("span", "ssub"); s.innerHTML = online != null ? '<span class="sdot' + (online ? " on" : "") + '"></span>' : ""; s.appendChild(document.createTextNode(sub));
     tx.append(n, s);
@@ -3917,7 +4016,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     $("dayTitle").textContent = tr("Heute: ", "Today: ") + dm.name;
     const db = store.get("daily:" + todayKey(), null), last = store.get("daily:last", null);
     const streak = last === todayKey() || last === yesterdayKey() ? store.get("daily:streak", 0) : 0;
-    $("daySub").textContent = tr("Dein Bestwert heute: ", "Your best today: ") + (db == null ? tr("noch keiner", "none yet") : db + " " + dm.unit) + tr(" · Serie: ", " · Streak: ") + streak + (streak === 1 ? tr(" Tag", " day") : tr(" Tage", " days"));
+    const paid = store.get("daily:paid", null) === todayKey(), nextSt = paid ? streak : last === yesterdayKey() ? streak + 1 : 1;
+    $("daySub").textContent = (paid ? tr("Tagesbonus abgeholt ✓", "Daily bonus collected ✓") : tr("Heute +", "Today +") + dailyBonus(nextSt) + tr(" Münzen Bonus", " bonus coins") + (nextSt % 7 === 0 ? tr(" + Verlängerung", " + continue") : "")) +
+      tr(" · Serie: ", " · Streak: ") + streak + (streak === 1 ? tr(" Tag", " day") : tr(" Tage", " days")) + (db == null ? "" : tr(" · Bestwert: ", " · Best: ") + db + " " + dm.unit);
     $("tiles").innerHTML = ORDER.map((id) => {
       const m = MODES[id], b = store.get("best:" + id, null);
       return '<button class="tile" type="button" data-m="' + id + '"><span class="eyebrow">' + m.kind + '</span><span class="tile-name">' + m.name + '</span><span class="tile-desc">' + m.desc + '</span><span class="tile-best">' + m.bestLabel + " <b>" + (b == null ? "–" : b + m.bestUnit) + "</b></span></button>";
@@ -3929,6 +4030,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   $("tiles").addEventListener("click", (e) => { const t = e.target.closest("[data-m]"); if (t) chooseHow(t.dataset.m); });
   $("premBtn").addEventListener("click", () => showShop());
+  $("wLvlBtn").addEventListener("click", showRankInfo);
   $("soundBtn").addEventListener("click", showSettings);
   $("setTop").addEventListener("click", showSettings);
   $("goDaily").addEventListener("click", launchDaily);
@@ -4794,7 +4896,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         }
       } else {
         state = "pause"; b.classList.add("bad");
-        const right = [...grid.children].find((x) => x.__it === seq[pos]); if (right) right.classList.add("hint");
+        const right = [...grid.children].find((x) => x.__it === seq[pos]); if (right) right.classList.add("right");
         lives--; ctx.lives(lives, max); ctx.hurt(); ctx.float(ctx.W() / 2, ctx.H() * 0.18, tr("Falsch!", "Wrong!"), "bad");
         if (lives <= 0) { ctx.at(900, () => ctx.die()); return; }
         ctx.at(1500, startRound); // gleiche Länge, neue Folge
