@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.8"></script>
-<script src="backend.js?v=1.8.8"></script>
+<script src="config.js?v=1.9.0"></script>
+<script src="backend.js?v=1.9.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -949,9 +949,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     </div>
     <div class="feature">
       <button class="wide hero" id="goCareer" type="button">
-        <span class="eyebrow" data-en="Career · 50 levels">Karriere · 50 Level</span>
+        <span class="eyebrow" data-en="Career · 100 levels">Karriere · 100 Level</span>
         <span class="wide-title" id="carTitle">Level 1</span>
-        <span class="wide-sub" id="carSub">0 von 150 Sternen</span>
+        <span class="wide-sub" id="carSub">0 von 300 Sternen</span>
         <span class="prog"><i id="carProg" style="width:0%"></i></span>
       </button>
       <button class="wide online" id="goSocial" type="button">
@@ -1512,6 +1512,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     { id: "chrome", n: ["Chrom", "Chrome"], r: "r", how: "lvl", lvl: 30 },
     { id: "ice", n: ["Eis", "Ice"], r: "e", how: "lvl", lvl: 40 },
     { id: "lava", n: ["Lava", "Lava"], r: "l", how: "lvl", lvl: 50 },
+    { id: "turbo", n: ["Turbo", "Turbo"], r: "l", how: "lvl", lvl: 75 },
+    { id: "weltmeister", n: ["Weltmeister", "World Champion"], r: "m", how: "lvl", lvl: 100 },
     { id: "blitz", n: ["Blitz", "Bolt"], r: "r", how: "rank", rank: 10 },
     { id: "bronze", n: ["Bronze", "Bronze"], r: "r", how: "rank", rank: 15 },
     { id: "silber", n: ["Silber", "Silver"], r: "e", how: "rank", rank: 25 },
@@ -1576,6 +1578,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     silber: () => helmetSVG({ defs: metal("sv", "#ffffff", "#d7dce3", "#9aa3ae", "#4b525c"), bg: "#1d2127", ring: "#d7dce3", shell: "url(#sv)", visor: "#14171c", edge: "#ffffff", overlay: shine(3) }),
     platin: () => helmetSVG({ defs: metal("pt", "#f4fbff", "#bfe3ff", "#7fa7d4", "#34507a"), bg: "#0f1a2a", ring: "#bfe3ff", shell: "url(#pt)", visor: "#0b1422", edge: "#f4fbff", overlay: shine(2.4),
       after: '<circle cx="50" cy="16" r="1.4" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></circle>' }),
+    turbo: () => helmetSVG({ defs: '<linearGradient id="tb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0b2cff"/><stop offset="1" stop-color="#22e8ff"/></linearGradient>', bg: "#06102a", ring: "#22e8ff", shell: "url(#tb)", visor: "#03081a", edge: "#bff6ff",
+      overlay: '<g fill="#ffffff" opacity=".9"><path d="M10 30 L40 28 L40 31 L10 33 Z"><animate attributeName="opacity" values="1;.3;1" dur=".6s" repeatCount="indefinite"/></path><path d="M10 37 L46 34 L46 37 L10 40 Z"><animate attributeName="opacity" values=".3;1;.3" dur=".6s" repeatCount="indefinite"/></path></g><path d="M12 44 L57 39 L57 42 L12 47 Z" fill="#ff3df2"/>' + shine(1.4) }),
+    weltmeister: () => helmetSVG({ defs: '<linearGradient id="wm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#ffd23f"/><stop offset="1" stop-color="#b8860b"/></linearGradient><pattern id="wck" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#fff"/><rect width="3" height="3" fill="#111"/><rect x="3" y="3" width="3" height="3" fill="#111"/></pattern>', bg: "#120d00", ring: "url(#wm)", shell: "url(#wm)", visor: "#0d0900", edge: "#fffbe0",
+      overlay: '<rect x="10" y="38" width="50" height="7" fill="url(#wck)" opacity=".9" transform="rotate(-6 35 41)"/>' + shine(2),
+      after: '<g transform="translate(25 0)"><path d="M3 2 H15 L14 7 C14 10 12 12 9 12 C6 12 4 10 4 7 Z" fill="#ffd23f" stroke="#7a4a00" stroke-width=".6"/><rect x="7.5" y="12" width="3" height="3" fill="#ffd23f"/><rect x="5" y="15" width="8" height="2.2" rx="1" fill="#b8860b"/></g>' }),
     champion: () => helmetSVG({ defs: '<linearGradient id="chg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c2"/><stop offset=".35" stop-color="#ffcf33"/><stop offset=".65" stop-color="#ff7a1a"/><stop offset="1" stop-color="#b3130c"/></linearGradient>' +
         '<linearGradient id="chr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4632"/><stop offset=".33" stop-color="#ffd23f"/><stop offset=".66" stop-color="#3ee27a"/><stop offset="1" stop-color="#63d9ff"/><animateTransform attributeName="gradientTransform" type="rotate" values="0 .5 .5;360 .5 .5" dur="3s" repeatCount="indefinite"/></linearGradient>',
       bg: "#1a0805", ring: "url(#chr)", shell: "url(#chg)", visor: "#160604", edge: "#fff6c2",
@@ -2421,7 +2428,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     fire: ["#ff7a1a", "#ffd23f", "#c3150f"], lava: ["#ff4632", "#ff6a1a", "#ffd23f"], ice: ["#8fe3ff", "#eafcff", "#3a8ed8"], pixel: ["#ff3df2", "#22e8ff", "#5b4bff"],
     holo: ["#ff7ac6", "#3ee27a", "#63d9ff"], phantom: ["#7c3aed", "#c4b5fd", "#a78bfa"], royal: ["#7b1fa2", "#ffd23f", "#fff3b0"], diamond: ["#9fe8ff", "#ffffff", "#5ab8ff"],
     racing: ["#ff4632", "#f3efe6", "#ffd23f"], carbon: ["#ff4632", "#8a8a95", "#34343a"], camo: ["#8a7d4f", "#556b2f", "#3b4a20"], chrome: ["#e9edf2", "#9aa3ad", "#1e3a8a"],
-    blitz: ["#ffd23f", "#7b5cff", "#fff3b0"], bronze: ["#d08a4a", "#ffd6a8", "#9a5a2a"], silber: ["#d7dce3", "#ffffff", "#9aa3ae"], platin: ["#bfe3ff", "#f4fbff", "#7fa7d4"], obsidian: ["#a855f7", "#22e8ff", "#7c3aed"], champion: ["#ffcf33", "#ff4632", "#fff6c2"]
+    blitz: ["#ffd23f", "#7b5cff", "#fff3b0"], bronze: ["#d08a4a", "#ffd6a8", "#9a5a2a"], silber: ["#d7dce3", "#ffffff", "#9aa3ae"], platin: ["#bfe3ff", "#f4fbff", "#7fa7d4"], obsidian: ["#a855f7", "#22e8ff", "#7c3aed"], champion: ["#ffcf33", "#ff4632", "#fff6c2"], turbo: ["#0b2cff", "#22e8ff", "#ff3df2"], weltmeister: ["#ffd23f", "#ffffff", "#111111"]
   };
   const NAMED_COL = { red: "#ff0000", white: "#ffffff", green: "#008000", blue: "#0000ff", yellow: "#ffff00", black: "#000000", orange: "#ffa500", navy: "#000080" };
   async function skinPalette(sk) {
@@ -2519,14 +2526,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   // ---------- career ----------
-  // alle 12 Spiele abwechselnd; 50 Level = gut 4 Runden durch alle Spiele, Ziele steigen pro Runde
+  // alle 12 Spiele abwechselnd; 100 Level = gut 8 Runden durch alle Spiele, Ziele steigen pro Runde
+  const CAR_MAX = 100;
   const CAREER = ["ziele", "klicks", "startampel", "farbwort", "ballon", "stoppuhr", "turm", "taeuschung", "merken", "lanes", "augenwinkel", "praezision"];
   function level(n) {
-    const i = n - 1, mode = CAREER[i % CAREER.length], tier = Math.floor(i / CAREER.length), t = tier * 1.5;
+    const i = n - 1, mode = CAREER[i % CAREER.length], tier = Math.floor(i / CAREER.length), t = tier * 0.9;
     const goals = {
-      ziele: Math.round(10 + t * 12), startampel: Math.round(420 - t * 25), farbwort: Math.round(8 + t * 5), stoppuhr: Math.round((90 + t * 1.3) * 10) / 10,
+      ziele: Math.round(10 + t * 12), startampel: Math.round(420 - t * 25), farbwort: Math.round(8 + t * 5), stoppuhr: Math.min(98.5, Math.round((90 + t * 1.15) * 10) / 10),
       taeuschung: Math.round(8 + t * 5), lanes: Math.round(15 + t * 12), augenwinkel: Math.round(8 + t * 5), praezision: Math.round(40 + t * 20),
-      klicks: Math.round(50 + t * 12), ballon: Math.round(250 + t * 60), turm: Math.round(8 + t * 6), merken: Math.round(7 + t * 6)
+      klicks: Math.min(125, Math.round(50 + t * 10)), ballon: Math.round(250 + t * 60), turm: Math.round(8 + t * 6), merken: Math.round(7 + t * 6)
     };
     return { n, mode, tier, goal: goals[mode], lower: !!MODES[mode].lower, target: mode === "stoppuhr" ? [3, 5, 8, 12, 20, 30, 45][Math.min(Math.round(t), 6)] : undefined };
   }
@@ -2545,7 +2553,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     store.set("mig:stoppuhr2", true);
   }
   // Etappenziele: alle 5 Level eine Belohnung, dazu ein Bonus für alle 15 Sterne der Etappe
-  const MILES = [150, 250, 300, 400, 500, 600, 700, 800, 900, 1500];
+  const MILES = [150, 250, 300, 400, 500, 600, 700, 800, 900, 1500, 1000, 1100, 1200, 1300, 1500, 1600, 1700, 1800, 1900, 3000];
   const STAR_BONUS = 100;
   const mileGot = () => store.get("miles", {});
   function checkMiles() {
@@ -2559,7 +2567,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (out.length) { store.set("miles", got); out.forEach((x) => { W.coins += x.coins; }); renderWallet(); }
     return out;
   }
-  function unlocked() { const c = careerData(); let u = 1; while (u < 50 && c[u] > 0) u++; return u; }
+  function unlocked() { const c = careerData(); let u = 1; while (u < CAR_MAX && c[u] > 0) u++; return u; }
   const dailyInfo = () => { const n = dayNum(); return { mode: DAILY[n % DAILY.length], seed: (n * 2654435761) >>> 0 }; };
 
   // ---------- timelines (score over time) ----------
@@ -3042,7 +3050,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const title = info.title || (info.isRec ? tr("Neuer Rekord!", "New record!") : info.first ? tr("Erster Rekord", "First record") : tr("Runde vorbei", "Round over"));
     const stars = info.stars != null ? '<div class="stars big-stars" aria-label="' + info.stars + tr(' Sterne">', " stars\">") + starStr(info.stars) + "</div>" : "";
     const best = info.best != null ? "<p>" + (m.bestLabel || tr("Rekord", "Record")) + ": <strong>" + fmtN(info.best) + " " + info.unit + "</strong></p>" : "";
-    const next = L && info.stars > 0 && L.n < 50;
+    const next = L && info.stars > 0 && L.n < CAR_MAX;
     const boost = L && info.stars === 0 && m.revive
       ? tr('<button class="btn ghost" id="rsBoost" type="button">Nochmal mit Extra-Leben<small>', "<button class=\"btn ghost\" id=\"rsBoost\" type=\"button\">Retry with extra life<small>") + (S.premium ? tr("Werbefrei: ohne Video", "Ad-free: no video") : tr("Kurzes Video ansehen", "Watch a short video")) + "</small></button>" : "";
     const followBtn = info.followId && NET.ok && info.followId !== NET.me && !NET.follows.includes(info.followId)
@@ -4366,8 +4374,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const stars = Object.values(c).reduce((a, b) => a + b, 0);
     const L = level(u);
     $("carTitle").textContent = "Level " + u + " · " + MODES[L.mode].name;
-    $("carSub").textContent = stars + tr(" von 150 Sternen · Ziel: ", " of 150 stars · Goal: ") + goalText(L);
-    $("carProg").style.width = Math.round((stars / 150) * 100) + "%";
+    $("carSub").textContent = stars + tr(" von " + CAR_MAX * 3 + " Sternen · Ziel: ", " of " + CAR_MAX * 3 + " stars · Goal: ") + goalText(L);
+    $("carProg").style.width = Math.round((stars / (CAR_MAX * 3)) * 100) + "%";
     const d = dailyInfo(), dm = MODES[d.mode], now_ = new Date();
     $("dayEyebrow").textContent = tr("Tages-Challenge · " + now_.getDate() + "." + (now_.getMonth() + 1) + ".", "Daily Challenge · " + (now_.getMonth() + 1) + "/" + now_.getDate());
     $("dayTitle").textContent = tr("Heute: ", "Today: ") + dm.name;
@@ -4407,10 +4415,10 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function renderCareer() {
     const c = careerData(), u = unlocked();
     const stars = Object.values(c).reduce((a, b) => a + b, 0);
-    $("carStars").textContent = stars + " / 150 ★";
+    $("carStars").textContent = stars + " / " + CAR_MAX * 3 + " ★";
     let html = "";
     const got = mileGot();
-    for (let n = 1; n <= 50; n++) {
+    for (let n = 1; n <= CAR_MAX; n++) {
       const L = level(n), lock = n > u, mile = n % 5 === 0;
       html += '<button class="lv' + (lock ? " locked" : "") + (n === u ? " cur" : "") + (mile ? " goal" : "") + '" type="button" data-n="' + n + '"' + (lock ? " disabled" : "") + ' aria-label="Level ' + n + '">' + (mile ? '<i class="gift">🎁</i>' : "") + "<b>" + n + "</b><small>" + MODES[L.mode].name + '</small><span class="stars">' + starStr(c[n] || 0) + "</span></button>";
       if (mile) {
