@@ -1,5 +1,5 @@
-// ZACK! 1.9.0 – offline cache
-const CACHE = "zack-1.9.0";
+// ZACK! 1.9.1 – offline cache
+const CACHE = "zack-1.9.1";
 const ASSETS = ["./", "index.html", "config.js", "backend.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));

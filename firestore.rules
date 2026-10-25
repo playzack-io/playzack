@@ -52,6 +52,21 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['by', 't', 'at']);
       }
     }
+    // Clipper: Videos einreichen (Prüfung und Auszahlung in der Firebase-Konsole), eigene Einreichungen lesen
+    match /clips/{id} {
+      allow read: if signedIn() && resource.data.by == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.by == request.auth.uid
+        && request.resource.data.keys().hasOnly(['by', 'plat', 'url', 'handle', 'at', 'status'])
+        && request.resource.data.status == 'neu' && request.resource.data.plat in ['tt', 'ig']
+        && request.resource.data.url is string && request.resource.data.url.size() <= 300
+        && request.resource.data.handle is string && request.resource.data.handle.size() <= 30;
+    }
+    // Story-Skin: einmal pro Konto melden
+    match /stories/{uid} {
+      allow read: if isMe(uid);
+      allow create: if isMe(uid) && request.resource.data.keys().hasOnly(['by', 'handle', 'at']) && request.resource.data.by == uid
+        && request.resource.data.handle is string && request.resource.data.handle.size() <= 30;
+    }
     // Meldungen: nur anlegen, lesen nur in der Firebase-Konsole
     match /reports/{id} { allow create: if signedIn() && request.resource.data.by == request.auth.uid; }
 
