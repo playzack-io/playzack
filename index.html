@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.2"></script>
-<script src="backend.js?v=1.8.2"></script>
+<script src="config.js?v=1.8.3"></script>
+<script src="backend.js?v=1.8.3"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -299,8 +299,10 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 /* Sieg-Moment: Helm rast rein, heult auf, rast davon */
 .vfx { --c1: #ffd23f; --c2: #3ee27a; --c3: #ff4632; position: fixed; inset: 0; z-index: 80; pointer-events: none; overflow: hidden; animation: vfxIn .2s ease-out both; }
 .vfx.out { animation: vfxOut .5s ease-in forwards; }
-.vfx::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--c1) 38%, transparent), rgba(10, 9, 13, .86) 65%); }
-.vfx-rays { position: absolute; left: 50%; top: 42%; width: 170vmax; height: 170vmax; transform: translate(-50%, -50%); background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--c1) 30%, transparent) 0deg 8deg, transparent 8deg 15deg, color-mix(in srgb, var(--c2) 26%, transparent) 15deg 23deg, transparent 23deg 30deg); animation: vfxSpin 7s linear infinite; mask: radial-gradient(circle, #000 0 16%, transparent 56%); -webkit-mask: radial-gradient(circle, #000 0 16%, transparent 56%); opacity: 0; animation: vfxSpin 7s linear infinite, vfxRays .4s .45s ease-out forwards; }
+.vfx { background: var(--c1); }
+.vfx::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, .18), rgba(0, 0, 0, .34) 75%); }
+.vfx > * { z-index: 2; } .vfx > .vfx-rays { z-index: 0; }
+.vfx-rays { position: absolute; left: 50%; top: 42%; width: 300vmax; height: 300vmax; transform: translate(-50%, -50%); background: repeating-conic-gradient(from 0deg, var(--c1) 0deg 12deg, var(--c2) 12deg 24deg, var(--c3) 24deg 36deg); animation: vfxSpin 9s linear infinite; }
 .vfx-lines b { position: absolute; left: 100%; top: var(--y); width: var(--w); height: 3px; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--c)); opacity: .9; animation: vfxLine .45s var(--d) linear 3; }
 .vfx-car { position: absolute; left: 50%; top: 42%; width: min(44vw, 200px); aspect-ratio: 1; transform: translate(-50%, -50%); animation: vfxCar 2.2s cubic-bezier(.4, 0, .2, 1) both; }
 .vfx-av { position: absolute; inset: 0; animation: vfxRev .12s linear .6s 5; }
@@ -309,7 +311,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .vfx-av img.pb { box-shadow: none; border-radius: 0; filter: drop-shadow(0 0 18px var(--c1)); }
 .vfx-trail { position: absolute; right: 62%; top: 22%; height: 56%; width: 0; display: flex; flex-direction: column; border-radius: 99px 0 0 99px; overflow: hidden; filter: blur(1px); animation: vfxTrail 2.2s cubic-bezier(.4, 0, .2, 1) both; }
 .vfx-trail span { flex: 1; } .vfx-trail span:nth-child(1) { background: linear-gradient(90deg, transparent, var(--c1)); } .vfx-trail span:nth-child(2) { background: linear-gradient(90deg, transparent, var(--c2)); } .vfx-trail span:nth-child(3) { background: linear-gradient(90deg, transparent, var(--c3)); }
-.vfx-t { position: absolute; left: 0; right: 0; top: calc(42% + min(22vw, 100px) + 22px); text-align: center; font-family: var(--font-display); font-size: clamp(30px, 9vw, 60px); white-space: nowrap; color: var(--c1); text-shadow: 0 4px 0 rgba(0, 0, 0, .55), 0 0 30px var(--c1); animation: vfxText .55s .5s cubic-bezier(.2, 1.5, .4, 1) both; }
+.vfx-t { position: absolute; left: 0; right: 0; top: calc(42% + min(22vw, 100px) + 22px); text-align: center; font-family: var(--font-display); font-size: clamp(30px, 9vw, 60px); white-space: nowrap; color: #fff; -webkit-text-stroke: 2px rgba(0, 0, 0, .55); paint-order: stroke fill; text-shadow: 0 5px 0 rgba(0, 0, 0, .5), 0 0 26px rgba(0, 0, 0, .45); animation: vfxText .55s .5s cubic-bezier(.2, 1.5, .4, 1) both; }
 .vfx-taunt { position: absolute; left: 16px; right: 16px; top: calc(42% + min(22vw, 100px) + 22px + clamp(42px, 11vw, 74px)); text-align: center; font-family: var(--font-num); font-weight: 800; font-size: clamp(18px, 5.4vw, 28px); color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, .8); animation: vfxTaunt .5s 1.35s cubic-bezier(.2, 1.4, .4, 1) both; }
 .vfx i { position: absolute; top: -4%; left: var(--x); width: calc(9px * var(--s)); height: calc(15px * var(--s)); background: var(--c); border-radius: 2px; animation: vfxFall 1.8s var(--d) cubic-bezier(.3, .6, .5, 1) both; }
 @keyframes vfxIn { from { opacity: 0; } } @keyframes vfxOut { to { opacity: 0; } }
@@ -2422,12 +2424,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         if (!/^#[0-9a-f]{3,6}$/.test(c)) return; if (c.length === 4) c = "#" + c[1] + c[1] + c[2] + c[2] + c[3] + c[3];
         cnt[c] = (cnt[c] || 0) + 1;
       });
-      const lum = (c) => { const n = parseInt(c.slice(1), 16); return ((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000; };
-      let list = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]);
-      const colorful = list.filter((c) => lum(c) > 30 && lum(c) < 235);
-      list = colorful.concat(list.filter((c) => !colorful.includes(c) && lum(c) >= 235));
-      while (list.length < 3) list.push(list[0] || def[list.length]);
-      return list.slice(0, 3);
+      // Reihenfolge wie in der Flagge (z. B. Kurdistan: Rot, Weiß, Grün), häufige Farben zuerst
+      const order = Object.keys(cnt);
+      let list = order.slice().sort((a, b) => cnt[b] - cnt[a] || order.indexOf(a) - order.indexOf(b)).slice(0, 3);
+      list.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+      while (list.length < 3) list.push(list[list.length - 1] || def[list.length]);
+      return list;
     } catch (e) { return def; }
   }
   const TAUNTS = [["{n}, zu langsam! 💨", "{n}, too slow! 💨"], ["Tschüss {n}! 💨", "Bye {n}! 💨"], ["{n} sieht nur noch Staub 🏁", "{n} only sees dust 🏁"], ["Nächstes Mal vielleicht, {n} 😏", "Maybe next time, {n} 😏"], ["Gas gegeben, {n} abgehängt 🏎️", "Full throttle, {n} left behind 🏎️"]];
@@ -2590,7 +2592,26 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   const halfHTML = (cls, name) => '<div class="half2 ' + cls + '"><div class="mhud"><span class="who">' + name + '</span><b class="ms">0</b><span class="mi"></span><span class="mr"></span></div><div class="pin"></div><div class="wait" hidden></div></div>';
 
+  // Ohne Internet: 3 Runden am Tag gratis, danach Internet oder Werbefrei. Münzen und Rekorde nur online.
+  const OFF_FREE = 3;
+  const isOffline = () => typeof navigator.onLine === "boolean" && !navigator.onLine;
+  function offlineOk() {
+    if (S.premium || !isOffline()) return true;
+    const k = "offRounds:" + todayKey(), n = store.get(k, 0);
+    if (n >= OFF_FREE) return false;
+    store.set(k, n + 1); return true;
+  }
+  function offlineBlock(retry) {
+    stopEngine();
+    openLayer('<span class="eyebrow">' + tr("Kein Internet", "No internet") + "</span><h2>" + tr("Gratis-Runden aufgebraucht", "Free rounds used up") + "</h2><p>" +
+      tr("Ohne Internet sind " + OFF_FREE + " Runden am Tag gratis, die hast du heute schon gespielt. Verbinde dich mit dem Internet oder hol dir Werbefrei, dann spielst du überall unbegrenzt.", "Without internet you get " + OFF_FREE + " free rounds a day, and you've played them today. Connect to the internet or get ad-free to play anywhere without limits.") + "</p>" +
+      '<button class="btn" id="obRetry" type="button">' + tr("Nochmal versuchen", "Try again") + '</button><button class="btn ghost" id="obPrem" type="button">' + tr("Werbefrei holen", "Get ad-free") + '</button><button class="link" id="obMenu" type="button">' + tr("Zum Menü", "To menu") + "</button>");
+    on("obRetry", () => { if (!isOffline()) { closeLayer(); retry(); } else { const b = $("obRetry"); b.textContent = tr("Immer noch offline", "Still offline"); buzz(40); } });
+    on("obPrem", () => showShop(() => { if (S.premium) { closeLayer(); retry(); } else offlineBlock(retry); }));
+    on("obMenu", toMenu);
+  }
   function startMode(id, opts) {
+    if (!opts.online && !opts._offOk && !offlineOk()) { offlineBlock(() => startMode(id, Object.assign({}, opts, { _offOk: true }))); return; }
     stopEngine();
     const m = MODES[id];
     E.id = id; E.mode = m; E.opts = opts; E.players = []; E.gen = (E.gen || 0) + 1;
@@ -2819,8 +2840,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const m = E.mode, o = E.opts, res = P.inst.result();
     const unit = res.unit != null ? res.unit : m.unit;
     const info = { title: res.title || null, text: res.text, unit, sub: res.sub || "", best: null, isRec: false, first: false, stars: null, level: null };
-    const key = bestKey();
-    if (key && res.value != null) {
+    const key = bestKey(), offPlay = !S.premium && isOffline() && !o.online;
+    if (offPlay) info.sub += (info.sub ? " · " : "") + tr("Offline: Münzen und Rekorde gibt es nur mit Internet", "Offline: coins and records only count with internet");
+    if (key && res.value != null && !offPlay) {
       const prev = store.get(key, null);
       const better = prev == null ? (m.lower || res.value > 0) : (m.lower ? res.value < prev : res.value > prev);
       if (better) { store.set(key, res.value); if (key === "best:" + E.id) setTimeout(pushProfile, 0); }
@@ -2858,7 +2880,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       ? tr("Duell bei ZACK!: ", "Duel at ZACK!: ") + res.text + tr(". Wer traut sich gegen mich?", ". Who dares to take me on?")
       : tr("Ich hab bei ZACK! (", "ZACK! (") + m.name + ") " + res.text + " " + unit + tr(" geschafft. Schaffst du das?", ". Can you beat that?");
     recordSkill(E.id, res.value, clock.t());
-    info.earn = reward(E.id, res.value, (info.isRec ? 25 : 0) + (info.stars ? info.stars * 10 : 0) + (o.daily && store.get("daily:paid", null) !== todayKey() ? (store.set("daily:paid", todayKey()), dailyPay(info)) : 0));
+    info.earn = offPlay ? null : reward(E.id, res.value, (info.isRec ? 25 : 0) + (info.stars ? info.stars * 10 : 0) + (o.daily && store.get("daily:paid", null) !== todayKey() ? (store.set("daily:paid", todayKey()), dailyPay(info)) : 0));
     if (o.online) { onlineFinish(res, info, P); return; }
     if (o.tour) { tourFinish(res, info); showResult(info); return; }
     afterRun(info);
@@ -4892,7 +4914,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     };
     draw();
   }
-  function partyStart(queue) { PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; if (!PARTY.tie) PARTY.res = []; partyTurn(); }
+  function partyStart(queue) { if (!PARTY.tie && !offlineOk()) { offlineBlock(() => { closeLayer(); PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; PARTY.res = []; partyTurn(); }); return; } PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; if (!PARTY.tie) PARTY.res = []; partyTurn(); }
   function partyTurn() {
     partyKeysOff();
     const n = PARTY.names[PARTY.i];
