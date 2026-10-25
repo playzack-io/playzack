@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.8.1"></script>
-<script src="backend.js?v=1.8.1"></script>
+<script src="config.js?v=1.8.2"></script>
+<script src="backend.js?v=1.8.2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -2082,7 +2082,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const showPh = pm === "photo" && photo, showSk = pm === "avatar" ? null : sk;
       store.set("profile", { uname: v, av, photo: showPh ? photo : null, photoKeep: showPh ? null : photo, sk: pm === "skin" && !sk ? null : showSk, flags: cleanFlags(flags) });
       const changed = !prev || prev.uname !== v;
-      const ok = changed ? await claimUname(v, prev && prev.uname) : (await pushProfile(), true);
+      let ok = changed ? await claimUname(v, prev && prev.uname) : (await pushProfile(), true);
+      // ohne Internet trotzdem weiterspielen: der Name wird beim nächsten Online-Start geprüft (ensureName)
+      if (ok === "offline") ok = true;
       if (ok !== true) {
         if (prev) store.set("profile", prev); else store.set("profile", null);
         btn.disabled = false; btn.textContent = first ? tr("Los geht's", "Let's go") : tr("Speichern", "Save");
