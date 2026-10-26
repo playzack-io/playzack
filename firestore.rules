@@ -73,8 +73,9 @@ service cloud.firestore {
     // Clipper-Links: playzack.io/?c=name – pro Gerät ein Klick und ein Spieler, Zähler nur um +1
     function markOk(id) { return signedIn() && id == request.resource.data.c + '_' + request.auth.uid && request.resource.data.by == request.auth.uid
       && request.resource.data.keys().hasOnly(['c', 'by', 'at']) && request.resource.data.c.matches('^[a-z0-9._]{2,30}$'); }
-    match /clicks/{id} { allow create: if markOk(id); allow read: if isAdmin(); }
-    match /cplays/{id} { allow create: if markOk(id); allow read: if isAdmin(); }
+    function ownMark() { return signedIn() && (resource == null || resource.data.by == request.auth.uid); }
+    match /clicks/{id} { allow create: if markOk(id); allow get: if ownMark(); allow list: if isAdmin(); }
+    match /cplays/{id} { allow create: if markOk(id); allow get: if ownMark(); allow list: if isAdmin(); }
     function cur(f) { return resource == null ? 0 : resource.data.get(f, 0); }
     function fresh(col, code) { return !exists(/databases/$(database)/documents/$(col)/$(code + '_' + request.auth.uid)) && existsAfter(/databases/$(database)/documents/$(col)/$(code + '_' + request.auth.uid)); }
     match /clickstats/{code} {
