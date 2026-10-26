@@ -67,6 +67,24 @@
         });
       });
     },
+    // Link-Klicks und Spieler je Clipper-Code: pro Gerät nur einmal gezählt (Markierung + Zähler in einem Schritt)
+    trackRef: function (kind, code) {
+      var uid = user && user.uid; if (!uid || !/^[a-z0-9._]{2,30}$/.test(code)) return Promise.resolve(false);
+      var col = kind === "play" ? "cplays" : "clicks", f = kind === "play" ? "plays" : "clicks";
+      var mark = fs.doc(col + "/" + code + "_" + uid), stat = fs.doc("clickstats/" + code);
+      return fs.runTransaction(function (tx) {
+        return tx.get(mark).then(function (m) {
+          if (m.exists) return false;
+          return tx.get(stat).then(function (st) {
+            var d = st.exists ? st.data() : {}, nd = { clicks: d.clicks || 0, plays: d.plays || 0 };
+            nd[f] += 1;
+            tx.set(mark, { c: code, by: uid, at: Date.now() });
+            tx.set(stat, nd);
+            return true;
+          });
+        });
+      });
+    },
     nameOwner: function (name) { return fs.doc("unames/" + name).get().then(function (s) { var d = s.exists ? s.data() : null; return d && d.uid ? d.uid : null; }); },
     collection: function (p) {
       var c = fs.collection(p);

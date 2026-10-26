@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.1"></script>
-<script src="backend.js?v=1.9.1"></script>
+<script src="config.js?v=1.9.2"></script>
+<script src="backend.js?v=1.9.2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -304,6 +304,19 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .cl-story img { width: 58px; height: 58px; border-radius: 50%; flex: none; }
 .cl-story b { display: block; font-size: 16px; } .cl-story small { color: var(--chalk); opacity: .85; font-size: 13px; }
 .cl-row { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; } .cl-row .btn { margin: 0; }
+.cl-link { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; padding: 10px 12px; border-radius: 12px; background: rgba(62, 226, 122, .08); border: 1px solid rgba(62, 226, 122, .35); text-align: left; font-size: 14px; }
+.cl-link b { color: var(--go); word-break: break-all; } .cl-link small { flex-basis: 100%; color: var(--muted); font-size: 12px; }
+.ad-tabs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 4px 0 10px; }
+.ad-list { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.ad-item { padding: 12px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.ad-h { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; } .ad-h small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.ad-url { color: var(--ice); font-size: 13px; word-break: break-all; }
+.ad-st { font-size: 13px; color: var(--chalk); }
+.ad-in { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 8px; } .ad-in label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.ad-in input { width: 100%; min-width: 0; box-sizing: border-box; background: var(--housing); color: var(--chalk); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; font-size: 16px; -webkit-user-select: text; user-select: text; }
+.ad-why { font-size: 14px; padding: 10px; }
+.ad-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.ad-row { flex-direction: row; justify-content: space-between; align-items: center; } .ad-row b { flex: 1; }
 .rk-prog { width: 100%; align-self: stretch; height: 8px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; margin: 6px 0 4px; }
 .rk-prog i { display: block; height: 100%; background: var(--go); border-radius: 4px; }
 .rk-skins { grid-template-columns: repeat(3, 1fr); }
@@ -2402,6 +2415,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (value == null || !EARN[id]) return null;
     const coins = Math.max(0, Math.round(EARN[id](value))) + (extra || 0);
     if (coins > 0 && !WPEND && !WANIM) WPEND = { coins0: W.coins, lvl0: W.lvl, xp0: W.xp };
+    if (store.get("clipRef", null) && !store.get("clipRefPlayed", false)) { store.set("clipRefPending", true); setTimeout(() => trackClip("play"), 0); }
     W.coins += coins;
     const ups = gainXP(coins);
     renderWallet();
@@ -2559,7 +2573,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function openClipper(focus, back) {
     const done = back || closeLayer;
     const storyGot = hasSkin(STORY_SK) || !!store.get("storyClaimed", false);
-    const caption = tr("Wie schnell bist du wirklich? ⚡ Spiel ZACK! gratis: " + DL + " · " + IG + " #zack #reaktionstest", "How fast are you really? ⚡ Play ZACK! free: " + DL + " · " + IG + " #zack #reactiontest");
+    const myLink = DL + (store.get("clipHandle", "") ? "/?c=" + store.get("clipHandle", "") : "");
+    const caption = tr("Wie schnell bist du wirklich? ⚡ Spiel ZACK! gratis: " + myLink + " · " + IG + " #zack #reaktionstest", "How fast are you really? ⚡ Play ZACK! free: " + myLink + " · " + IG + " #zack #reactiontest");
     const rule = (t) => '<li><span class="cl-ok">✓</span><span>' + t + "</span></li>";
     openLayer('<span class="eyebrow">' + tr("Clipper-Programm", "Clipper program") + "</span><h2>" + tr("Verdiene Geld mit Clips", "Earn money with clips") + "</h2>" +
       "<p>" + tr("Poste TikToks oder Instagram-Reels mit ZACK!. Ab 10.000 Views zahlen wir dich aus.", "Post TikToks or Instagram Reels with ZACK!. From 10,000 views we pay you.") + "</p>" +
@@ -2569,13 +2584,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         rule(tr("ZACK! ist im Video zu sehen", "ZACK! is shown in the video")) +
         rule(tr("<b>" + IG + "</b> im Video markiert", "<b>" + IG + "</b> tagged in the video")) +
         rule(tr("<b>" + IG + "</b> in deiner Bio", "<b>" + IG + "</b> in your bio")) +
-        rule(tr("Download-Link <b>" + DL + "</b> in der Beschreibung und in deiner Bio", "Download link <b>" + DL + "</b> in the caption and in your bio")) +
+        rule(tr("Dein persönlicher Link <b>" + DL + "/?c=deinname</b> in der Beschreibung und in deiner Bio (darüber zählen wir echte Klicks)", "Your personal link <b>" + DL + "/?c=yourname</b> in the caption and in your bio (we count real clicks through it)")) +
         rule(tr("Öffentliches, eigenes Video, keine gekauften Views", "Public video of your own, no bought views")) + "</ul>" +
       '<div class="cl-copy"><button class="sbtn" type="button" data-cp="' + esc(IG) + '">' + esc(IG) + tr(" kopieren", " copy") + '</button><button class="sbtn" type="button" data-cp="' + esc(DL) + '">' + esc(DL) + tr(' kopieren', ' copy') + '</button><button class="sbtn quiet" type="button" data-cp="' + esc(caption) + '">' + tr("Beschreibung kopieren", "Copy caption") + "</button></div>" +
       '<span class="eyebrow" id="clFormHead">' + tr("Video einreichen", "Submit a video") + "</span>" +
       '<div class="seg two cl-plat"><button type="button" data-pl="tt" class="on">TikTok</button><button type="button" data-pl="ig">Instagram</button></div>' +
       '<input class="search" id="clUrl" type="url" inputmode="url" autocomplete="off" placeholder="' + tr("Link zum Video", "Link to the video") + '">' +
       '<input class="search" id="clHandle" autocomplete="off" autocapitalize="none" placeholder="' + tr("Dein Account (@name)", "Your account (@name)") + '">' +
+      '<div class="cl-link" id="clLink" hidden><span>' + tr("Dein Link:", "Your link:") + ' <b id="clLinkT"></b></span><button class="sbtn" id="clLinkCp" type="button">' + tr("Kopieren", "Copy") + '</button><small id="clLinkSt"></small></div>' +
       '<label class="cl-check"><input type="checkbox" id="clOk"> ' + tr("Ich habe alle Punkte oben erfüllt.", "I've met every point above.") + "</label>" +
       '<p class="msg-bad" id="clErr" hidden></p><button class="btn" id="clSend" type="button">' + tr("Einreichen", "Submit") + "</button>" +
       '<div id="clMine"></div>' +
@@ -2590,6 +2606,19 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     sheet.querySelectorAll("[data-cp]").forEach((b) => b.addEventListener("click", () => copyText(b.dataset.cp, b)));
     const err = (t) => { const e = $("clErr"); e.hidden = !t; e.textContent = t || ""; };
     const cleanHandle = (v) => (v || "").trim().replace(/^@+/, "").slice(0, 30);
+    let linkT = 0;
+    const showLink = () => {
+      const c = clipCode($("clHandle").value), box = $("clLink");
+      if (c.length < 2) { box.hidden = true; return; }
+      box.hidden = false; $("clLinkT").textContent = DL + "/?c=" + c; store.set("clipHandle", c);
+      clearTimeout(linkT); linkT = setTimeout(async () => {
+        const st = $("clLinkSt"); if (!st || !NET.ok) return;
+        try { const d = await NET.db.doc("clickstats/" + c).get(); const x = d.exists ? d.data() : {}; st.textContent = "🔗 " + fmtN(x.clicks || 0) + tr(" Klicks · 🎮 ", " clicks · 🎮 ") + fmtN(x.plays || 0) + tr(" haben gespielt", " played"); } catch (e) {}
+      }, 400);
+    };
+    $("clHandle").value = store.get("clipHandle", "") || "";
+    $("clHandle").addEventListener("input", showLink); showLink();
+    on("clLinkCp", () => copyText("https://" + $("clLinkT").textContent, $("clLinkCp")));
     on("clSend", async () => {
       const url = ($("clUrl").value || "").trim(), hd = cleanHandle($("clHandle").value);
       if (!CLIP_RE[plat].test(url)) { err(plat === "tt" ? tr("Bitte einen TikTok-Link einfügen (https://www.tiktok.com/…).", "Please paste a TikTok link (https://www.tiktok.com/…).") : tr("Bitte einen Instagram-Link einfügen (https://www.instagram.com/reel/…).", "Please paste an Instagram link (https://www.instagram.com/reel/…).")); return; }
@@ -2627,6 +2656,65 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     });
     on("clBack", done);
     if (focus === "story") setTimeout(() => { const el = $("clStory"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); }, 120);
+  }
+  // ---------- Admin: Clipper-Einreichungen prüfen (nur playzack@outlook.de mit Google) ----------
+  const ADMIN_MAIL = "playzack@outlook.de";
+  const isAdminUser = () => { try { const c = AUTH().current(); return !!(c && String(c.email).toLowerCase() === ADMIN_MAIL); } catch (e) { return false; } };
+  const tierEur = (v) => { let e = 0; CLIP_TIERS.forEach(([n, x]) => { if (v >= n) e = x; }); return e; };
+  const ADM = { tab: "neu", list: [], stats: {} };
+  async function openAdmin(tab) {
+    if (tab) ADM.tab = tab;
+    openLayer('<span class="eyebrow">Admin</span><h2>Clipper</h2><p class="note" id="adSum">' + tr("Lade …", "Loading …") + "</p>" +
+      '<div class="ad-tabs">' + [["neu", tr("Neu", "New")], ["ok", tr("Bestätigt", "Approved")], ["bezahlt", tr("Bezahlt", "Paid")], ["abgelehnt", tr("Abgelehnt", "Rejected")], ["story", "Stories"], ["links", "Links"]].map(([k, l]) => '<button type="button" class="chip' + (ADM.tab === k ? " on" : "") + '" data-at="' + k + '">' + l + "</button>").join("") + "</div>" +
+      '<div id="adList" class="ad-list"></div><button class="link" id="adBack" type="button">' + tr("Schließen", "Close") + "</button>", "wide-sheet");
+    sheet.querySelectorAll("[data-at]").forEach((b) => b.addEventListener("click", () => openAdmin(b.dataset.at)));
+    on("adBack", closeLayer);
+    const box = $("adList"), sum = $("adSum");
+    if (!NET.ok) { sum.textContent = tr("Keine Verbindung.", "No connection."); return; }
+    try {
+      if (ADM.tab === "story") {
+        const q = await NET.db.collection("stories").orderBy("at", "desc").limit(200).get();
+        sum.textContent = q.size + tr(" Story-Skins vergeben", " story skins given");
+        box.innerHTML = q.docs.map((d) => { const x = d.data(); return '<div class="ad-item"><div class="ad-h"><b>@' + esc(x.handle) + '</b><small>' + new Date(x.at).toLocaleString("de-DE") + '</small></div><a class="ad-url" href="https://www.instagram.com/' + encodeURIComponent(x.handle) + '/" target="_blank" rel="noopener">instagram.com/' + esc(x.handle) + "</a></div>"; }).join("") || '<p class="empty">' + tr("Noch keine.", "None yet.") + "</p>";
+        return;
+      }
+      if (ADM.tab === "links") {
+        const q = await NET.db.collection("clickstats").limit(300).get();
+        const rows = q.docs.map((d) => Object.assign({ c: d.id }, d.data())).sort((a, b) => (b.plays || 0) - (a.plays || 0) || (b.clicks || 0) - (a.clicks || 0));
+        sum.textContent = rows.length + tr(" Clipper-Links · ", " clipper links · ") + fmtN(rows.reduce((a, r) => a + (r.clicks || 0), 0)) + tr(" Klicks gesamt", " clicks total");
+        box.innerHTML = rows.map((r) => '<div class="ad-item ad-row"><b>' + esc(r.c) + '</b><span>🔗 ' + fmtN(r.clicks || 0) + '</span><span>🎮 ' + fmtN(r.plays || 0) + "</span></div>").join("") || '<p class="empty">' + tr("Noch keine Klicks.", "No clicks yet.") + "</p>";
+        return;
+      }
+      const q = await NET.db.collection("clips").orderBy("at", "desc").limit(300).get();
+      ADM.list = q.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      const open = ADM.list.filter((x) => (x.status || "neu") === "neu").length, owe = ADM.list.filter((x) => x.status === "ok").reduce((a, x) => a + (x.eur || 0), 0);
+      sum.textContent = open + tr(" zu prüfen · offen auszuzahlen: ", " to review · still to pay: ") + eur(owe);
+      const list = ADM.list.filter((x) => (x.status || "neu") === ADM.tab);
+      const codes = Array.from(new Set(list.map((x) => clipCode(x.handle))));
+      await Promise.all(codes.map(async (c) => { if (ADM.stats[c]) return; try { const d = await NET.db.doc("clickstats/" + c).get(); ADM.stats[c] = d.exists ? d.data() : { clicks: 0, plays: 0 }; } catch (e) { ADM.stats[c] = { clicks: 0, plays: 0 }; } }));
+      box.innerHTML = list.map((x) => {
+        const st = ADM.stats[clipCode(x.handle)] || {};
+        return '<div class="ad-item" data-id="' + esc(x.id) + '"><div class="ad-h"><b>' + (x.plat === "ig" ? "Instagram" : "TikTok") + " · @" + esc(x.handle) + '</b><small>' + new Date(x.at).toLocaleString("de-DE") + "</small></div>" +
+          '<a class="ad-url" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(String(x.url).replace(/^https:\/\/(www\.)?/, "")) + "</a>" +
+          '<div class="ad-st">🔗 ' + fmtN(st.clicks || 0) + tr(" Klicks", " clicks") + " · 🎮 " + fmtN(st.plays || 0) + tr(" Spieler", " players") + tr(" über ", " via ") + esc(DL) + "/?c=" + esc(clipCode(x.handle)) + "</div>" +
+          '<div class="ad-in"><label>Views<input type="number" inputmode="numeric" min="0" data-v value="' + (x.views || "") + '"></label><label>€<input type="number" inputmode="decimal" min="0" step="0.5" data-e value="' + (x.eur || "") + '"></label></div>' +
+          '<input class="search ad-why" data-w placeholder="' + tr("Grund bei Ablehnung (optional)", "Reason if rejected (optional)") + '" value="' + esc(x.why || "") + '">' +
+          '<div class="ad-btns"><button class="sbtn" type="button" data-do="ok">' + tr("Bestätigen", "Approve") + '</button><button class="sbtn quiet" type="button" data-do="abgelehnt">' + tr("Ablehnen", "Reject") + '</button><button class="sbtn" type="button" data-do="bezahlt">' + tr("Bezahlt", "Paid") + "</button></div></div>";
+      }).join("") || '<p class="empty">' + tr("Nichts in diesem Bereich.", "Nothing here.") + "</p>";
+      box.querySelectorAll(".ad-item[data-id]").forEach((it) => {
+        const v = it.querySelector("[data-v]"), e = it.querySelector("[data-e]");
+        v.addEventListener("input", () => { e.value = tierEur(+v.value || 0) || ""; });
+        it.querySelectorAll("[data-do]").forEach((b) => b.addEventListener("click", async () => {
+          const upd = { status: b.dataset.do };
+          if (v.value !== "") upd.views = Math.max(0, Math.round(+v.value));
+          if (e.value !== "") upd.eur = Math.max(0, Math.round(+e.value * 100) / 100);
+          const w = it.querySelector("[data-w]").value.trim(); if (w) upd.why = w.slice(0, 120);
+          b.disabled = true;
+          try { await NET.db.doc("clips/" + it.dataset.id).update(upd); SFX.coin(); openAdmin(ADM.tab); }
+          catch (err) { b.disabled = false; b.textContent = tr("Fehler – nochmal", "Error – retry"); }
+        }));
+      });
+    } catch (e) { sum.textContent = tr("Kein Zugriff. Melde dich mit Google als " + ADMIN_MAIL + " an.", "No access. Sign in with Google as " + ADMIN_MAIL + "."); }
   }
   // Was bringen Stufen?
   function showRankInfo() {
@@ -3445,6 +3533,20 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     });
     on("ivClose", () => { closeLayer(); renderMenu(); });
   }
+  // Clipper-Link playzack.io/?c=name: Klick zählen (einmal pro Gerät), nach der ersten Runde auch als Spieler
+  const clipCode = (v) => String(v || "").trim().toLowerCase().replace(/^@+/, "").replace(/[^a-z0-9._]/g, "").slice(0, 30);
+  (function readClipParam() {
+    try {
+      const u = new URL(location.href), c = clipCode(u.searchParams.get("c"));
+      if (c.length >= 2 && !store.get("clipRef", null)) store.set("clipRef", c);
+      if (u.searchParams.has("c")) { u.searchParams.delete("c"); history.replaceState(null, "", u.pathname + (u.search || "") + u.hash); }
+    } catch (e) {}
+  })();
+  async function trackClip(kind) {
+    const c = store.get("clipRef", null), flag = kind === "play" ? "clipRefPlayed" : "clipRefClicked";
+    if (!c || store.get(flag, false) || !NET.ok || typeof NET.db.trackRef !== "function") return;
+    try { await NET.db.trackRef(kind, c); store.set(flag, true); } catch (e) {}
+  }
   function checkRef() {
     let ref = null;
     try { ref = new URLSearchParams(location.search).get("ref"); } catch (e) {}
@@ -3466,6 +3568,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<button class="btn ghost" id="stPrem" type="button">' + (S.premium ? tr("Werbefrei aktiv", "Ad-free active") : tr("Werbefrei spielen", "Play ad-free")) + "</button>" +
       '<button class="btn ghost" id="stProf" type="button">' + tr("Profil bearbeiten", "Edit profile") + "</button>" +
       '<button class="btn ghost" id="stAcct" type="button">' + (AUTH().current() ? tr("Konto · ", "Account · ") + esc(AUTH().current().email) : tr("Konto & Passwort", "Account & password")) + "</button>" +
+      (isAdminUser() ? '<button class="btn ghost" id="stAdmin" type="button">Admin · Clipper</button>' : "") +
       '<button class="btn" id="stClose" type="button">' + tr("Fertig", "Done") + "</button>");
     on("stSound", () => { S.sound = !S.sound; store.set("sound", S.sound); showSettings(); });
     on("stMusic", () => { S.music = !S.music; store.set("music", S.music); if (S.music) { AU.unlock(); AU.startMusic(); } else AU.stopMusic(); showSettings(); });
@@ -3475,6 +3578,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     on("stPrem", () => showShop());
     on("stProf", () => showProfile(false));
     on("stAcct", () => showAccount(null, showSettings));
+    on("stAdmin", () => openAdmin());
     on("stClose", closeLayer);
   }
   function setLang(l) { S.lang = l; store.set("lang", l); applyLang(); renderMenu(); if (!$("career").hidden) renderCareer(); if (!$("ranks").hidden) renderRanks(); if (!$("social").hidden) renderSocial(); }
@@ -3554,6 +3658,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       try { await syncPlayer(); } catch (e) { NET.ok = false; }
       setTimeout(() => { claimWeekly().catch(() => {}); }, 2500);
       setTimeout(() => { ensureName().catch(() => {}); }, 1500);
+      setTimeout(() => { trackClip("click"); if (store.get("clipRefPending", false)) trackClip("play"); }, 2200);
     }
     netReadyResolve();
     renderOnline();

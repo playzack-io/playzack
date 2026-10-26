@@ -3,6 +3,8 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
     function isMe(uid) { return signedIn() && request.auth.uid == uid; }
+    // Admin: nur das Google-Konto playzack@outlook.de (E-Mail von Google bestätigt)
+    function isAdmin() { return signedIn() && request.auth.token.email == 'playzack@outlook.de' && request.auth.token.email_verified == true; }
 
     // Profil, Bestwerte, Folgen, Läufe, Spielstand: lesen alle Angemeldeten, schreiben nur der Besitzer
     match /players/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
@@ -54,7 +56,8 @@ service cloud.firestore {
     }
     // Clipper: Videos einreichen (Prüfung und Auszahlung in der Firebase-Konsole), eigene Einreichungen lesen
     match /clips/{id} {
-      allow read: if signedIn() && resource.data.by == request.auth.uid;
+      allow read: if signedIn() && (resource.data.by == request.auth.uid || isAdmin());
+      allow update: if isAdmin() && request.resource.data.by == resource.data.by && request.resource.data.url == resource.data.url;
       allow create: if signedIn() && request.resource.data.by == request.auth.uid
         && request.resource.data.keys().hasOnly(['by', 'plat', 'url', 'handle', 'at', 'status'])
         && request.resource.data.status == 'neu' && request.resource.data.plat in ['tt', 'ig']
@@ -63,9 +66,22 @@ service cloud.firestore {
     }
     // Story-Skin: einmal pro Konto melden
     match /stories/{uid} {
-      allow read: if isMe(uid);
+      allow read: if isMe(uid) || isAdmin();
       allow create: if isMe(uid) && request.resource.data.keys().hasOnly(['by', 'handle', 'at']) && request.resource.data.by == uid
         && request.resource.data.handle is string && request.resource.data.handle.size() <= 30;
+    }
+    // Clipper-Links: playzack.io/?c=name – pro Gerät ein Klick und ein Spieler, Zähler nur um +1
+    function markOk(id) { return signedIn() && id == request.resource.data.c + '_' + request.auth.uid && request.resource.data.by == request.auth.uid
+      && request.resource.data.keys().hasOnly(['c', 'by', 'at']) && request.resource.data.c.matches('^[a-z0-9._]{2,30}$'); }
+    match /clicks/{id} { allow create: if markOk(id); allow read: if isAdmin(); }
+    match /cplays/{id} { allow create: if markOk(id); allow read: if isAdmin(); }
+    function cur(f) { return resource == null ? 0 : resource.data.get(f, 0); }
+    function fresh(col, code) { return !exists(/databases/$(database)/documents/$(col)/$(code + '_' + request.auth.uid)) && existsAfter(/databases/$(database)/documents/$(col)/$(code + '_' + request.auth.uid)); }
+    match /clickstats/{code} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.resource.data.keys().hasOnly(['clicks', 'plays'])
+        && ((request.resource.data.clicks == cur('clicks') + 1 && request.resource.data.plays == cur('plays') && fresh('clicks', code))
+          || (request.resource.data.plays == cur('plays') + 1 && request.resource.data.clicks == cur('clicks') && fresh('cplays', code)));
     }
     // Meldungen: nur anlegen, lesen nur in der Firebase-Konsole
     match /reports/{id} { allow create: if signedIn() && request.resource.data.by == request.auth.uid; }
