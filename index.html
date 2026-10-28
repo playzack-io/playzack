@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.3"></script>
-<script src="backend.js?v=1.9.3"></script>
+<script src="config.js?v=1.9.4"></script>
+<script src="backend.js?v=1.9.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -308,6 +308,12 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .cl-link b { color: var(--go); word-break: break-all; } .cl-link small { flex-basis: 100%; color: var(--muted); font-size: 12px; }
 .ad-bud { display: inline-block; margin-top: 4px; color: var(--go); font-weight: 700; } .ad-bud.full { color: var(--signal); }
 .ad-bbar { display: block; height: 6px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; margin: 6px auto 0; max-width: 260px; } .ad-bbar i { display: block; height: 100%; background: var(--go); }
+.ad-pay { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 10px; background: rgba(62, 226, 122, .08); border: 1px solid rgba(62, 226, 122, .3); font-size: 13px; }
+.ad-pay small { color: var(--muted); } .ad-pay.none { background: rgba(255, 70, 50, .08); border-color: rgba(255, 70, 50, .35); color: var(--signal); }
+.ad-acct { font-family: ui-monospace, Menlo, monospace; font-size: 13px; word-break: break-all; -webkit-user-select: text; user-select: text; }
+.cl-paynow { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 8px; border-radius: 14px; border: 1px solid var(--go); background: rgba(62, 226, 122, .14); color: var(--chalk); cursor: pointer; }
+.cl-paynow b { font-size: 16px; } .cl-paynow small { font-size: 13px; opacity: .9; }
+.ad-bud.full + .ad-bbar i { background: var(--signal); }
 .ad-warn { margin: 0; font-size: 13px; color: var(--signal); }
 .cl-terms { text-align: left; padding-left: 20px; margin: 4px 0 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45; }
 .cl-tlink { display: inline; padding: 0; font-size: inherit; }
@@ -2575,6 +2581,56 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const CLIP_TIERS = [[10000, 10], [50000, 40], [100000, 75], [500000, 300], [1000000, 500]];
   const CLIP_RE = { tt: /^https:\/\/(www\.|vm\.|vt\.|m\.)?tiktok\.com\/\S+$/i, ig: /^https:\/\/(www\.)?instagram\.com\/(reel|reels|p|tv|stories)\/\S+$/i };
   const fmtViews = (v) => v >= 1000000 ? (v / 1000000).toLocaleString(S.lang === "en" ? "en" : "de") + tr(" Mio.", "M") : fmtN(v);
+  // ---------- Auszahlungsdaten: nur der Clipper selbst und der Admin können sie lesen ----------
+  const ibanOk = (v) => {
+    const s0 = String(v || "").replace(/\s+/g, "").toUpperCase();
+    if (!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s0)) return false;
+    const r = (s0.slice(4) + s0.slice(0, 4)).replace(/[A-Z]/g, (c) => String(c.charCodeAt(0) - 55));
+    let m = 0; for (const ch of r) m = (m * 10 + +ch) % 97;
+    return m === 1;
+  };
+  const fmtIban = (v) => String(v || "").replace(/\s+/g, "").toUpperCase().replace(/(.{4})/g, "$1 ").trim();
+  async function payoutForm(back) {
+    let cur = {};
+    try { const d = await NET.db.doc("payout/" + NET.me).get(); if (d.exists) cur = d.data(); } catch (e) {}
+    let meth = cur.method === "iban" ? "iban" : "paypal";
+    const f = (id, label, val, extra) => '<label class="acct-l" for="' + id + '">' + label + '</label><div class="acct-f"><input id="' + id + '" value="' + esc(val || "") + '" ' + (extra || "") + "></div>";
+    openLayer('<span class="eyebrow">' + tr("Clipper-Programm", "Clipper program") + "</span><h2>" + tr("Auszahlungsdaten", "Payout details") + "</h2>" +
+      "<p>" + tr("Hierhin zahlen wir deine bestätigten Videos aus.", "We pay your approved videos here.") + "</p>" +
+      '<div class="acct-form">' +
+      f("poName", tr("Vor- und Nachname", "Full name"), cur.name, 'autocomplete="name" maxlength="80"') +
+      f("poAddr", tr("Adresse (Straße, PLZ, Ort)", "Address (street, postcode, city)"), cur.addr, 'autocomplete="street-address" maxlength="160"') +
+      f("poCountry", tr("Land", "Country"), cur.country, 'autocomplete="country-name" maxlength="40"') +
+      '<span class="acct-l">' + tr("Auszahlung per", "Pay me via") + '</span><div class="seg two" id="poSeg"><button type="button" data-pm2="paypal">PayPal</button><button type="button" data-pm2="iban">' + tr("Bank (IBAN)", "Bank (IBAN)") + "</button></div>" +
+      '<div id="poPaypal">' + f("poMail", tr("PayPal-E-Mail", "PayPal email"), cur.paypal, 'type="email" autocomplete="email" autocapitalize="none" maxlength="120"') + "</div>" +
+      '<div id="poBank">' + f("poIban", "IBAN", cur.iban ? fmtIban(cur.iban) : "", 'autocapitalize="characters" autocomplete="off" maxlength="42"') + "</div>" +
+      '<label class="cl-check"><input type="checkbox" id="poOk"' + (cur.at ? " checked" : "") + "> " + tr("Die Daten sind richtig und gehören mir.", "These details are correct and mine.") + "</label>" +
+      '<p class="msg-bad" id="poErr" hidden></p><button class="btn" id="poSave" type="button">' + tr("Speichern", "Save") + "</button></div>" +
+      '<p class="note">' + tr("Nur du und das ZACK!-Team können diese Daten sehen. Wir nutzen sie nur für deine Auszahlung.", "Only you and the ZACK! team can see these details. We only use them for your payout.") + "</p>" +
+      '<button class="link" id="poBack" type="button">' + tr("Zurück", "Back") + "</button>");
+    const paint = () => { sheet.querySelectorAll("[data-pm2]").forEach((b) => b.classList.toggle("on", b.dataset.pm2 === meth)); $("poPaypal").hidden = meth !== "paypal"; $("poBank").hidden = meth !== "iban"; };
+    sheet.querySelectorAll("[data-pm2]").forEach((b) => b.addEventListener("click", () => { meth = b.dataset.pm2; paint(); })); paint();
+    const err = (t) => { const e = $("poErr"); e.hidden = !t; e.textContent = t || ""; };
+    on("poBack", back);
+    on("poSave", async () => {
+      const name = $("poName").value.trim(), addr = $("poAddr").value.trim(), country = $("poCountry").value.trim();
+      const mail = $("poMail").value.trim().toLowerCase(), iban = $("poIban").value.replace(/\s+/g, "").toUpperCase();
+      if (name.length < 4 || !/\s/.test(name)) { err(tr("Bitte Vor- und Nachname eintragen.", "Please enter your full name.")); return; }
+      if (addr.length < 8) { err(tr("Bitte deine Adresse eintragen.", "Please enter your address.")); return; }
+      if (country.length < 2) { err(tr("Bitte dein Land eintragen.", "Please enter your country.")); return; }
+      if (meth === "paypal" && !EMAIL_RE.test(mail)) { err(tr("Diese PayPal-E-Mail sieht nicht richtig aus.", "That PayPal email doesn't look right.")); return; }
+      if (meth === "iban" && !ibanOk(iban)) { err(tr("Diese IBAN stimmt nicht. Bitte nochmal prüfen.", "That IBAN isn't valid. Please check it.")); return; }
+      if (!$("poOk").checked) { err(tr("Bitte bestätige, dass die Daten stimmen.", "Please confirm the details are correct.")); return; }
+      if (!NET.ok) { err(tr("Dafür brauchst du Internet.", "You need internet for this.")); return; }
+      const b = $("poSave"); b.disabled = true; err("");
+      try {
+        await NET.db.doc("payout/" + NET.me).set({ name, addr, country, method: meth, paypal: meth === "paypal" ? mail : "", iban: meth === "iban" ? iban : "", at: Date.now() });
+        SFX.coin(); buzz(15); store.set("payoutSet", true);
+        openLayer("<h2>" + tr("Gespeichert ✓", "Saved ✓") + "</h2><p>" + tr("Sobald ein Video bestätigt ist, zahlen wir dorthin aus.", "As soon as a video is approved, we pay out there.") + '</p><button class="btn" id="poDone" type="button">OK</button>');
+        on("poDone", back);
+      } catch (e) { b.disabled = false; err(tr("Das ging gerade nicht. Versuch es nochmal.", "That didn't work. Try again.")); }
+    });
+  }
   function clipTerms(back) {
     const li = (t) => "<li>" + t + "</li>";
     openLayer('<span class="eyebrow">' + tr("Clipper-Programm", "Clipper program") + "</span><h2>" + tr("Teilnahmebedingungen", "Terms of participation") + '</h2><ol class="cl-terms">' +
@@ -2658,7 +2714,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         const list = q.docs.map((d) => d.data()).sort((a, b) => b.at - a.at);
         if (!list.length) { box.innerHTML = ""; return; }
         const st = (x) => x.status === "bezahlt" ? tr("Ausgezahlt ", "Paid ") + (x.eur ? eur(x.eur) : "") : x.status === "ok" ? tr("Bestätigt", "Approved") + (x.views ? " · " + fmtViews(x.views) + tr(" Views", " views") : "") + (x.eur ? " · " + eur(x.eur) : "") : x.status === "abgelehnt" ? tr("Abgelehnt", "Rejected") + (x.why ? ": " + x.why : "") : tr("Wird geprüft", "In review");
-        box.innerHTML = '<span class="eyebrow">' + tr("Deine Videos", "Your videos") + '</span><div class="cl-mine">' + list.map((x) => '<div class="cl-item"><b>' + (x.plat === "ig" ? "Instagram" : "TikTok") + "</b><small>" + esc(String(x.url).replace(/^https:\/\/(www\.)?/, "").slice(0, 46)) + '</small><span class="cl-st ' + esc(x.status || "neu") + '">' + esc(st(x)) + "</span></div>").join("") + "</div>";
+        let hasPay = !!store.get("payoutSet", false);
+        if (!hasPay) { try { const pd = await NET.db.doc("payout/" + NET.me).get(); hasPay = pd.exists; if (hasPay) store.set("payoutSet", true); } catch (e) {} }
+        const approved = list.some((x) => x.status === "ok");
+        box.innerHTML = (approved && !hasPay ? '<button class="cl-paynow" id="clPayNow" type="button"><b>🎉 ' + tr("Video bestätigt!", "Video approved!") + "</b><small>" + tr("Gib jetzt deine Auszahlungsdaten ein, damit wir dir das Geld schicken können.", "Enter your payout details now so we can send you the money.") + "</small></button>" : "") +
+          '<span class="eyebrow">' + tr("Deine Videos", "Your videos") + '</span><div class="cl-mine">' + list.map((x) => '<div class="cl-item"><b>' + (x.plat === "ig" ? "Instagram" : "TikTok") + "</b><small>" + esc(String(x.url).replace(/^https:\/\/(www\.)?/, "").slice(0, 46)) + '</small><span class="cl-st ' + esc(x.status || "neu") + '">' + esc(st(x)) + "</span></div>").join("") + "</div>" +
+          '<button class="link" id="clPayEdit" type="button">' + (hasPay ? tr("Auszahlungsdaten ändern", "Edit payout details") : tr("Auszahlungsdaten eintragen", "Add payout details")) + "</button>";
+        const goPay = () => payoutForm(() => openClipper(null, back));
+        on("clPayNow", goPay); on("clPayEdit", goPay);
       } catch (e) {}
     }
     loadMine();
@@ -2716,16 +2779,23 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       sum.innerHTML = esc(open + tr(" zu prüfen · offen auszuzahlen: ", " to review · still to pay: ") + eur(owe)) + '<br><span class="ad-bud' + (spent >= CLIP_BUDGET ? " full" : "") + '">' + tr("Budget ", "Budget ") + new Date().toLocaleString(S.lang === "en" ? "en" : "de-DE", { month: "long" }) + ": " + eur(spent) + tr(" von ", " of ") + eur(CLIP_BUDGET) + tr(" vergeben", " used") + '</span><span class="ad-bbar"><i style="width:' + Math.min(100, Math.round((spent / CLIP_BUDGET) * 100)) + '%"></i></span>';
       const list = ADM.list.filter((x) => (x.status || "neu") === ADM.tab);
       const codes = Array.from(new Set(list.map((x) => clipCode(x.handle))));
+      ADM.pay = ADM.pay || {};
+      if (ADM.tab === "ok" || ADM.tab === "bezahlt") await Promise.all(Array.from(new Set(list.map((x) => x.by))).map(async (u) => { try { const d = await NET.db.doc("payout/" + u).get(); ADM.pay[u] = d.exists ? d.data() : null; } catch (e) { ADM.pay[u] = null; } }));
       await Promise.all(codes.map(async (c) => { if (ADM.stats[c]) return; try { const d = await NET.db.doc("clickstats/" + c).get(); ADM.stats[c] = d.exists ? d.data() : { clicks: 0, plays: 0 }; } catch (e) { ADM.stats[c] = { clicks: 0, plays: 0 }; } }));
       box.innerHTML = list.map((x) => {
         const st = ADM.stats[clipCode(x.handle)] || {};
         return '<div class="ad-item" data-id="' + esc(x.id) + '"><div class="ad-h"><b>' + (x.plat === "ig" ? "Instagram" : "TikTok") + " · @" + esc(x.handle) + '</b><small>' + new Date(x.at).toLocaleString("de-DE") + "</small></div>" +
           '<a class="ad-url" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(String(x.url).replace(/^https:\/\/(www\.)?/, "")) + "</a>" +
           '<div class="ad-st">🔗 ' + fmtN(st.clicks || 0) + tr(" Klicks", " clicks") + " · 🎮 " + fmtN(st.plays || 0) + tr(" Spieler", " players") + tr(" über ", " via ") + esc(DL) + "/?c=" + esc(clipCode(x.handle)) + "</div>" +
+          ((ADM.tab === "ok" || ADM.tab === "bezahlt") ? (() => { const pd = ADM.pay[x.by];
+            if (!pd) return '<div class="ad-pay none">' + tr("Noch keine Auszahlungsdaten – der Clipper sieht in der App einen Hinweis.", "No payout details yet – the clipper sees a reminder in the app.") + "</div>";
+            const acct = pd.method === "iban" ? fmtIban(pd.iban) : pd.paypal;
+            return '<div class="ad-pay"><b>' + esc(pd.name) + "</b><small>" + esc(pd.addr) + ", " + esc(pd.country) + '</small><span>' + (pd.method === "iban" ? "IBAN" : "PayPal") + ': <b class="ad-acct">' + esc(acct) + '</b> <button class="sbtn quiet" type="button" data-cp="' + esc(acct) + '">' + tr("Kopieren", "Copy") + '</button> <button class="sbtn quiet" type="button" data-cp="' + esc(pd.name) + '">' + tr("Name kopieren", "Copy name") + "</button></span></div>"; })() : "") +
           '<div class="ad-in"><label>Views<input type="number" inputmode="numeric" min="0" data-v value="' + (x.views || "") + '"></label><label>€<input type="number" inputmode="decimal" min="0" step="0.5" data-e value="' + (x.eur || "") + '"></label></div>' +
           '<input class="search ad-why" data-w placeholder="' + tr("Grund bei Ablehnung (optional)", "Reason if rejected (optional)") + '" value="' + esc(x.why || "") + '">' +
           '<div class="ad-btns"><button class="sbtn" type="button" data-do="ok">' + tr("Bestätigen", "Approve") + '</button><button class="sbtn quiet" type="button" data-do="abgelehnt">' + tr("Ablehnen", "Reject") + '</button><button class="sbtn" type="button" data-do="bezahlt">' + tr("Bezahlt", "Paid") + "</button></div></div>";
       }).join("") || '<p class="empty">' + tr("Nichts in diesem Bereich.", "Nothing here.") + "</p>";
+      box.querySelectorAll("[data-cp]").forEach((b) => b.addEventListener("click", () => copyText(b.dataset.cp, b)));
       box.querySelectorAll(".ad-item[data-id]").forEach((it) => {
         const v = it.querySelector("[data-v]"), e = it.querySelector("[data-e]");
         v.addEventListener("input", () => { e.value = tierEur(+v.value || 0) || ""; });
