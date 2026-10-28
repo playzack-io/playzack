@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.2"></script>
-<script src="backend.js?v=1.9.2"></script>
+<script src="config.js?v=1.9.3"></script>
+<script src="backend.js?v=1.9.3"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -306,6 +306,11 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .cl-row { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; } .cl-row .btn { margin: 0; }
 .cl-link { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; padding: 10px 12px; border-radius: 12px; background: rgba(62, 226, 122, .08); border: 1px solid rgba(62, 226, 122, .35); text-align: left; font-size: 14px; }
 .cl-link b { color: var(--go); word-break: break-all; } .cl-link small { flex-basis: 100%; color: var(--muted); font-size: 12px; }
+.ad-bud { display: inline-block; margin-top: 4px; color: var(--go); font-weight: 700; } .ad-bud.full { color: var(--signal); }
+.ad-bbar { display: block; height: 6px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; margin: 6px auto 0; max-width: 260px; } .ad-bbar i { display: block; height: 100%; background: var(--go); }
+.ad-warn { margin: 0; font-size: 13px; color: var(--signal); }
+.cl-terms { text-align: left; padding-left: 20px; margin: 4px 0 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45; }
+.cl-tlink { display: inline; padding: 0; font-size: inherit; }
 .ad-tabs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 4px 0 10px; }
 .ad-list { display: flex; flex-direction: column; gap: 10px; text-align: left; }
 .ad-item { padding: 12px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
@@ -2570,6 +2575,20 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const CLIP_TIERS = [[10000, 10], [50000, 40], [100000, 75], [500000, 300], [1000000, 500]];
   const CLIP_RE = { tt: /^https:\/\/(www\.|vm\.|vt\.|m\.)?tiktok\.com\/\S+$/i, ig: /^https:\/\/(www\.)?instagram\.com\/(reel|reels|p|tv|stories)\/\S+$/i };
   const fmtViews = (v) => v >= 1000000 ? (v / 1000000).toLocaleString(S.lang === "en" ? "en" : "de") + tr(" Mio.", "M") : fmtN(v);
+  function clipTerms(back) {
+    const li = (t) => "<li>" + t + "</li>";
+    openLayer('<span class="eyebrow">' + tr("Clipper-Programm", "Clipper program") + "</span><h2>" + tr("Teilnahmebedingungen", "Terms of participation") + '</h2><ol class="cl-terms">' +
+      li(tr("Teilnehmen darf, wer mindestens 18 Jahre alt ist oder die Erlaubnis der Eltern hat.", "You must be 18 or have parental consent.")) +
+      li(tr("Eingereicht werden nur eigene, öffentliche Videos auf TikTok oder Instagram, in denen ZACK! zu sehen ist.", "Only your own public TikTok or Instagram videos showing ZACK! can be submitted.")) +
+      li(tr("Pflicht: " + IG + " im Video markiert, " + IG + " in der Bio und dein persönlicher Link " + DL + "/?c=deinname in Beschreibung und Bio. Die Markierungen müssen mindestens 30 Tage bleiben.", "Required: " + IG + " tagged in the video, " + IG + " in your bio and your personal link " + DL + "/?c=yourname in caption and bio. Tags must stay for at least 30 days.")) +
+      li(tr("Vergütet wird pro Video die höchste erreichte Stufe, gezählt 14 Tage nach dem Hochladen: 10.000 Views 10 €, 50.000 Views 40 €, 100.000 Views 75 €, 500.000 Views 300 €, 1 Mio. Views 500 € (Höchstbetrag pro Video).", "Per video the highest tier reached counts, measured 14 days after upload: 10,000 views €10, 50,000 €40, 100,000 €75, 500,000 €300, 1M €500 (maximum per video).")) +
+      li(tr("Vor der Auszahlung können wir eine Bildschirmaufnahme deiner Video-Statistik verlangen. Gekaufte Views, Bots oder auffällige Zahlen (z. B. kaum echte Klicks auf deinen Link) führen zur Ablehnung und zum Ausschluss.", "Before payout we may ask for a screen recording of your video analytics. Bought views, bots or suspicious numbers (e.g. hardly any real clicks on your link) lead to rejection and exclusion.")) +
+      li(tr("Das Programm hat ein monatliches Gesamtbudget für alle Teilnehmer. Ist es ausgeschöpft, werden weitere bestätigte Videos im folgenden Monat ausgezahlt.", "The program has a monthly total budget for all participants. Once it's used up, further approved videos are paid out the following month.")) +
+      li(tr("Die Auszahlung erfolgt nach Prüfung per PayPal oder Überweisung. Wir melden uns per Direktnachricht bei dem eingereichten Account. Für die Versteuerung deiner Einnahmen bist du selbst verantwortlich.", "Payout after review via PayPal or bank transfer. We contact you by direct message on the submitted account. You are responsible for taxes on your earnings.")) +
+      li(tr("Ein Anspruch auf Vergütung entsteht erst mit unserer Bestätigung. Wir können das Programm jederzeit ändern oder beenden; bereits bestätigte Videos werden noch ausgezahlt.", "Payment is only owed once we approve a video. We may change or end the program at any time; videos already approved are still paid.")) +
+      "</ol>" + '<button class="btn" id="ctOk" type="button">' + tr("Verstanden", "Got it") + "</button>");
+    on("ctOk", back);
+  }
   function openClipper(focus, back) {
     const done = back || closeLayer;
     const storyGot = hasSkin(STORY_SK) || !!store.get("storyClaimed", false);
@@ -2592,13 +2611,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<input class="search" id="clUrl" type="url" inputmode="url" autocomplete="off" placeholder="' + tr("Link zum Video", "Link to the video") + '">' +
       '<input class="search" id="clHandle" autocomplete="off" autocapitalize="none" placeholder="' + tr("Dein Account (@name)", "Your account (@name)") + '">' +
       '<div class="cl-link" id="clLink" hidden><span>' + tr("Dein Link:", "Your link:") + ' <b id="clLinkT"></b></span><button class="sbtn" id="clLinkCp" type="button">' + tr("Kopieren", "Copy") + '</button><small id="clLinkSt"></small></div>' +
-      '<label class="cl-check"><input type="checkbox" id="clOk"> ' + tr("Ich habe alle Punkte oben erfüllt.", "I've met every point above.") + "</label>" +
+      '<label class="cl-check"><input type="checkbox" id="clOk"> <span>' + tr("Ich habe alle Punkte oben erfüllt und die ", "I've met every point above and accept the ") + '<button class="link cl-tlink" id="clTerms" type="button">' + tr("Teilnahmebedingungen", "terms") + "</button>" + tr(" gelesen.", ".") + "</span></label>" +
       '<p class="msg-bad" id="clErr" hidden></p><button class="btn" id="clSend" type="button">' + tr("Einreichen", "Submit") + "</button>" +
       '<div id="clMine"></div>' +
       '<div class="cl-story' + (focus === "story" ? " hi" : "") + '" id="clStory"><img alt="" id="clStoryImg"><div><b>' + tr("Story posten = Gratis-Skin", "Post a story = free skin") + "</b><small>" +
         (storyGot ? tr("Erledigt – „Story-Star“ gehört dir.", "Done – \"Story Star\" is yours.") : tr("Einmalig: Poste eine Instagram-Story mit ZACK! (z. B. dein Ergebnis) und markiere " + IG + ". Dann hier deinen Instagram-Namen eintragen.", "Once: post an Instagram story with ZACK! (e.g. your result) and tag " + IG + ". Then enter your Instagram name here.")) + "</small></div></div>" +
       (storyGot ? "" : '<div class="cl-row"><input class="search" id="stHandle" autocomplete="off" autocapitalize="none" placeholder="' + tr("Dein Instagram (@name)", "Your Instagram (@name)") + '"><button class="btn" id="stGo" type="button">' + tr("Gepostet, Skin holen", "Posted, get skin") + "</button></div>") +
-      '<p class="note">' + tr("Auszahlung nach Prüfung per PayPal oder Überweisung, wir melden uns per DM bei deinem Account. Ab 18 Jahren oder mit Erlaubnis der Eltern. Fake-Views oder fehlende Markierung = keine Auszahlung.", "Payout after review via PayPal or bank transfer, we contact you by DM. 18+ or with parental consent. Fake views or missing tags = no payout.") + "</p>" +
+      '<p class="note">' + tr("Auszahlung nach Prüfung per PayPal oder Überweisung, wir melden uns per DM bei deinem Account. Ab 18 Jahren oder mit Erlaubnis der Eltern. Fake-Views oder fehlende Markierung = keine Auszahlung.", "Payout after review via PayPal or bank transfer, we contact you by DM. 18+ or with parental consent. Fake views or missing tags = no payout.") + ' <button class="link cl-tlink" id="clTerms2" type="button">' + tr("Teilnahmebedingungen", "Terms") + "</button></p>" +
       '<button class="link" id="clBack" type="button">' + tr("Zurück", "Back") + "</button>", "wide-sheet");
     paintAvatar($("clStoryImg"), { sk: STORY_SK });
     let plat = "tt";
@@ -2655,11 +2674,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       on("stLater", () => openClipper(null, back));
     });
     on("clBack", done);
+    on("clTerms2", () => clipTerms(() => openClipper(focus, back)));
+    on("clTerms", (ev) => { ev.preventDefault(); clipTerms(() => openClipper(focus, back)); });
     if (focus === "story") setTimeout(() => { const el = $("clStory"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); }, 120);
   }
   // ---------- Admin: Clipper-Einreichungen prüfen (nur playzack@outlook.de mit Google) ----------
   const ADMIN_MAIL = "playzack@outlook.de";
   const isAdminUser = () => { try { const c = AUTH().current(); return !!(c && String(c.email).toLowerCase() === ADMIN_MAIL); } catch (e) { return false; } };
+  const CLIP_BUDGET = 500; // Gesamtbudget pro Monat für alle Clipper – nur im Admin sichtbar
+  const monthKey = (t) => { const d = new Date(t); return d.getFullYear() * 12 + d.getMonth(); };
   const tierEur = (v) => { let e = 0; CLIP_TIERS.forEach(([n, x]) => { if (v >= n) e = x; }); return e; };
   const ADM = { tab: "neu", list: [], stats: {} };
   async function openAdmin(tab) {
@@ -2688,7 +2711,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const q = await NET.db.collection("clips").orderBy("at", "desc").limit(300).get();
       ADM.list = q.docs.map((d) => Object.assign({ id: d.id }, d.data()));
       const open = ADM.list.filter((x) => (x.status || "neu") === "neu").length, owe = ADM.list.filter((x) => x.status === "ok").reduce((a, x) => a + (x.eur || 0), 0);
-      sum.textContent = open + tr(" zu prüfen · offen auszuzahlen: ", " to review · still to pay: ") + eur(owe);
+      const mk = monthKey(Date.now()), spent = ADM.list.filter((x) => (x.status === "ok" || x.status === "bezahlt") && x.okAt && monthKey(x.okAt) === mk).reduce((a, x) => a + (x.eur || 0), 0);
+      ADM.spent = spent;
+      sum.innerHTML = esc(open + tr(" zu prüfen · offen auszuzahlen: ", " to review · still to pay: ") + eur(owe)) + '<br><span class="ad-bud' + (spent >= CLIP_BUDGET ? " full" : "") + '">' + tr("Budget ", "Budget ") + new Date().toLocaleString(S.lang === "en" ? "en" : "de-DE", { month: "long" }) + ": " + eur(spent) + tr(" von ", " of ") + eur(CLIP_BUDGET) + tr(" vergeben", " used") + '</span><span class="ad-bbar"><i style="width:' + Math.min(100, Math.round((spent / CLIP_BUDGET) * 100)) + '%"></i></span>';
       const list = ADM.list.filter((x) => (x.status || "neu") === ADM.tab);
       const codes = Array.from(new Set(list.map((x) => clipCode(x.handle))));
       await Promise.all(codes.map(async (c) => { if (ADM.stats[c]) return; try { const d = await NET.db.doc("clickstats/" + c).get(); ADM.stats[c] = d.exists ? d.data() : { clicks: 0, plays: 0 }; } catch (e) { ADM.stats[c] = { clicks: 0, plays: 0 }; } }));
@@ -2709,6 +2734,17 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           if (v.value !== "") upd.views = Math.max(0, Math.round(+v.value));
           if (e.value !== "") upd.eur = Math.max(0, Math.round(+e.value * 100) / 100);
           const w = it.querySelector("[data-w]").value.trim(); if (w) upd.why = w.slice(0, 120);
+          const prev = ADM.list.find((x) => x.id === it.dataset.id) || {};
+          if (upd.status === "ok" && !prev.okAt) {
+            upd.okAt = Date.now();
+            const free = CLIP_BUDGET - (ADM.spent || 0), cost = upd.eur || 0;
+            if (cost > free && !b.dataset.sure) {
+              b.dataset.sure = "1"; b.textContent = tr("Trotzdem bestätigen", "Approve anyway");
+              let wn = it.querySelector(".ad-warn"); if (!wn) { wn = h("p", "ad-warn"); it.appendChild(wn); }
+              wn.textContent = tr("Über dem Monatsbudget: nur noch " + eur(Math.max(0, free)) + " frei. Am besten erst im nächsten Monat bestätigen.", "Over the monthly budget: only " + eur(Math.max(0, free)) + " left. Better approve it next month.");
+              return;
+            }
+          }
           b.disabled = true;
           try { await NET.db.doc("clips/" + it.dataset.id).update(upd); SFX.coin(); openAdmin(ADM.tab); }
           catch (err) { b.disabled = false; b.textContent = tr("Fehler – nochmal", "Error – retry"); }
