@@ -58,6 +58,7 @@ service cloud.firestore {
     match /clips/{id} {
       allow read: if signedIn() && (resource.data.by == request.auth.uid || isAdmin());
       allow update: if isAdmin() && request.resource.data.by == resource.data.by && request.resource.data.url == resource.data.url;
+      allow delete: if signedIn() && resource.data.by == request.auth.uid && resource.data.get('status', 'neu') in ['neu', 'abgelehnt'];
       allow create: if signedIn() && request.resource.data.by == request.auth.uid
         && request.resource.data.keys().hasOnly(['by', 'plat', 'url', 'handle', 'at', 'status'])
         && request.resource.data.status == 'neu' && request.resource.data.plat in ['tt', 'ig']
@@ -67,6 +68,7 @@ service cloud.firestore {
     // Auszahlungsdaten: nur der Clipper selbst und der Admin
     match /payout/{uid} {
       allow read: if isMe(uid) || isAdmin();
+      allow delete: if isMe(uid);
       allow write: if isMe(uid) && request.resource.data.keys().hasOnly(['name', 'addr', 'country', 'method', 'paypal', 'iban', 'at'])
         && request.resource.data.method in ['paypal', 'iban']
         && request.resource.data.name is string && request.resource.data.name.size() <= 80
@@ -78,6 +80,7 @@ service cloud.firestore {
     // Story-Skin: einmal pro Konto melden
     match /stories/{uid} {
       allow read: if isMe(uid) || isAdmin();
+      allow delete: if isMe(uid);
       allow create: if isMe(uid) && request.resource.data.keys().hasOnly(['by', 'handle', 'at']) && request.resource.data.by == uid
         && request.resource.data.handle is string && request.resource.data.handle.size() <= 30;
     }

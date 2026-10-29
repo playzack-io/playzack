@@ -95,12 +95,13 @@
   };
 
   // ---------- room: Echtzeit über Firestore (rooms/{name}/peers und rooms/{name}/msgs) ----------
-  var ALIVE = 75000;
+  // Anwesenheit sparsam: Lebenszeichen jede Minute, im Hintergrund ganz pausiert (spart Datenbank-Lesezugriffe)
+  var ALIVE = 150000, HB_MS = 60000;
   function makeRoom(name) {
     var base = fs.collection("rooms").doc(name), peersCol = base.collection("peers"), msgsCol = base.collection("msgs");
     var mine = {}, hb = null, unsubs = [], peerCbs = [], last = new Map(), topicCbs = {}, msgUnsub = null, t0 = Date.now(), left = false;
     function writeMe() { if (left) return Promise.resolve(); return peersCol.doc(TAB_PEER).set({ peer: TAB_PEER, by: user.uid, presence: clean(mine), at: Date.now() }); }
-    function startHb() { if (hb) return; hb = setInterval(function () { writeMe().catch(function () {}); }, 30000); }
+    function startHb() { if (hb || document.hidden) return; hb = setInterval(function () { writeMe().catch(function () {}); }, HB_MS); }
     var latest = [];
     function recompute() {
       var now = Date.now(), next = new Map();
@@ -114,10 +115,16 @@
     }
     var peerUnsub = null, tick = null;
     function watchPeers() {
-      if (peerUnsub) return;
+      if (peerUnsub || document.hidden) return;
       peerUnsub = peersCol.orderBy("at", "desc").limit(200).onSnapshot(function (q) { latest = q.docs.map(function (d) { return d.data(); }); recompute(); }, function () {});
-      tick = setInterval(recompute, 10000);
+      tick = setInterval(recompute, 15000);
     }
+    function pausePeers() { if (peerUnsub) { peerUnsub(); peerUnsub = null; } clearInterval(tick); tick = null; clearInterval(hb); hb = null; }
+    document.addEventListener("visibilitychange", function () {
+      if (left) return;
+      if (document.hidden) pausePeers();
+      else { if (peerCbs.length) watchPeers(); writeMe().catch(function () {}); startHb(); }
+    });
     function watchMsgs() {
       if (msgUnsub) return;
       msgUnsub = msgsCol.orderBy("at").startAt(t0 - 1500).onSnapshot(function (q) {
@@ -211,6 +218,20 @@
     },
     save: function (snap) { return ready.then(function () { if (!user || user.isAnonymous) return; var at = Date.now(); return fs.doc("saves/" + user.uid).set({ snap: JSON.stringify(snap), at: at }).then(function () { savedAt = at; }); }); },
     signOut: function () { return ready.then(function () { rooms.forEach(function (r) { try { r.leave(); } catch (e) {} }); return auth.signOut(); }).then(function () { user = null; }); },
+    // Konto endgültig löschen (Apple/Google verlangen das). Bei alter Anmeldung kurz neu bestätigen.
+    deleteAccount: function (pw) {
+      return ready.then(function () {
+        var u = auth.currentUser; if (!u) return;
+        return u.delete().catch(function (e) {
+          if (!/requires-recent-login/.test((e && e.code) || "")) throw e;
+          var p = providerOf(u);
+          var re = p === "google" ? u.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider())
+            : p === "apple" ? u.reauthenticateWithPopup(new firebase.auth.OAuthProvider("apple.com"))
+            : pw ? u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email, pw)) : Promise.reject({ code: "needs-password" });
+          return re.then(function () { return u.delete(); });
+        });
+      }).then(function () { user = null; savedAt = null; }).catch(function (e) { throw wrap(e); });
+    },
     reset: function (email) { return ready.then(function () { lang(); return auth.sendPasswordResetEmail(email); }).catch(function (e) { throw wrap(e); }); }
   };
 })();

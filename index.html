@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.4"></script>
-<script src="backend.js?v=1.9.4"></script>
+<script src="config.js?v=1.9.5"></script>
+<script src="backend.js?v=1.9.5"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -750,6 +750,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .sso-btn:disabled { opacity: .6; }
 .sso-or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
 .sso-or::before, .sso-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.btn.danger { background: var(--signal); color: #fff; }
+.danger-link { color: var(--signal) !important; margin-top: 4px; }
 .acct-form { display: flex; flex-direction: column; gap: 6px; text-align: left; }
 .acct-l { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 4px; }
 .acct-f { display: flex; align-items: center; background: var(--housing); border: 1px solid var(--line); border-radius: 12px; }
@@ -1124,6 +1126,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     set(k, v) { try { localStorage.setItem("zack." + k, JSON.stringify(v)); } catch (e) {} if (!/^(premium|plan|sound|music|haptics|lang|ads|mig:)/.test(k)) { try { acctAutosave(); } catch (e) {} } }
   };
   const S = {
+    consent: store.get("consent", null),
     premium: store.get("premium", false), sound: store.get("sound", true), music: store.get("music", true), haptics: store.get("haptics", true),
     lang: store.get("lang", /^de\b/i.test(navigator.language || "") ? "de" : "en")
   };
@@ -2236,6 +2239,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     },
     async save(snap) { const e = lget("cur", null), list = lget("list", {}); if (!e || !list[e]) return; list[e].snap = snap; list[e].savedAt = Date.now(); lset("list", list); },
     async signOut() { lset("cur", null); },
+    async deleteAccount() { const e = lget("cur", null), list = lget("list", {}); if (e) { delete list[e]; lset("list", list); } lset("cur", null); },
     async reset() { throw { code: "no-reset" }; }
   };
   const AUTH = () => (window.ZACK_AUTH && typeof window.ZACK_AUTH.signIn === "function" ? window.ZACK_AUTH : LOCAL_AUTH);
@@ -2290,6 +2294,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         "<p>" + tr("Spielstand gesichert: ", "Progress saved: ") + "<strong>" + fmtAgo(cur.savedAt) + "</strong></p>" +
         '<button class="btn" id="acSave" type="button">' + tr("Spielstand jetzt sichern", "Save progress now") + "</button>" +
         '<button class="btn ghost" id="acOut" type="button">' + tr("Abmelden", "Sign out") + "</button>" + testNote +
+        '<button class="link danger-link" id="acDel" type="button">' + tr("Konto löschen", "Delete account") + "</button>" +
         '<button class="link" id="acBack" type="button">' + tr("Zurück", "Back") + "</button>");
       on("acSave", async () => { const b = $("acSave"); b.disabled = true; try { await A.save(snapshot()); b.textContent = tr("Gesichert ✓", "Saved ✓"); SFX.coin(); } catch (e) { b.disabled = false; b.textContent = tr("Ging nicht, nochmal", "Failed, retry"); } });
       on("acOut", () => {
@@ -2299,6 +2304,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         on("acOutY", async () => { const b = $("acOutY"); b.disabled = true; try { await A.save(snapshot()); await A.signOut(); wipeLocal(); location.reload(); } catch (e) { b.disabled = false; note(tr("Abmelden ging nicht", "Couldn't sign out"), acctErr(e)); } });
       });
       on("acBack", done);
+      on("acDel", () => deleteAccountFlow(() => showAccount(null, back)));
       return;
     }
     const reg = tab !== "in";
@@ -2377,6 +2383,47 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     setTimeout(() => { const i = $("acMail"); if (i) i.focus({ preventScroll: true }); }, 60);
   }
 
+  // ---------- Konto löschen: Profil, Spielstand, Freunde, Name, Auszahlungsdaten und das Konto selbst ----------
+  async function deleteMyData() {
+    if (!NET.ok || !NET.me) return;
+    const me = NET.me, pr = profile() || {}, del = (path) => NET.db.doc(path).delete().catch(() => {});
+    const jobs = ["players/", "follows/", "runs/", "saves/", "payout/", "stories/", "tentries/", "tourneys/"].map((c) => del(c + me));
+    if (pr.uname) jobs.push((async () => { try { const own = typeof NET.db.nameOwner === "function" ? await NET.db.nameOwner(pr.uname) : null; if (own === me) await del("unames/" + pr.uname); } catch (e) {} })());
+    jobs.push((async () => { try { const q = await NET.db.collection("clips").where("by", "==", me).limit(100).get(); await Promise.all(q.docs.filter((d) => ["neu", "abgelehnt"].includes(d.data().status || "neu")).map((d) => del("clips/" + d.id))); } catch (e) {} })());
+    await Promise.all(jobs);
+  }
+  function deleteAccountFlow(back) {
+    const A = AUTH(), cur = A.current();
+    openLayer('<span class="eyebrow">' + tr("Konto", "Account") + "</span><h2>" + tr("Konto löschen?", "Delete account?") + "</h2>" +
+      "<p>" + tr("Dein Profil, dein Benutzername, Spielstand, Münzen, Skins, Freunde und Auszahlungsdaten werden endgültig gelöscht. Das lässt sich nicht rückgängig machen. Käufe werden dabei nicht erstattet.", "Your profile, username, progress, coins, skins, friends and payout details will be deleted for good. This can't be undone. Purchases are not refunded.") + "</p>" +
+      (cur && cur.provider === "email" ? '<div class="acct-form"><label class="acct-l" for="dlPw">' + tr("Passwort (nur falls nötig)", "Password (only if needed)") + '</label><div class="acct-f"><input id="dlPw" type="password" autocomplete="current-password"></div></div>' : "") +
+      '<p class="msg-bad" id="dlErr" hidden></p>' +
+      '<button class="btn danger" id="dlYes" type="button">' + tr("Endgültig löschen", "Delete for good") + '</button><button class="link" id="dlNo" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
+    on("dlNo", back);
+    on("dlYes", async () => {
+      const b = $("dlYes"), er = $("dlErr"); b.disabled = true; b.textContent = tr("Lösche …", "Deleting …"); er.hidden = true;
+      try {
+        await deleteMyData();
+        if (typeof A.deleteAccount === "function") await A.deleteAccount(($("dlPw") || {}).value || "");
+        try { Object.keys(localStorage).filter((k) => k.startsWith("zack.") || k.startsWith(ACCT_KEY) || k === "fakeauth").forEach((k) => localStorage.removeItem(k)); } catch (e) {}
+        openLayer("<h2>" + tr("Konto gelöscht", "Account deleted") + "</h2><p>" + tr("Alles ist gelöscht. Du kannst jederzeit neu anfangen.", "Everything is deleted. You can start over any time.") + '</p><button class="btn" id="dlOk" type="button">OK</button>');
+        on("dlOk", () => location.reload());
+      } catch (e) {
+        b.disabled = false; b.textContent = tr("Endgültig löschen", "Delete for good"); er.hidden = false;
+        const c = (e && e.code) || "";
+        er.textContent = /needs-password|wrong|invalid-credential/.test(c) ? tr("Zur Sicherheit: bitte dein Passwort eingeben und nochmal tippen.", "For security: enter your password and tap again.") : /popup-closed|cancelled/.test(c) ? tr("Bitte die Anmeldung kurz bestätigen, dann wird gelöscht.", "Please confirm the sign-in, then it will be deleted.") : acctErr(e);
+      }
+    });
+  }
+  // ---------- Einwilligung: personalisierte Werbung ja/nein (für AdMob/AdSense) ----------
+  function consentSheet(back) {
+    openLayer('<span class="eyebrow">' + tr("Datenschutz", "Privacy") + "</span><h2>" + tr("Werbung & Daten", "Ads & data") + "</h2>" +
+      "<p>" + tr("ZACK! ist gratis und finanziert sich über Werbung. Mit deiner Zustimmung zeigen wir Werbung, die zu dir passt. Ohne Zustimmung siehst du allgemeine Werbung. Gespeichert wird nur, was für das Spiel nötig ist (Profil, Spielstand, Freunde).", "ZACK! is free and funded by ads. With your consent we show ads that fit you. Without it you see general ads. We only store what the game needs (profile, progress, friends).") + "</p>" +
+      '<button class="btn" id="csAll" type="button">' + tr("Zustimmen", "Accept") + '</button><button class="btn ghost" id="csMin" type="button">' + tr("Nur notwendige", "Necessary only") + "</button>" +
+      '<p class="note">' + tr("Du kannst das jederzeit in den Einstellungen unter „Datenschutz & Werbung“ ändern.", "You can change this any time in Settings under \"Privacy & ads\".") + "</p>");
+    const set = (v) => { S.consent = v; store.set("consent", v); store.set("consentAt", Date.now()); (back || closeLayer)(); };
+    on("csAll", () => set("all")); on("csMin", () => set("min"));
+  }
   function showAccountOffer(after) {
     const go = () => { closeLayer(); if (after) after(); };
     openLayer('<span class="eyebrow">' + tr("Fast fertig", "Almost done") + "</span><h2>" + tr("Konto sichern?", "Secure your account?") + "</h2><p>" + tr("Mit Apple, Google oder E-Mail sind deine Skins, Münzen und dein Benutzername gesichert und du spielst auf jedem Gerät weiter. Geht auch später im Profil.", "With Apple, Google or email your skins, coins and username are secured and you can keep playing on any device. You can also do this later in your profile.") + "</p>" +
@@ -3675,6 +3722,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<button class="btn ghost" id="stProf" type="button">' + tr("Profil bearbeiten", "Edit profile") + "</button>" +
       '<button class="btn ghost" id="stAcct" type="button">' + (AUTH().current() ? tr("Konto · ", "Account · ") + esc(AUTH().current().email) : tr("Konto & Passwort", "Account & password")) + "</button>" +
       (isAdminUser() ? '<button class="btn ghost" id="stAdmin" type="button">Admin · Clipper</button>' : "") +
+      '<button class="btn ghost" id="stConsent" type="button">' + tr("Datenschutz & Werbung", "Privacy & ads") + "<small>" + (S.consent === "all" ? tr("Personalisierte Werbung: an", "Personalised ads: on") : S.consent === "min" ? tr("Personalisierte Werbung: aus", "Personalised ads: off") : tr("Noch nicht festgelegt", "Not set yet")) + "</small></button>" +
+      '<button class="link danger-link" id="stDel" type="button">' + tr("Konto & Daten löschen", "Delete account & data") + "</button>" +
       '<button class="btn" id="stClose" type="button">' + tr("Fertig", "Done") + "</button>");
     on("stSound", () => { S.sound = !S.sound; store.set("sound", S.sound); showSettings(); });
     on("stMusic", () => { S.music = !S.music; store.set("music", S.music); if (S.music) { AU.unlock(); AU.startMusic(); } else AU.stopMusic(); showSettings(); });
@@ -3685,6 +3734,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     on("stProf", () => showProfile(false));
     on("stAcct", () => showAccount(null, showSettings));
     on("stAdmin", () => openAdmin());
+    on("stDel", () => deleteAccountFlow(showSettings));
+    on("stConsent", () => consentSheet(showSettings));
     on("stClose", closeLayer);
   }
   function setLang(l) { S.lang = l; store.set("lang", l); applyLang(); renderMenu(); if (!$("career").hidden) renderCareer(); if (!$("ranks").hidden) renderRanks(); if (!$("social").hidden) renderSocial(); }
@@ -5845,7 +5896,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const ms = $("modesSec"); ms.dataset.en = "All modes · solo or 2 players"; ms.dataset.de = "Alle Modi · allein oder zu zweit";
   }
   applyLang();
-  setTimeout(() => { if (!profile() || !profile().uname) showProfile(true, checkRef); else checkRef(); }, 450);
+  const startFlow = () => { if (!profile() || !profile().uname) showProfile(true, checkRef); else { closeLayer(); checkRef(); } };
+  setTimeout(() => { if (S.consent == null) consentSheet(startFlow); else startFlow(); }, 450);
   initNet();
   renderMenu();
   // Einladungslink ?t=CODE öffnet direkt das Turnier

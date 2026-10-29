@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "ZACK!",
+    "slug": "zack",
+    "owner": "playzack",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#17151b",
+    "ios": {
+      "bundleIdentifier": "io.playzack.app",
+      "supportsTablet": true,
+      "infoPlist": { "ITSAppUsesNonExemptEncryption": false }
+    },
+    "android": {
+      "package": "io.playzack.app",
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#17151b" },
+      "permissions": ["VIBRATE"]
+    },
+    "plugins": [
+      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "imageWidth": 200, "resizeMode": "contain", "backgroundColor": "#17151b" }]
+    ]
+  }
+}

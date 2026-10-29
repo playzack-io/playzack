@@ -1,0 +1,23 @@
+ZACK! als echte App (App Store + Google Play)
+
+Voraussetzungen (machst du selbst):
+- Apple-Developer-Konto (99 $/Jahr) und Google-Play-Konsole (25 $ einmalig)
+- Expo-Konto "playzack" (hast du schon)
+
+Einrichten auf dem Mac (im Terminal, einmalig):
+  cd ~ && npx create-expo-app@latest zack-store --template blank@sdk-58
+  cd zack-store
+  npx expo install react-native-webview expo-haptics expo-splash-screen expo-status-bar
+  -> dann App.js, app.json, eas.json und den Ordner assets aus diesem Ordner hineinkopieren (überschreiben)
+  npm install -g eas-cli
+  eas login            (Konto playzack)
+  eas init             (verbindet das Projekt mit Expo)
+
+Test-App aufs Handy (ohne Store):
+  eas build --profile preview --platform android   -> APK-Link zum Installieren
+  eas build --profile preview --platform ios       -> braucht Apple-Developer-Konto, Gerät wird registriert
+
+Für die Stores:
+  eas build --profile production --platform all
+  eas submit --platform ios       (lädt zu App Store Connect / TestFlight hoch)
+  eas submit --platform android   (lädt zu Google Play hoch)
