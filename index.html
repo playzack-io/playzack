@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.0.4"></script>
-<script src="backend.js?v=2.0.4"></script>
+<script src="config.js?v=2.1.0"></script>
+<script src="backend.js?v=2.1.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -55,6 +55,9 @@ img { max-width: 100%; }
   --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 html, body { height: 100%; }
+/* Arabisch (rechts nach links): jeder Textblock nimmt die Richtung seines Inhalts – Namen, @handles und ZACK! bleiben lesbar */
+html[dir="rtl"] :is(h1, h2, h3, p, span, b, strong, small, label, dt, dd, button, a, li, .who, .ms, .score, .hud-title) { unicode-bidi: plaintext; }
+html[dir="rtl"] .logo h1 { direction: ltr; }
 /* iOS Safari: Höhe folgt der echten sichtbaren Fläche (auch wenn die Adressleiste einklappt) – sonst bleibt unten ein leerer Streifen */
 @supports (height: 100dvh) { html, body { height: 100dvh; } }
 body {
@@ -691,8 +694,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .cta s { opacity: .65; font-weight: 600; }
 .legal { font-size: 11.5px !important; line-height: 1.4; }
 .sheet .perks { font-size: 14px; }
-.langs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.lang { border: 1px solid var(--line); background: var(--housing); border-radius: 12px; padding: 12px; font-family: var(--font-num); font-weight: 800; font-size: 17px; text-transform: uppercase; color: var(--muted); }
+.langs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.lang { border: 1px solid var(--line); background: var(--housing); border-radius: 12px; padding: 10px 4px; font-family: var(--font-body); font-weight: 700; font-size: 13.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lang.on { border-color: var(--volt); color: var(--volt); }
 .wide.online .eyebrow { color: var(--go); }
 /* Skins */
@@ -1008,7 +1011,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         <span class="prog"><i id="carProg" style="width:0%"></i></span>
       </button>
       <button class="wide online" id="goSocial" type="button">
-        <span class="eyebrow" id="socEyebrow">Online</span>
+        <span class="eyebrow" id="socEyebrow" data-en="Online">Online</span>
         <span class="wide-title" data-en="Friends & rivals">Freunde & Gegner</span>
         <span class="wide-sub" id="socSub">…</span>
       </button>
@@ -1119,10 +1122,52 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const $ = (id) => document.getElementById(id);
   const now = () => performance.now();
   const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
-  const fmt3 = (v) => (S.lang === "en" ? v.toFixed(3) : v.toFixed(3).replace(".", ","));
+  const fmt3 = (v) => v.toFixed(3).replace(".", decSep());
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const rand32 = () => (Math.random() * 4294967296) >>> 0;
   const rid = () => Math.random().toString(36).slice(2, 12);
+
+  // ---------- Sprachen ----------
+  // Deutsch ist das Original, Englisch der Schlüssel. Alle anderen Sprachen kommen als lang/xx.json (Englisch -> Übersetzung).
+  const LANGS = [["de", "Deutsch"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["it", "Italiano"], ["pt", "Português"], ["tr", "Türkçe"], ["pl", "Polski"], ["nl", "Nederlands"], ["ru", "Русский"], ["ar", "العربية"], ["hi", "हिन्दी"], ["id", "Bahasa Indonesia"], ["ja", "日本語"], ["ko", "한국어"], ["zh", "中文"]];
+  const LOCALE = { de: "de-DE", en: "en-US", es: "es-ES", fr: "fr-FR", it: "it-IT", pt: "pt-BR", tr: "tr-TR", pl: "pl-PL", nl: "nl-NL", ru: "ru-RU", ar: "ar-AE-u-nu-latn", hi: "hi-IN-u-nu-latn", id: "id-ID", ja: "ja-JP", ko: "ko-KR", zh: "zh-CN" };
+  function detectLang() {
+    const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"]);
+    for (const l of list) { const c = String(l || "").slice(0, 2).toLowerCase(); if (LANGS.some((x) => x[0] === c)) return c; }
+    return "en";
+  }
+  const I18N = { lang: null, dict: null, tpl: [], memo: new Map(), loading: null };
+  function setDict(lang, dict) {
+    I18N.lang = lang; I18N.dict = dict; I18N.memo.clear();
+    I18N.tpl = Object.keys(dict).filter((k) => /\{\d\}/.test(k)).map((k) => {
+      const order = []; const re = k.replace(/[.*+?^$()|[\]\\]/g, "\\$&").replace(/\\?\{(\d)\\?\}/g, (m, d) => { order.push(d); return "([\\s\\S]+?)"; });
+      return { re: new RegExp("^" + re + "$"), order, out: dict[k] };
+    });
+  }
+  function tx(en) {
+    en = String(en);
+    if (!I18N.dict || I18N.lang !== S.lang) return en;
+    const v = I18N.dict[en]; if (v != null) return v;
+    if (I18N.memo.has(en)) return I18N.memo.get(en);
+    let res = en;
+    for (const t of I18N.tpl) { const m = t.re.exec(en); if (m) { res = t.out.replace(/\{(\d)\}/g, (x, d) => { const i = t.order.indexOf(d); return i >= 0 ? m[i + 1] : x; }); break; } }
+    if (I18N.memo.size > 500) I18N.memo.clear();
+    I18N.memo.set(en, res); return res;
+  }
+  // Sprachdatei laden: zuerst aus dem Gerätespeicher (sofort), dann frisch vom Server
+  function loadLang(lang, done) {
+    if (lang === "de" || lang === "en") { done && done(); return; }
+    try { const c = JSON.parse(localStorage.getItem("zack.i18n." + lang) || "null"); if (c && c.v === I18N_VER && c.d) setDict(lang, c.d); } catch (e) {}
+    if (I18N.lang === lang) done && done();
+    fetch("lang/" + lang + ".json?v=" + I18N_VER).then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (!d) return; const fresh = I18N.lang !== lang; setDict(lang, d);
+      try { localStorage.setItem("zack.i18n." + lang, JSON.stringify({ v: I18N_VER, d })); } catch (e) {}
+      if (fresh && S.lang === lang) done && done();
+    }).catch(() => {});
+  }
+  const I18N_VER = "1";
+  const loc = () => LOCALE[S.lang] || "en-US";
+  const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
   // ---------- storage (best effort) ----------
   const store = {
@@ -1132,11 +1177,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const S = {
     consent: store.get("consent", null),
     premium: store.get("premium", false), sound: store.get("sound", true), music: store.get("music", true), haptics: store.get("haptics", true),
-    lang: store.get("lang", /^de\b/i.test(navigator.language || "") ? "de" : "en")
+    lang: store.get("lang", detectLang())
   };
-  const tr = (de, en) => (S.lang === "en" ? en : de);
+  if (!LANGS.some((x) => x[0] === S.lang)) S.lang = "en";
+  const tr = (de, en) => (S.lang === "de" ? de : S.lang === "en" ? en : tx(en));
   const ONLINE = !!(window.claude && typeof window.claude.use === "function");
-  const L = (pair) => (S.lang === "en" ? pair[1] : pair[0]);
+  const L = (pair) => (S.lang === "de" ? pair[0] : S.lang === "en" ? pair[1] : tx(pair[1]));
 
   // ---------- Sound, Musik, Vibration ----------
   const AU = (() => {
@@ -1510,7 +1556,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     praezision: [["Yellow center", "10 points"], ["Red ring", "5 points"], ["White edge", "2 points"], ["Miss", "0 points"], ["Time", "30 seconds"]]
   };
   function rulesHTML(id) {
-    const list = (S.lang === "en" ? RULES_EN : RULES)[id] || [];
+    const list = ((S.lang === "de" ? RULES : RULES_EN)[id] || []).map((p) => (S.lang === "de" || S.lang === "en" ? p : p.map(tx)));
     const open = store.get("best:" + id, null) == null ? " open" : "";
     return '<details class="rules"' + open + "><summary>" + tr("So gibt's Punkte", "How scoring works") + '</summary><dl class="dl">' +
       list.map(([a, b]) => "<dt>" + a + "</dt><dd>" + b + "</dd>").join("") + "</dl></details>";
@@ -1535,9 +1581,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function countryName(c) {
     if (CUSTOM[c]) return L(CUSTOM[c]);
     if (c === "US") return "USA";
-    if (c === "GB" && S.lang !== "en") return "Großbritannien";
-    if (c === "AE" && S.lang !== "en") return "Vereinigte Arabische Emirate (VAE)";
-    try { if (regionLang !== S.lang) { regionNames = new Intl.DisplayNames([S.lang === "en" ? "en" : "de"], { type: "region" }); regionLang = S.lang; } return regionNames.of(c) || c; } catch (e) { return c; }
+    if (c === "GB" && S.lang === "de") return "Großbritannien";
+    if (c === "AE" && S.lang === "de") return "Vereinigte Arabische Emirate (VAE)";
+    try { if (regionLang !== S.lang) { regionNames = new Intl.DisplayNames([loc(), "en"], { type: "region" }); regionLang = S.lang; } return regionNames.of(c) || c; } catch (e) { return c; }
   }
   // Suchbegriffe, die im offiziellen Ländernamen nicht vorkommen (z. B. "USA" -> "Vereinigte Staaten")
   const CALIAS = { US: "usa us amerika america vereinigte staaten united states", GB: "uk england britain großbritannien grossbritannien", AE: "uae vae emirate emirates dubai abu dhabi", NL: "holland", CZ: "tschechien czechia", KR: "südkorea korea", KP: "nordkorea", RU: "russland russia", CH: "schweiz switzerland", BA: "bosnien bosnia", MK: "mazedonien macedonia", XK: "kosovo", PS: "palästina palestine", CD: "kongo congo", CG: "kongo congo", CI: "elfenbeinküste ivory coast", VA: "vatikan vatican", TR: "türkei turkey türkiye turkiye" };
@@ -1603,7 +1649,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   ];
   const BUNDLE = { ids: ["s:royal", "s:phantom", "s:diamond", "s:holo"], eur: 6.99, coins: 5000 };
   const STORY_SK = "s:story";
-  const eur = (v) => { const t = Number.isInteger(v) ? String(v) : v.toFixed(2); return S.lang === "en" ? "€" + t : t.replace(".", ",") + " €"; };
+  const eur = (v) => { try { return new Intl.NumberFormat(loc(), { style: "currency", currency: "EUR", minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 }).format(v); } catch (e) { return "€" + v; } };
   const skinHow = (sk) => (sk.startsWith("s:") ? special(sk.slice(2)).how : "cash");
   const HELM_EUR = 3.99, FLAG_EUR = 1.99, PAIR_EUR = 4.19; // Helm + Flagge zusammen: 30 % günstiger als einzeln (5,98 €)
   const flagsOwned = () => { const f = store.get("flagsOwned", null); return Array.isArray(f) ? f.filter(isFlag) : []; };
@@ -2080,7 +2126,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<div class="uname-row"><span>@</span><input id="pfName" maxlength="16" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="' + tr("deinname", "yourname") + '"></div>' +
       '<p class="note" id="pfHint">' + tr("3–16 Zeichen: a–z, 0–9, _ und Punkt.", "3–16 characters: a–z, 0–9, _ and dot.") + "</p>" +
       '<span class="eyebrow">' + tr("Profilbild", "Profile picture") + '</span>' +
-      '<div class="seg three pic-seg"><button type="button" data-pm="photo">📷 ' + tr("Foto", "Photo") + '</button><button type="button" data-pm="skin">🪖 Skin</button><button type="button" data-pm="avatar">🙂 Avatar</button></div>' +
+      '<div class="seg three pic-seg"><button type="button" data-pm="photo">📷 ' + tr("Foto", "Photo") + '</button><button type="button" data-pm="skin">🪖 ' + tr("Skin", "Skin") + '</button><button type="button" data-pm="avatar">🙂 ' + tr("Avatar", "Avatar") + '</button></div>' +
       '<div class="pic-panel" id="picPanel"></div><input id="pfFile" type="file" accept="image/*" hidden>' +
       '<span class="eyebrow">' + tr("Dein Land", "Your country") + '</span><div class="flagrow" id="pfFlags"></div>' +
       '<div class="flagpick" id="pfPick" hidden><input class="search" id="pfFlagQ" autocomplete="off" placeholder="' + tr("Land suchen", "Search country") + '"><div class="flaglist" id="pfFlagList"></div></div>' +
@@ -2301,7 +2347,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (/network/.test(c)) return tr("Keine Verbindung. Prüf dein Internet.", "No connection. Check your internet.");
     return tr("Das hat nicht geklappt. Versuch es nochmal.", "That didn't work. Try again.");
   };
-  const fmtAgo = (t) => { if (!t) return "–"; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? tr("gerade eben", "just now") : m < 60 ? tr("vor " + m + " Min", m + " min ago") : new Date(t).toLocaleString(S.lang === "de" ? "de-DE" : "en-GB", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); };
+  const fmtAgo = (t) => { if (!t) return "–"; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? tr("gerade eben", "just now") : m < 60 ? tr("vor " + m + " Min", m + " min ago") : new Date(t).toLocaleString(S.lang === "en" ? "en-GB" : loc(), { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); };
 
   async function showAccount(tab, back) {
     const A = AUTH();
@@ -2467,7 +2513,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   };
   const xpNeed = (l) => 100 + (l - 1) * 50;
   const rankCoins = (l) => 50 + l * 10 + (l % 5 === 0 ? 100 : 0);
-  const fmtN = (n) => Number(n).toLocaleString(S.lang === "en" ? "en-US" : "de-DE");
+  const fmtN = (n) => Number(n).toLocaleString(loc());
   const coinIco = '<span class="coin" aria-hidden="true"></span>';
   const tokIco = '<span class="tok" aria-hidden="true"></span>';
   // Münzen pro Runde aus der Leistung (pro Modus vergleichbar gemacht)
@@ -2648,7 +2694,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const IG = "@playzack", DL = "playzack.io";
   const CLIP_TIERS = [[10000, 10], [50000, 40], [100000, 75], [500000, 300], [1000000, 500]];
   const CLIP_RE = { tt: /^https:\/\/(www\.|vm\.|vt\.|m\.)?tiktok\.com\/\S+$/i, ig: /^https:\/\/(www\.)?instagram\.com\/(reel|reels|p|tv|stories)\/\S+$/i };
-  const fmtViews = (v) => v >= 1000000 ? (v / 1000000).toLocaleString(S.lang === "en" ? "en" : "de") + tr(" Mio.", "M") : fmtN(v);
+  const fmtViews = (v) => v >= 1000000 ? (v / 1000000).toLocaleString(loc()) + tr(" Mio.", "M") : fmtN(v);
   // ---------- Auszahlungsdaten: nur der Clipper selbst und der Admin können sie lesen ----------
   const ibanOk = (v) => {
     const s0 = String(v || "").replace(/\s+/g, "").toUpperCase();
@@ -2844,7 +2890,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const open = ADM.list.filter((x) => (x.status || "neu") === "neu").length, owe = ADM.list.filter((x) => x.status === "ok").reduce((a, x) => a + (x.eur || 0), 0);
       const mk = monthKey(Date.now()), spent = ADM.list.filter((x) => (x.status === "ok" || x.status === "bezahlt") && x.okAt && monthKey(x.okAt) === mk).reduce((a, x) => a + (x.eur || 0), 0);
       ADM.spent = spent;
-      sum.innerHTML = esc(open + tr(" zu prüfen · offen auszuzahlen: ", " to review · still to pay: ") + eur(owe)) + '<br><span class="ad-bud' + (spent >= CLIP_BUDGET ? " full" : "") + '">' + tr("Budget ", "Budget ") + new Date().toLocaleString(S.lang === "en" ? "en" : "de-DE", { month: "long" }) + ": " + eur(spent) + tr(" von ", " of ") + eur(CLIP_BUDGET) + tr(" vergeben", " used") + '</span><span class="ad-bbar"><i style="width:' + Math.min(100, Math.round((spent / CLIP_BUDGET) * 100)) + '%"></i></span>';
+      sum.innerHTML = esc(open + tr(" zu prüfen · offen auszuzahlen: ", " to review · still to pay: ") + eur(owe)) + '<br><span class="ad-bud' + (spent >= CLIP_BUDGET ? " full" : "") + '">' + tr("Budget ", "Budget ") + new Date().toLocaleString(loc(), { month: "long" }) + ": " + eur(spent) + tr(" von ", " of ") + eur(CLIP_BUDGET) + tr(" vergeben", " used") + '</span><span class="ad-bbar"><i style="width:' + Math.min(100, Math.round((spent / CLIP_BUDGET) * 100)) + '%"></i></span>';
       const list = ADM.list.filter((x) => (x.status || "neu") === ADM.tab);
       const codes = Array.from(new Set(list.map((x) => clipCode(x.handle))));
       ADM.pay = ADM.pay || {};
@@ -3057,7 +3103,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     $("play").classList.toggle("duel", !!opts.local2);
     stage.innerHTML = "";
     $("hudInfo").textContent = ""; $("hudScore").textContent = "0"; $("hudRight").innerHTML = ""; $("badge").hidden = true;
-    $("hudTitle").textContent = opts.level ? "Level " + opts.level.n + " · " + m.name : opts.daily ? tr("Tages-Challenge · ", "Daily · ") + m.name : opts.ghost ? tr("Geist-Rennen", "Ghost Race") : opts.online ? (opts.online.kind === "bot" ? tr("Gegen Bot · ", "Vs. bot · ") : "Online · ") + m.name : m.name;
+    $("hudTitle").textContent = opts.level ? tr("Level ", "Level ") + opts.level.n + " · " + m.name : opts.daily ? tr("Tages-Challenge · ", "Daily · ") + m.name : opts.ghost ? tr("Geist-Rennen", "Ghost Race") : opts.online ? (opts.online.kind === "bot" ? tr("Gegen Bot · ", "Vs. bot · ") : tr("Online · ", "Online · ")) + m.name : m.name;
     if (E.local2) {
       const wrap = h("div", "split", halfHTML("p2", tr("Spieler 2", "Player 2")) + tr('<div class="band"><button class="pill" type="button" data-quit>Menü</button><span class="eyebrow">Gleiche Runde für beide</span></div>', "<div class=\"band\"><button class=\"pill\" type=\"button\" data-quit>Menu</button><span class=\"eyebrow\">Same round for both</span></div>") + halfHTML("p1", tr("Spieler 1", "Player 1")));
       stage.appendChild(wrap);
@@ -3744,8 +3790,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const icoMusic = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17V5l11-2v12" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2.8" fill="currentColor"/><circle cx="17.5" cy="15.5" r="2.8" fill="currentColor"/></svg>';
     const icoVib = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M4 8v8M20 8v8M1.5 10v4M22.5 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     openLayer("<h2>" + tr("Einstellungen", "Settings") + '</h2><div class="tgls">' +
-      tg("stSound", "Sound", S.sound, icoSound) + tg("stMusic", tr("Musik", "Music"), S.music, icoMusic) + tg("stHapt", "Vibration", S.haptics, icoVib) + "</div>" +
-      '<span class="eyebrow">' + tr("Sprache", "Language") + '</span><div class="langs"><button class="lang' + (S.lang === "de" ? " on" : "") + '" id="stDe" type="button">Deutsch</button><button class="lang' + (S.lang === "en" ? " on" : "") + '" id="stEn" type="button">English</button></div>' +
+      tg("stSound", tr("Sound", "Sound"), S.sound, icoSound) + tg("stMusic", tr("Musik", "Music"), S.music, icoMusic) + tg("stHapt", tr("Vibration", "Vibration"), S.haptics, icoVib) + "</div>" +
+      '<span class="eyebrow">' + tr("Sprache", "Language") + '</span><div class="langs">' + LANGS.map(([c, n]) => '<button class="lang' + (S.lang === c ? " on" : "") + '" data-lang="' + c + '" type="button" lang="' + c + '">' + n + "</button>").join("") + '</div>' +
       '<button class="btn ghost" id="stPrem" type="button">' + (S.premium ? tr("Werbefrei aktiv", "Ad-free active") : tr("Werbefrei spielen", "Play ad-free")) + "</button>" +
       '<button class="btn ghost" id="stProf" type="button">' + tr("Profil bearbeiten", "Edit profile") + "</button>" +
       '<button class="btn ghost" id="stAcct" type="button">' + (AUTH().current() ? tr("Konto · ", "Account · ") + esc(AUTH().current().email) : tr("Konto & Passwort", "Account & password")) + "</button>" +
@@ -3756,8 +3802,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     on("stSound", () => { S.sound = !S.sound; store.set("sound", S.sound); showSettings(); });
     on("stMusic", () => { S.music = !S.music; store.set("music", S.music); if (S.music) { AU.unlock(); AU.startMusic(); } else AU.stopMusic(); showSettings(); });
     on("stHapt", () => { S.haptics = !S.haptics; store.set("haptics", S.haptics); buzz(40); showSettings(); });
-    on("stDe", () => { setLang("de"); showSettings(); });
-    on("stEn", () => { setLang("en"); showSettings(); });
+    sheet.querySelectorAll("[data-lang]").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang, showSettings)));
     on("stPrem", () => showShop());
     on("stProf", () => showProfile(false));
     on("stAcct", () => showAccount(null, showSettings));
@@ -3766,11 +3811,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     on("stConsent", () => consentSheet(showSettings));
     on("stClose", closeLayer);
   }
-  function setLang(l) { S.lang = l; store.set("lang", l); applyLang(); renderMenu(); if (!$("career").hidden) renderCareer(); if (!$("ranks").hidden) renderRanks(); if (!$("social").hidden) renderSocial(); }
+  function setLang(l, after) {
+    S.lang = l; store.set("lang", l); let ran = false;
+    loadLang(l, () => { if (S.lang !== l) return; ran = true; setLang2(); after && after(); });
+    if (!ran) { setLang2(); after && after(); }
+  }
+  function setLang2() { applyLang(); renderMenu(); if (!$("career").hidden) renderCareer(); if (!$("ranks").hidden) renderRanks(); if (!$("social").hidden) renderSocial(); }
   function applyLang() {
-    document.documentElement.lang = S.lang;
-    document.querySelectorAll("[data-en]").forEach((el) => { if (el.dataset.de == null) el.dataset.de = el.textContent; el.textContent = S.lang === "en" ? el.dataset.en : el.dataset.de; });
-    document.querySelectorAll("[data-en-ph]").forEach((el) => { if (el.dataset.dePh == null) el.dataset.dePh = el.placeholder; el.placeholder = S.lang === "en" ? el.dataset.enPh : el.dataset.dePh; });
+    document.documentElement.lang = S.lang; document.documentElement.dir = S.lang === "ar" ? "rtl" : "ltr";
+    document.querySelectorAll("[data-en]").forEach((el) => { if (el.dataset.de == null) el.dataset.de = el.textContent; el.textContent = S.lang === "de" ? el.dataset.de : S.lang === "en" ? el.dataset.en : tx(el.dataset.en); });
+    document.querySelectorAll("[data-en-ph]").forEach((el) => { if (el.dataset.dePh == null) el.dataset.dePh = el.placeholder; el.placeholder = S.lang === "de" ? el.dataset.dePh : S.lang === "en" ? el.dataset.enPh : tx(el.dataset.enPh); });
   }
 
   function showDebug() {
@@ -4788,11 +4838,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const c = careerData(), u = unlocked();
     const stars = Object.values(c).reduce((a, b) => a + b, 0);
     const L = level(u);
-    $("carTitle").textContent = "Level " + u + " · " + MODES[L.mode].name;
+    $("carTitle").textContent = tr("Level ", "Level ") + u + " · " + MODES[L.mode].name;
     $("carSub").textContent = stars + tr(" von " + CAR_MAX * 3 + " Sternen · Ziel: ", " of " + CAR_MAX * 3 + " stars · Goal: ") + goalText(L);
     $("carProg").style.width = Math.round((stars / (CAR_MAX * 3)) * 100) + "%";
     const d = dailyInfo(), dm = MODES[d.mode], now_ = new Date();
-    $("dayEyebrow").textContent = tr("Tages-Challenge · " + now_.getDate() + "." + (now_.getMonth() + 1) + ".", "Daily Challenge · " + (now_.getMonth() + 1) + "/" + now_.getDate());
+    $("dayEyebrow").textContent = tr("Tages-Challenge · ", "Daily Challenge · ") + (S.lang === "de" ? now_.getDate() + "." + (now_.getMonth() + 1) + "." : now_.toLocaleDateString(loc(), { day: "numeric", month: "numeric" }));
     $("dayTitle").textContent = tr("Heute: ", "Today: ") + dm.name;
     const db = store.get("daily:" + todayKey(), null), last = store.get("daily:last", null);
     const streak = last === todayKey() || last === yesterdayKey() ? store.get("daily:streak", 0) : 0;
@@ -5074,7 +5124,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function makeStoppuhr(ctx, opts) {
     const POOL = [3, 4, 5, 7, 8, 10, 12, 15, 18, 20, 25, 30, 40, 45, 60];
     const targets = [0, 1, 2].map(() => opts.target || POOL[Math.floor(ctx.rng() * POOL.length)]);
-    const pct = (v) => (S.lang === "en" ? v.toFixed(1) : v.toFixed(1).replace(".", ",")) + " %";
+    const pct = (v) => v.toFixed(1).replace(".", decSep()) + " %";
     const r = ctx.root; r.classList.add("padmode");
     r.innerHTML = '<span class="eyebrow">' + tr("Zielzeit", "Target time") + '</span><div class="target"></div><div class="clock">' + fmt3(0) + "</div>" +
       '<div class="pad-msg"></div><div class="splits s3">' + "<span>–</span>".repeat(3) + "</div>";
@@ -5565,8 +5615,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<div class="hint">' + tr("Tippe so schnell du kannst. Die 10 Sekunden starten mit dem ersten Tipp. Mehrere Finger erlaubt.", "Tap as fast as you can. The 10 seconds start with your first tap. Multiple fingers allowed.") + "</div>";
     const bar = r.querySelector(".ck-bar i"), rate = r.querySelector(".ck-rate b"), btn = r.querySelector(".ck-btn"), lbl = btn.firstChild, beat = r.querySelector(".ck-beat"), hint = r.querySelector(".hint");
     let n = 0, t0 = null, last = -1e9, done = false, recent = [];
-    const fmt1 = (x) => x.toFixed(1).replace(".", S.lang === "en" ? "." : ",");
-    ctx.score(0); ctx.side("10,0 s".replace(",", S.lang === "en" ? "." : ","));
+    const fmt1 = (x) => x.toFixed(1).replace(".", decSep());
+    ctx.score(0); ctx.side("10" + decSep() + "0 s");
     function tap(e) {
       if (!ctx.live() || done) return;
       const at = ctx.evT(e);
@@ -6319,8 +6369,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const ms = $("modesSec"); ms.dataset.en = "All modes · solo or 2 players"; ms.dataset.de = "Alle Modi · allein oder zu zweit";
   }
   applyLang();
+  // Sprachdatei laden (aus dem Speicher sofort, beim allerersten Start kurz warten, max. 2,5 s)
+  let langReady = S.lang === "de" || S.lang === "en";
+  loadLang(S.lang, () => { const first = !langReady; langReady = true; if (first) setLang2(); });
   const startFlow = () => { if (!profile() || !profile().uname) showProfile(true, checkRef); else { closeLayer(); checkRef(); } };
-  setTimeout(() => { if (S.consent == null) consentSheet(startFlow); else startFlow(); }, 450);
+  const t0 = Date.now(), whenLang = (fn) => (langReady || Date.now() - t0 > 2500 ? fn() : setTimeout(() => whenLang(fn), 80));
+  setTimeout(() => whenLang(() => { if (S.consent == null) consentSheet(startFlow); else startFlow(); }), 450);
   initNet();
   renderMenu();
   // Einladungslink ?t=CODE öffnet direkt das Turnier
