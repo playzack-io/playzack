@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.0.3"></script>
-<script src="backend.js?v=2.0.3"></script>
+<script src="config.js?v=2.0.4"></script>
+<script src="backend.js?v=2.0.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -238,8 +238,9 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .root.stroop { display: flex; flex-direction: column; gap: 14px; padding: 16px; box-sizing: border-box; }
 .sw-top { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
 .word { font-family: var(--font-display); font-size: clamp(54px, 19vw, 108px); line-height: 1; min-height: 1em; }
-.tbar { width: 100%; max-width: 320px; height: 6px; background: var(--bulb-off); border-radius: 3px; overflow: hidden; }
-.tbar i { display: block; height: 100%; background: var(--chalk); transform-origin: left; }
+/* Zeitbalken: eigene Grafik-Ebene, sonst lässt iOS-Safari beim Schrumpfen feine Striche stehen */
+.tbar { width: 100%; max-width: 320px; height: 6px; background: var(--bulb-off); border-radius: 3px; overflow: hidden; transform: translateZ(0); isolation: isolate; }
+.tbar i { display: block; height: 100%; background: var(--chalk); transform-origin: left; will-change: transform; backface-visibility: hidden; }
 .cbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .cbtns button { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); background: var(--housing); border-radius: 14px; padding: 16px 14px; font-family: var(--font-num); font-weight: 800; font-size: 20px; text-transform: uppercase; touch-action: none; }
 .cbtns button span { width: 26px; height: 26px; border-radius: 8px; background: var(--cc); flex: none; }
@@ -252,8 +253,8 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .root.balloon .hint { bottom: 46px; }
 /* Klicks */
 .root.clicks { background: radial-gradient(120% 80% at 50% 45%, #2b2412 0%, #141218 70%); touch-action: none; }
-.ck-bar { position: absolute; left: 14px; right: 14px; top: 12px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; }
-.ck-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--volt), #ff9a3c); transform-origin: left; }
+.ck-bar { position: absolute; left: 14px; right: 14px; top: 12px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; transform: translateZ(0); isolation: isolate; }
+.ck-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--volt), #ff9a3c); transform-origin: left; will-change: transform; backface-visibility: hidden; }
 .ck-rate { position: absolute; left: 0; right: 0; top: 9%; text-align: center; pointer-events: none; }
 .ck-rate b { display: block; font-family: var(--font-num); font-weight: 800; font-size: 44px; line-height: 1; color: var(--chalk); }
 .ck-rate small { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
@@ -5219,7 +5220,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     return {
       tick(t) {
         if (waiting) return;
-        bar.style.transform = "scaleX(" + Math.max(0, (deadline - t) / dur).toFixed(3) + ")";
+        bar.style.transform = "translateZ(0) scaleX(" + Math.max(0, (deadline - t) / dur).toFixed(4) + ")";
         if (t >= deadline + 80) { if (lose(tr("Zu langsam", "Too slow"))) { waiting = true; deadline = Infinity; return; } after(); }
       },
       revive() { lives = 1; combo = 0; ctx.lives(lives, max); ctx.info(""); waiting = true; deadline = Infinity; word.textContent = ""; ctx.at(900, (t) => next(t)); },
@@ -5591,7 +5592,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       tick(t) {
         if (t0 == null || done) return;
         const el = Math.min(DUR, t - t0), left = Math.max(0, DUR - el);
-        bar.style.transform = "scaleX(" + left / DUR + ")";
+        bar.style.transform = "translateZ(0) scaleX(" + Math.max(0, left / DUR).toFixed(4) + ")";
         ctx.side(fmt1(left / 1000) + " s");
         recent = recent.filter((x) => t - x < 1000);
         rate.textContent = fmt1(el > 300 ? Math.min(recent.length, n / (el / 1000)) : recent.length);
