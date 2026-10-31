@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.7"></script>
-<script src="backend.js?v=1.9.7"></script>
+<script src="config.js?v=1.9.8"></script>
+<script src="backend.js?v=1.9.8"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -1470,8 +1470,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Grün antippen", "1 Punkt"], ["Andere Farbe oder Trick-Wort", "1 Leben weg"], ["Grün verpasst oder zu früh", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     farbwort: [["Richtige Schriftfarbe", "1 Punkt"], ["Falsch oder zu langsam", "1 Leben weg"], ["Ab 20 Punkten", "Knöpfe werden gemischt"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block antippen", "doppelte Punkte: 2"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
-    ausweichen: [["Hindernis-Reihe geschafft", "1 Punkt"], ["Wischen / Maus / ← →", "Helm nach links oder rechts"], ["Reifen, Auto oder Hütchen berührt", "1 Leben weg"], ["Mit jedem Punkt", "wird es schneller"], ["Spielfigur", "dein aktueller Skin"]],
-    helmflug: [["Durch eine Lücke geflogen", "1 Punkt"], ["Tippen", "Helm fliegt hoch"], ["Reifenstapel oder Boden berührt", "1 Leben weg"], ["Alle 10 Punkte", "Combo-Sound, es wird schneller"], ["Spielfigur", "dein aktueller Skin"]],
+    ausweichen: [["Hindernis-Reihe geschafft", "1 Punkt"], ["Wischen / Maus / ← →", "Helm nach links oder rechts"], ["Reifen, Auto oder Hütchen berührt", "1 Leben weg"], ["2×-Münze einsammeln", "7 Sekunden doppelte Punkte"], ["Mit jeder Reihe", "wird es etwas schneller"], ["Spielfigur", "dein aktueller Skin"]],
+    helmflug: [["Durch eine Lücke geflogen", "1 Punkt"], ["Tippen", "Helm fliegt hoch"], ["Reifenstapel oder Boden berührt", "1 Leben weg"], ["2×-Münze einsammeln", "7 Sekunden doppelte Punkte"], ["Mit jedem Reifenstapel", "wird es etwas schneller und enger"], ["Spielfigur", "dein aktueller Skin"]],
     klicks: [["Jeder Tipp", "1 Klick"], ["Zeit", "10 Sekunden ab dem ersten Tipp"], ["Mehrere Finger", "erlaubt"], ["Alle 25 Klicks", "Combo-Sound und Vibration"]],
     merken: [["Richtig angetippt", "1 Punkt"], ["Ganze Folge geschafft", "nächstes Level, eins mehr zu merken"], ["Falsche Reihenfolge", "1 Leben weg, neue Folge gleicher Länge"], ["Tempo", "mit jedem Level blitzen die Begriffe kürzer auf"]],
     ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
@@ -1486,8 +1486,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Tap green", "1 point"], ["Other color or trick word", "lose 1 life"], ["Missed green or too early", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     farbwort: [["Right ink color", "1 point"], ["Wrong or too slow", "lose 1 life"], ["From 20 points", "buttons get shuffled"], ["Streak", "sound and vibration, no extra points"]],
     lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block", "double points: 2"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
-    ausweichen: [["Row of obstacles cleared", "1 point"], ["Swipe / mouse / ← →", "helmet moves left or right"], ["Hit a tyre, car or cone", "lose 1 life"], ["With every point", "it gets faster"], ["Your character", "your current skin"]],
-    helmflug: [["Fly through a gap", "1 point"], ["Tap", "helmet flies up"], ["Hit a tyre wall or the ground", "lose 1 life"], ["Every 10 points", "combo sound, it gets faster"], ["Your character", "your current skin"]],
+    ausweichen: [["Row of obstacles cleared", "1 point"], ["Swipe / mouse / ← →", "helmet moves left or right"], ["Hit a tyre, car or cone", "lose 1 life"], ["Grab a 2× coin", "double points for 7 seconds"], ["With every row", "it gets a bit faster"], ["Your character", "your current skin"]],
+    helmflug: [["Fly through a gap", "1 point"], ["Tap", "helmet flies up"], ["Hit a tyre wall or the ground", "lose 1 life"], ["Grab a 2× coin", "double points for 7 seconds"], ["With every tyre wall", "it gets a bit faster and tighter"], ["Your character", "your current skin"]],
     klicks: [["Every tap", "1 click"], ["Time", "10 seconds from your first tap"], ["Multiple fingers", "allowed"], ["Every 25 clicks", "combo sound and vibration"]],
     merken: [["Right tap", "1 point"], ["Whole sequence done", "next level, one more to remember"], ["Wrong order", "lose 1 life, new sequence of the same length"], ["Speed", "items flash shorter every level"]],
     ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
@@ -5681,6 +5681,38 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   // =====================================================
+  // 2×-Münze für Helmflug und Ausweichen: einsammeln = kurze Zeit doppelte Punkte
+  // =====================================================
+  const X2_SEC = 7;
+  function drawX2Coin(g, x, y, r, t) {
+    const s = 1 + Math.sin(t / 140) * 0.07, rr = r * s;
+    g.save();
+    g.globalAlpha = 0.35 + Math.sin(t / 200) * 0.15; g.fillStyle = "#ffd23f"; g.beginPath(); g.arc(x, y, rr * 1.55, 0, Math.PI * 2); g.fill();
+    g.globalAlpha = 1;
+    const gr = g.createRadialGradient(x - rr * 0.35, y - rr * 0.35, rr * 0.1, x, y, rr);
+    gr.addColorStop(0, "#fff3b0"); gr.addColorStop(0.55, "#ffd23f"); gr.addColorStop(1, "#d89a00");
+    g.fillStyle = gr; g.beginPath(); g.arc(x, y, rr, 0, Math.PI * 2); g.fill();
+    g.lineWidth = Math.max(2, rr * 0.12); g.strokeStyle = "#a86f00"; g.beginPath(); g.arc(x, y, rr * 0.8, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = "#5a3a00"; g.font = "900 " + Math.round(rr * 0.95) + "px system-ui, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.fillText("2×", x, y + rr * 0.04);
+    g.restore();
+  }
+  function drawX2Aura(g, x, y, rr, t, left) {
+    if (left <= 0) return;
+    const blink = left < 2 && Math.floor(t / 120) % 2;
+    g.save();
+    g.globalAlpha = blink ? 0.25 : 0.55 + Math.sin(t / 110) * 0.2;
+    g.strokeStyle = "#ffd23f"; g.lineWidth = 4; g.beginPath(); g.arc(x, y, rr * 1.32, 0, Math.PI * 2); g.stroke();
+    g.globalAlpha = 1; g.lineWidth = 3; g.strokeStyle = "#fff3b0";
+    g.beginPath(); g.arc(x, y, rr * 1.32, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, left / X2_SEC)); g.stroke();
+    g.fillStyle = "#ffd23f"; g.font = "900 " + Math.round(rr * 0.8) + "px system-ui, sans-serif"; g.textAlign = "center"; g.textBaseline = "bottom";
+    g.fillText("2×", x, y - rr * 1.45);
+    g.restore();
+  }
+  function x2Sound() { AU.tone(880, 0.09, "triangle", 0.22, 1.02); AU.tone(1175, 0.09, "triangle", 0.22, 1.02, 0.07); AU.tone(1568, 0.16, "triangle", 0.24, 1.04, 0.14); buzz([15, 30, 15]); }
+  function x2Hud(ctx, left, shown) { const n = left > 0 ? Math.ceil(left) : 0; if (n !== shown) ctx.info(n ? "2× · " + n + "s" : ""); return n; }
+
+  // =====================================================
   // MODE: Helmflug (Flappy-Stil auf der Rennstrecke, der Vogel ist dein Helm/Skin)
   // =====================================================
   function makeHelmflug(ctx) {
@@ -5698,23 +5730,27 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (sk) paintAvatar(holder, { sk }); else paintAvatar(holder, { av: pr.av || 0, photo: pr.photo || null });
     let pal = ["#ffd23f", "#ff4632", "#63d9ff"]; skinPalette(sk).then((p) => { pal = p; }).catch(() => {});
     const GROUND = () => Math.round(H * 0.13), R = () => Math.max(16, Math.min(W, H) * 0.055);
-    let hwhy = null, started = false, py = 0, vy = 0, rot = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, pipes = [], parts = [], scroll = 0, lastT = null, nextGap = 0, dead = false;
+    let passed = 0, np = 0, prevCy = null, x2 = 0, x2Shown = 0, nextBonus = 4 + Math.floor(ctx.rng() * 4), hwhy = null, started = false, py = 0, vy = 0, rot = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, pipes = [], parts = [], scroll = 0, lastT = null, nextGap = 0, dead = false;
     const max = lives; ctx.lives(lives, max); ctx.score(0);
     const PX = () => W * 0.28;
     const reset = () => { py = (H - GROUND()) * 0.45; vy = 0; rot = 0; };
     reset();
-    const speed = () => Math.min(W * 0.78, W * 0.4 + score * 4 + ctx.boost * 6);
-    const gapH = () => Math.max(H * 0.2, H * 0.3 - score * 1.6);
+    const diff = () => Math.min(1, passed / 45); // 0 = Anfang, 1 = volle Schwierigkeit (nach Reifenstapeln, nicht Punkten)
+    const speed = () => Math.min(W * 0.8, W * (0.33 + 0.27 * diff()) + Math.max(0, passed - 45) * 3 + ctx.boost * 6);
+    const gapH = () => H * (0.4 - 0.19 * diff());
     const pipeW = () => Math.max(54, W * 0.16);
     function addPipe(x) {
       const top = H * 0.12, bottom = H - GROUND() - H * 0.12, gh = gapH();
-      const cy = top + gh / 2 + ctx.rng() * Math.max(10, bottom - top - gh);
-      pipes.push({ x, cy, gh, passed: false });
+      const lo = top + gh / 2, hi = Math.max(lo + 1, bottom - gh / 2), shift = H * (0.14 + 0.3 * diff());
+      const base = prevCy == null ? (lo + hi) / 2 : prevCy;
+      const cy = Math.max(lo, Math.min(hi, base + (ctx.rng() * 2 - 1) * shift)); prevCy = cy;
+      np++; const bonus = np >= nextBonus; if (bonus) nextBonus = np + 7 + Math.floor(ctx.rng() * 6);
+      pipes.push({ x, cy, gh, passed: false, bonus, got: false });
     }
     function flap(e) {
       if (!ctx.live() || dead) return;
       if (e) e.preventDefault();
-      if (!started) { started = true; hint.hidden = true; nextGap = W * 0.75; }
+      if (!started) { started = true; hint.hidden = true; if (!pipes.length) nextGap = W * 0.45; }
       vy = -H * 0.74;
       AU.tone(180, 0.09, "sawtooth", 0.09, 2.2); AU.tone(360, 0.06, "square", 0.04, 1.6, 0.02); buzz(6);
       for (let i = 0; i < 6; i++) parts.push({ x: PX() - R() * 0.8, y: py + R() * 0.3, vx: -60 - Math.random() * 120, vy: (Math.random() - 0.3) * 80, life: 0.45, c: pal[i % 3] });
@@ -5726,7 +5762,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (lives <= 0) { ctx.at(700, () => ctx.die()); return; }
       ctx.at(700, () => { pipes = pipes.filter((p) => p.x > PX() + W * 0.45); reset(); dead = false; inv = 1.6; started = false; hint.hidden = false; });
     }
-    r.__hf = () => ({ hwhy, started, py, vy, score, lives, dead, H, R: R(), px: PX(), pw: pipeW(), pipes: pipes.map((p) => ({ x: p.x, cy: p.cy, gh: p.gh })) }); // für Tests
+    r.__hf = () => ({ x2, passed, hwhy, started, py, vy, score, lives, dead, H, R: R(), px: PX(), pw: pipeW(), pipes: pipes.map((p) => ({ x: p.x, cy: p.cy, gh: p.gh, bonus: p.bonus, got: p.got })) }); // für Tests
     // ---- Zeichnen ----
     function tyreWall(x, y0, y1, w) {
       if (y1 - y0 < 2) return;
@@ -5763,6 +5799,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         tyreWall(p.x, 0, top, pw); kerbCap(p.x, top - 10, pw, 10);
         tyreWall(p.x, bot, gy, pw); kerbCap(p.x, bot, pw, 10);
       }
+      for (const p of pipes) if (p.bonus && !p.got) drawX2Coin(g, p.x + pw / 2, p.cy, R() * 0.82, t);
       // Strecke
       g.fillStyle = "#2a2a30"; g.fillRect(0, gy, W, GROUND());
       const so = scroll % 40;
@@ -5775,6 +5812,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       // Helm
       const rr = R(), x = PX();
       if (!(dead && lives <= 0)) {
+        drawX2Aura(g, x, py, rr, t, x2);
         g.save(); g.translate(x, py); g.rotate(rot);
         if (inv > 0 && Math.floor(t / 90) % 2) g.globalAlpha = 0.35;
         g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(0, rr * 1.05, rr * 0.8, rr * 0.2, 0, 0, Math.PI * 2); g.fill();
@@ -5797,15 +5835,22 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           const v = speed();
           vy += H * 2.35 * dt; vy = Math.min(vy, H * 1.3); py += vy * dt;
           rot = Math.max(-0.45, Math.min(1.1, vy / (H * 1.1)));
+          if (x2 > 0) x2 = Math.max(0, x2 - dt);
+          x2Shown = x2Hud(ctx, x2, x2Shown);
           scroll += v * dt;
           for (const p of pipes) p.x -= v * dt;
           pipes = pipes.filter((p) => p.x > -pw - 20);
           nextGap -= v * dt;
-          if (nextGap <= 0) { addPipe(W + 10); nextGap = Math.max(W * 0.55, 200); }
+          if (nextGap <= 0) { addPipe(W + 10); nextGap = Math.max(200, W * (0.78 - 0.22 * diff())); }
           if (py - rr < 0) { py = rr; vy = 0; }
           if (py + rr * 0.85 >= gy) { py = gy - rr * 0.85; hwhy = ['ground']; crash(); }
           for (const p of pipes) {
-            if (!p.passed && p.x + pw < PX() - rr) { p.passed = true; score++; ctx.score(score); SFX.hit(Math.min(score, 24)); if (score % 10 === 0) ctx.milestone(score + tr(" geschafft!", " cleared!"), Math.min(6, 2 + score / 10)); }
+            if (!p.passed && p.x + pw < PX() - rr) {
+              p.passed = true; passed++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); SFX.hit(Math.min(passed, 24));
+              if (add > 1) ctx.float(PX(), py - rr * 2.2, "+2", "fast");
+              if (passed % 10 === 0) ctx.milestone(passed + tr(" geschafft!", " cleared!"), Math.min(6, 2 + passed / 10));
+            }
+            if (p.bonus && !p.got && Math.hypot(PX() - (p.x + pw / 2), py - p.cy) < rr + rr * 0.7) { p.got = true; x2 = X2_SEC; x2Sound(); ctx.milestone(tr("2× Punkte!", "2× points!"), 4); x2Shown = -1; }
             if (inv <= 0 && !dead) {
               const hr = rr * 0.78, cx = Math.max(p.x, Math.min(PX(), p.x + pw));
               const topY = p.cy - p.gh / 2, botY = p.cy + p.gh / 2;
@@ -5822,7 +5867,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         draw(t);
       },
       revive() { lives = 1; ctx.lives(lives, max); pipes = pipes.filter((p) => p.x > PX() + W * 0.45); reset(); dead = false; inv = 1.6; started = false; hint.hidden = false; lastT = null; },
-      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: score + tr(" Reifenstapel geschafft", " tyre walls cleared") })
+      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: passed + tr(" Reifenstapel geschafft", " tyre walls cleared") })
     };
   }
 
@@ -5843,14 +5888,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (sk) paintAvatar(holder, { sk }); else paintAvatar(holder, { av: pr.av || 0, photo: pr.photo || null });
     let pal = ["#ffd23f", "#3ee27a", "#ff4632"]; skinPalette(sk).then((p) => { pal = p; }).catch(() => {});
     const TW = () => Math.min(W - 20, 460), TL = () => (W - TW()) / 2, R = () => Math.max(15, TW() * 0.07), PY = () => H * 0.8;
-    let px = W / 2, tx = W / 2, vx = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, obs = [], rows = [], parts = [], scroll = 0, lastT = null, until = 0, moved = false, dead = false, steer = 0, el = 0, why = null;
+    let px = W / 2, tx = W / 2, vx = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, obs = [], rows = [], parts = [], scroll = 0, lastT = null, until = 0, moved = false, dead = false, steer = 0, el = 0, why = null, nr = 0, rowsOk = 0, coins = [], x2 = 0, x2Shown = 0, nextBonus = 6 + Math.floor(ctx.rng() * 4);
     const max = lives; ctx.lives(lives, max); ctx.score(0);
-    const diff = () => Math.min(1, score / 70); // 0 = Anfang, 1 = volle Schwierigkeit
-    const speed = () => Math.min(H * 1.9, H * (0.36 + 0.84 * diff()) + Math.max(0, score - 70) * H * 0.006 + ctx.boost * 8);
+    const diff = () => Math.min(1, nr / 75); // 0 = Anfang, 1 = volle Schwierigkeit (nach Reihen, nicht Punkten)
+    const speed = () => Math.min(H * 1.9, H * (0.36 + 0.84 * diff()) + Math.max(0, nr - 75) * H * 0.006 + ctx.boost * 8);
     const RIVAL = ["#3a7bff", "#ff8a1f", "#b14cff", "#20c997", "#ff4d8d", "#e8e8ee"];
     function spawnRow(y) {
       const l = TL(), w = TW(), rr = R(), d = diff(), gapW = rr * (6 - 3.1 * d); // Lücke: anfangs sehr breit
-      const kind = score < 4 ? (score % 2 ? "cars" : "wall") : score < 10 ? ["wall", "cars", "wall", "cones"][Math.floor(ctx.rng() * 4)] : ["wall", "cars", "cones", "wall", "cars"][Math.floor(ctx.rng() * 5)];
+      const kind = nr < 4 ? (nr % 2 ? "cars" : "wall") : nr < 10 ? ["wall", "cars", "wall", "cones"][Math.floor(ctx.rng() * 4)] : ["wall", "cars", "cones", "wall", "cars"][Math.floor(ctx.rng() * 5)];
       const row = { y, passed: false, items: [] };
       if (kind === "wall") {
         const gx = l + gapW / 2 + 6 + ctx.rng() * (w - gapW - 12);
@@ -5858,11 +5903,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         if (gx - gapW / 2 - l > 4) row.items.push({ k: "tyre", x: l, y, w: gx - gapW / 2 - l, h: th });
         if (l + w - (gx + gapW / 2) > 4) row.items.push({ k: "tyre", x: gx + gapW / 2, y, w: l + w - (gx + gapW / 2), h: th });
       } else if (kind === "cars") {
-        const lanes = 4, lw = w / lanes, free = Math.floor(ctx.rng() * lanes), n = score < 8 ? 1 : score < 25 ? (ctx.rng() < 0.5 ? 1 : 2) : score < 45 || ctx.rng() < 0.6 ? 2 : 3;
+        const lanes = 4, lw = w / lanes, free = Math.floor(ctx.rng() * lanes), n = nr < 8 ? 1 : nr < 25 ? (ctx.rng() < 0.5 ? 1 : 2) : nr < 45 || ctx.rng() < 0.6 ? 2 : 3;
         const pick = [0, 1, 2, 3].filter((i) => i !== free).sort(() => ctx.rng() - 0.5).slice(0, n);
         for (const i of pick) { const cw = Math.min(lw * 0.62, rr * 1.9); row.items.push({ k: "car", x: l + i * lw + (lw - cw) / 2, y, w: cw, h: cw * 1.75, c: RIVAL[Math.floor(ctx.rng() * RIVAL.length)] }); }
       } else {
-        const n = score < 15 ? 2 : score < 35 ? 3 : 3 + Math.floor(ctx.rng() * 2), cs = rr * 0.9; let tries = 0;
+        const n = nr < 15 ? 2 : nr < 35 ? 3 : 3 + Math.floor(ctx.rng() * 2), cs = rr * 0.9; let tries = 0;
         while (row.items.length < n && tries++ < 30) {
           const x = l + 4 + ctx.rng() * (w - cs - 8), yy = y + ctx.rng() * rr * 2;
           if (row.items.some((o) => Math.abs(o.x - x) < cs * 1.6)) continue;
@@ -5874,7 +5919,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         while (best < gapW && row.items.length > 1) { row.items.pop(); const ys = row.items.map((o) => [o.x, o.x + o.w]).sort((a, b) => a[0] - b[0]); let e2 = l; best = 0; for (const [a, b] of ys) { best = Math.max(best, a - e2); e2 = Math.max(e2, b); } best = Math.max(best, l + w - e2); }
       }
       rows.push(row); obs.push(...row.items.map((o) => Object.assign(o, { row })));
-      return row.items.reduce((m, o) => Math.max(m, o.y + o.h - y), 0); // Tiefe der Reihe
+      const depth = row.items.reduce((m, o) => Math.max(m, o.y + o.h - y), 0); // Tiefe der Reihe
+      nr++;
+      if (nr >= nextBonus) {
+        // 2×-Münze mitten in die größte Lücke dieser Reihe
+        nextBonus = nr + 9 + Math.floor(ctx.rng() * 6);
+        const xs = row.items.map((o) => [o.x, o.x + o.w]).sort((a, b) => a[0] - b[0]);
+        let e = l, bx = l + w / 2, bw = 0; for (const [a, b] of xs) { if (a - e > bw) { bw = a - e; bx = (a + e) / 2; } e = Math.max(e, b); } if (l + w - e > bw) bx = (l + w + e) / 2;
+        coins.push({ x: bx, y: y + Math.max(depth, rr) / 2, got: false });
+      }
+      return depth;
     }
     function setX(cx) { tx = Math.max(TL() + R(), Math.min(TL() + TW() - R(), cx)); if (!moved) { moved = true; hint.hidden = true; } }
     let drag = null;
@@ -5888,7 +5942,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const endDrag = () => { drag = null; };
     r.addEventListener("pointerup", endDrag); r.addEventListener("pointercancel", endDrag);
     r.__steer = (d) => { steer = d; if (d && !moved) { moved = true; hint.hidden = true; } };
-    r.__aw = () => ({ why, px, tx, score, lives, obs: obs.length, dead, speed: speed(), l: TL(), w: TW(), R: R(), py: PY(), list: obs.map((o) => [o.x, o.y, o.w, o.h]) }); // für Tests
+    r.__aw = () => ({ x2, nr, coins: coins.map((c) => [c.x, c.y]), why, px, tx, score, lives, obs: obs.length, dead, speed: speed(), l: TL(), w: TW(), R: R(), py: PY(), list: obs.map((o) => [o.x, o.y, o.w, o.h]) }); // für Tests
     function crash() {
       dead = true; lives--; ctx.lives(lives, max); ctx.hurt(); buzz([50, 30, 80]);
       for (let i = 0; i < 22; i++) { const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 240; parts.push({ x: px, y: PY(), vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.8, c: pal[i % 3] }); }
@@ -5897,7 +5951,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     function revive(full) {
       if (full) { lives = 1; ctx.lives(lives, max); }
-      obs = obs.filter((o) => o.y + o.h < PY() - H * 0.45); rows = rows.filter((w) => w.y < PY() - H * 0.45);
+      obs = obs.filter((o) => o.y + o.h < PY() - H * 0.45); rows = rows.filter((w) => w.y < PY() - H * 0.45); coins = coins.filter((c) => c.y < PY() - H * 0.45);
       dead = false; inv = 1.6; lastT = null;
     }
     // ---- Zeichnen ----
@@ -5936,9 +5990,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           g.fillStyle = "#fff"; g.fillRect(o.x + o.w * 0.3, o.y + o.h * 0.5, o.w * 0.4, o.h * 0.14);
         }
       }
+      for (const c of coins) drawX2Coin(g, c.x, c.y, rr * 0.82, t);
       for (const q of parts) { g.globalAlpha = Math.max(0, q.life * 1.8); g.fillStyle = q.c; g.beginPath(); g.arc(q.x, q.y, 3.5, 0, Math.PI * 2); g.fill(); }
       g.globalAlpha = 1;
       if (!(dead && lives <= 0)) {
+        drawX2Aura(g, px, PY(), rr, t, x2);
         g.save(); g.translate(px, PY()); g.rotate(Math.max(-0.35, Math.min(0.35, vx / (W * 2.2))));
         if (inv > 0 && Math.floor(t / 90) % 2) g.globalAlpha = 0.35;
         g.fillStyle = "rgba(0,0,0,.4)"; g.beginPath(); g.ellipse(4, rr * 0.25, rr, rr * 0.95, 0, 0, Math.PI * 2); g.fill();
@@ -5962,16 +6018,22 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         if (!dead) {
           scroll += v * dt; el += v * dt;
           for (const o of obs) o.y += v * dt;
+          for (const c of coins) c.y += v * dt;
           for (const w of rows) { w.y += v * dt; if (w.flag) w.flag += v * dt; }
           const gapD = Math.max(rr * 6, H * (0.55 - 0.3 * diff())); // freie Strecke zwischen zwei Reihen: anfangs viel Platz
           if (t > until && el >= gapD) { el = -spawnRow(-rr * 4); }
           for (const w of rows) {
             if (!w.passed && w.items.every((o) => o.y > PY() + rr)) {
-              w.passed = true; score++; ctx.score(score); SFX.hit(Math.min(score, 24));
-              if (score % 25 === 0) { ctx.milestone(score + tr(" ausgewichen!", " dodged!"), Math.min(6, 2 + score / 25)); }
-              else if (score % 10 === 0) ctx.info(tr("Schneller!", "Faster!"));
+              w.passed = true; rowsOk++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); SFX.hit(Math.min(rowsOk, 24));
+              if (add > 1) ctx.float(px, PY() - R() * 2.2, "+2", "fast");
+              if (rowsOk % 25 === 0) { ctx.milestone(rowsOk + tr(" ausgewichen!", " dodged!"), Math.min(6, 2 + rowsOk / 25)); }
+              else if (rowsOk % 10 === 0 && x2 <= 0) ctx.info(tr("Schneller!", "Faster!"));
             }
           }
+          for (const c of coins) if (!c.got && Math.hypot(px - c.x, PY() - c.y) < rr * 1.6) { c.got = true; x2 = X2_SEC; x2Sound(); ctx.milestone(tr("2× Punkte!", "2× points!"), 4); x2Shown = -1; }
+          coins = coins.filter((c) => !c.got && c.y < H + 40);
+          if (x2 > 0) x2 = Math.max(0, x2 - dt);
+          x2Shown = x2Hud(ctx, x2, x2Shown);
           if (inv <= 0) {
             const hr = rr * 0.8, cy = PY();
             for (const o of obs) {
@@ -5987,7 +6049,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         draw(t);
       },
       revive() { revive(true); },
-      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: score + tr(" Hindernissen ausgewichen", " obstacles dodged") })
+      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: rowsOk + tr(" Hindernissen ausgewichen", " obstacles dodged") })
     };
   }
 
