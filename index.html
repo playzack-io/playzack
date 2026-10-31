@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.0.1"></script>
-<script src="backend.js?v=2.0.1"></script>
+<script src="config.js?v=2.0.2"></script>
+<script src="backend.js?v=2.0.2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -5741,7 +5741,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (sk) paintAvatar(holder, { sk }); else paintAvatar(holder, { av: pr.av || 0, photo: pr.photo || null });
     let pal = ["#ffd23f", "#ff4632", "#63d9ff"]; skinPalette(sk).then((p) => { pal = p; }).catch(() => {});
     const GROUND = () => Math.round(H * 0.13), R = () => Math.max(16, Math.min(W, H) * 0.055);
-    let passed = 0, np = 0, prevCy = null, x2 = 0, x2Shown = 0, nextBonus = 4 + Math.floor(ctx.rng() * 4), hwhy = null, started = false, py = 0, vy = 0, rot = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, pipes = [], parts = [], scroll = 0, lastT = null, nextGap = 0, dead = false;
+    let streak = 0, passed = 0, np = 0, prevCy = null, x2 = 0, x2Shown = 0, nextBonus = 4 + Math.floor(ctx.rng() * 4), hwhy = null, started = false, py = 0, vy = 0, rot = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, pipes = [], parts = [], scroll = 0, lastT = null, nextGap = 0, dead = false;
     const max = lives; ctx.lives(lives, max); ctx.score(0);
     const PX = () => W * 0.28;
     const reset = () => { py = (H - GROUND()) * 0.45; vy = 0; rot = 0; };
@@ -5768,7 +5768,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     r.addEventListener("pointerdown", flap);
     function crash() {
-      dead = true; lives--; ctx.lives(lives, max); ctx.hurt(); buzz([50, 30, 80]);
+      dead = true; streak = 0; lives--; ctx.lives(lives, max); ctx.hurt(); buzz([50, 30, 80]);
       for (let i = 0; i < 22; i++) { const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 260; parts.push({ x: PX(), y: py, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.8, c: pal[i % 3] }); }
       if (lives <= 0) { ctx.at(700, () => ctx.die()); return; }
       ctx.at(700, () => { pipes = pipes.filter((p) => p.x > PX() + W * 0.45); reset(); dead = false; inv = 1.6; started = false; hint.hidden = false; });
@@ -5873,7 +5873,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           if (py + rr * 0.85 >= gy) { py = gy - rr * 0.85; hwhy = ['ground']; crash(); }
           for (const p of pipes) {
             if (!p.passed && p.x + pw < PX() - rr) {
-              p.passed = true; passed++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); SFX.chime(passed - 1, add > 1);
+              p.passed = true; passed++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); streak++; if (add > 1) SFX.fast(); else SFX.hit(streak);
               if (add > 1) ctx.float(PX() + rr * 1.6, py - rr * 1.2, "+2", "fast");
               if (passed % 10 === 0) ctx.milestone(passed + tr(" geschafft!", " cleared!"), Math.min(6, 2 + passed / 10));
             }
@@ -5915,7 +5915,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (sk) paintAvatar(holder, { sk }); else paintAvatar(holder, { av: pr.av || 0, photo: pr.photo || null });
     let pal = ["#ffd23f", "#3ee27a", "#ff4632"]; skinPalette(sk).then((p) => { pal = p; }).catch(() => {});
     const TW = () => Math.min(W - 20, 460), TL = () => (W - TW()) / 2, R = () => Math.max(15, TW() * 0.07), PY = () => H * 0.8;
-    let px = W / 2, tx = W / 2, vx = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, obs = [], rows = [], parts = [], scroll = 0, lastT = null, until = 0, moved = false, dead = false, steer = 0, el = 0, why = null, nr = 0, rowsOk = 0, coins = [], x2 = 0, x2Shown = 0, nextBonus = 6 + Math.floor(ctx.rng() * 4);
+    let px = W / 2, tx = W / 2, vx = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, obs = [], rows = [], parts = [], scroll = 0, lastT = null, until = 0, moved = false, dead = false, steer = 0, el = 0, why = null, nr = 0, rowsOk = 0, streak = 0, coins = [], x2 = 0, x2Shown = 0, nextBonus = 6 + Math.floor(ctx.rng() * 4);
     const max = lives; ctx.lives(lives, max); ctx.score(0);
     const diff = () => Math.min(1, nr / 75); // 0 = Anfang, 1 = volle Schwierigkeit (nach Reihen, nicht Punkten)
     const speed = () => Math.min(H * 1.9, H * (0.36 + 0.84 * diff()) + Math.max(0, nr - 75) * H * 0.006 + ctx.boost * 8);
@@ -5971,7 +5971,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     r.__steer = (d) => { steer = d; if (d && !moved) { moved = true; hint.hidden = true; } };
     r.__aw = () => ({ x2, nr, coins: coins.map((c) => [c.x, c.y]), why, px, tx, score, lives, obs: obs.length, dead, speed: speed(), l: TL(), w: TW(), R: R(), py: PY(), list: obs.map((o) => [o.x, o.y, o.w, o.h]) }); // für Tests
     function crash() {
-      dead = true; lives--; ctx.lives(lives, max); ctx.hurt(); buzz([50, 30, 80]);
+      dead = true; streak = 0; lives--; ctx.lives(lives, max); ctx.hurt(); buzz([50, 30, 80]);
       for (let i = 0; i < 22; i++) { const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 240; parts.push({ x: px, y: PY(), vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.8, c: pal[i % 3] }); }
       if (lives <= 0) { ctx.at(700, () => ctx.die()); return; }
       ctx.at(700, () => revive(false));
@@ -6051,7 +6051,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           if (t > until && el >= gapD) { el = -spawnRow(-rr * 4); }
           for (const w of rows) {
             if (!w.passed && w.items.every((o) => o.y > PY() + rr)) {
-              w.passed = true; rowsOk++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); SFX.chime(rowsOk - 1, add > 1);
+              w.passed = true; rowsOk++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); streak++; if (add > 1) SFX.fast(); else SFX.hit(streak);
               if (add > 1) ctx.float(px + R() * 1.6, PY() - R() * 1.2, "+2", "fast");
               if (rowsOk % 25 === 0) { ctx.milestone(rowsOk + tr(" ausgewichen!", " dodged!"), Math.min(6, 2 + rowsOk / 25)); }
               else if (rowsOk % 10 === 0 && x2 <= 0) ctx.info(tr("Schneller!", "Faster!"));
