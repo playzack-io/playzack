@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.5"></script>
-<script src="backend.js?v=1.9.5"></script>
+<script src="config.js?v=1.9.6"></script>
+<script src="backend.js?v=1.9.6"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -246,6 +246,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .root.tower { background: #18161d; }
 .tw-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .root.tower .hint { z-index: 2; }
+.root.hflug .hint, .root.ausw .hint { bottom: auto; right: auto; top: 18%; left: 50%; color: var(--chalk); transform: translateX(-50%); width: max-content; max-width: 86%; text-align: center; background: rgba(14,13,18,.72); padding: 8px 14px; border-radius: 12px; pointer-events: none; }
 .root.balloon .hint { bottom: 46px; }
 /* Klicks */
 .root.clicks { background: radial-gradient(120% 80% at 50% 45%, #2b2412 0%, #141218 70%); touch-action: none; }
@@ -898,7 +899,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
 /* ---------- Online: Duell-Ergebnis ---------- */
 .sheet.duelres { max-width: 440px; gap: 14px; }
-.duel { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.sheet .duel { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
 .dside { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px 12px; border-radius: 18px; background: var(--housing); border: 1px solid var(--line); min-width: 0; animation: skpop .4s cubic-bezier(.2, 1.4, .4, 1) both; }
 .dside.op { animation-delay: .12s; }
 .dside > img { width: 76px; height: 76px; border-radius: 50%; background: #17151b; box-shadow: 0 0 0 3px rgba(255, 255, 255, .85); }
@@ -1437,6 +1438,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     farbwort:    { name: ["Farbwort", "Color Word"], kind: ["Endlos", "Endless"], desc: ["Tippe die Farbe der Schrift, nicht das Wort.", "Tap the color of the ink, not the word."], unit: ["richtig", "correct"], bestLabel: ["Rekord", "Best"] },
     lanes:       { name: ["Lanes", "Lanes"], kind: ["Endlos", "Endless"], desc: ["Blöcke fallen in drei Spuren. Tippen, bevor sie unten sind. 2× gibt doppelte Punkte, rote Steine meiden.", "Blocks fall in three lanes. Tap them before they hit the bottom. 2× gives double points, avoid the red rocks."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     augenwinkel: { name: ["Augenwinkel", "Side Eye"], kind: ["Endlos", "Endless"], desc: ["Blick aufs Kreuz. Punkte blitzen kurz am Rand auf.", "Eyes on the cross. Dots flash briefly at the edge."], unit: ["Treffer", "hits"], bestLabel: ["Rekord", "Best"] },
+    ausweichen:  { name: ["Ausweichen", "Dodge"], kind: ["Endlos · neu", "Endless · new"], desc: ["Dein Helm rast über die Strecke. Schieb ihn nach links und rechts an Reifen, Autos und Hütchen vorbei. Es wird immer schneller.", "Your helmet races down the track. Slide it left and right past tyres, cars and cones. It keeps getting faster."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
+    helmflug:    { name: ["Helmflug", "Helmet Flight"], kind: ["Endlos · neu", "Endless · new"], desc: ["Dein Helm fliegt über die Rennstrecke. Tippen hält ihn oben, zwischen den Reifenstapeln durch.", "Your helmet flies over the race track. Tap to stay up and fly between the tyre walls."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     klicks:      { name: ["Klicks", "Clicks"], kind: ["10 Sek. · neu", "10 sec · new"], desc: ["Tippe 10 Sekunden lang so schnell du kannst. Wer schafft die meisten Klicks?", "Tap as fast as you can for 10 seconds. Who gets the most clicks?"], unit: ["Klicks", "clicks"], bestLabel: ["Rekord", "Best"] },
     merken:      { name: ["Merken", "Memory"], kind: ["Endlos · neu", "Endless · new"], desc: ["Tiere, Wörter und Zahlen blitzen nacheinander auf. Tippe sie in derselben Reihenfolge. Jede Runde eins mehr.", "Animals, words and numbers flash one after another. Tap them in the same order. One more every round."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     ballon:      { name: ["Ballon", "Balloon"], kind: ["10 Ballons · neu", "10 balloons · new"], desc: ["Pump den Ballon auf und lass rechtzeitig los. Je größer, desto mehr Punkte. Platzt er, gibt's 0.", "Pump the balloon and let go in time. Bigger means more points. If it pops, you get 0."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
@@ -1446,7 +1449,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const MODE_DEF = {
     ziele: { revive: true, make: makeZiele }, startampel: { lower: true, bestUnit: " ms", make: makeAmpel }, stoppuhr: { bestUnit: " %", make: makeStoppuhr },
     taeuschung: { revive: true, make: makeTaeuschung }, farbwort: { revive: true, make: makeFarbwort }, lanes: { revive: true, make: makeLanes },
-    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }, turm: { revive: true, make: makeTurm }, ballon: { make: makeBallon }, klicks: { make: makeKlicks }, merken: { revive: true, make: makeMerken }
+    augenwinkel: { revive: true, make: makeAugenwinkel }, praezision: { make: makePraezision }, turm: { revive: true, make: makeTurm }, ballon: { make: makeBallon }, klicks: { make: makeKlicks }, helmflug: { revive: true, make: makeHelmflug }, ausweichen: { revive: true, make: makeAusweichen }, merken: { revive: true, make: makeMerken }
   };
   const MODES = {};
   for (const id of Object.keys(MODE_TXT)) {
@@ -1454,8 +1457,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     for (const k of Object.keys(MODE_TXT[id])) Object.defineProperty(m, k, { get: () => L(MODE_TXT[id][k]), enumerable: true });
     MODES[id] = m;
   }
-  const ORDER = ["ziele", "klicks", "ballon", "merken", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
-  const DAILY = ["ziele", "farbwort", "klicks", "taeuschung", "ballon", "lanes", "merken", "augenwinkel", "turm", "praezision", "startampel"];
+  const ORDER = ["ziele", "helmflug", "ausweichen", "klicks", "ballon", "merken", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision"];
+  const DAILY = ["ziele", "helmflug", "ausweichen", "farbwort", "klicks", "taeuschung", "ballon", "lanes", "merken", "augenwinkel", "turm", "praezision", "startampel"];
   const COURSES = [{ name: ["Strecke A", "Track A"], seed: 1101 }, { name: ["Strecke B", "Track B"], seed: 2202 }, { name: ["Strecke C", "Track C"], seed: 3303 }];
   const offNote = () => tr("Online braucht die geteilte Version mit Anmeldung", "Online needs the shared version while signed in");
 
@@ -1467,6 +1470,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Grün antippen", "1 Punkt"], ["Andere Farbe oder Trick-Wort", "1 Leben weg"], ["Grün verpasst oder zu früh", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     farbwort: [["Richtige Schriftfarbe", "1 Punkt"], ["Falsch oder zu langsam", "1 Leben weg"], ["Ab 20 Punkten", "Knöpfe werden gemischt"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     lanes: [["Gelben Block antippen", "1 Punkt"], ["2×-Block antippen", "doppelte Punkte: 2"], ["Block fällt unten raus", "1 Leben weg"], ["Roten Stein antippen", "1 Leben weg, einfach fallen lassen"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
+    ausweichen: [["Hindernis-Reihe geschafft", "1 Punkt"], ["Wischen / Maus / ← →", "Helm nach links oder rechts"], ["Reifen, Auto oder Hütchen berührt", "1 Leben weg"], ["Mit jedem Punkt", "wird es schneller"], ["Spielfigur", "dein aktueller Skin"]],
+    helmflug: [["Durch eine Lücke geflogen", "1 Punkt"], ["Tippen", "Helm fliegt hoch"], ["Reifenstapel oder Boden berührt", "1 Leben weg"], ["Alle 10 Punkte", "Combo-Sound, es wird schneller"], ["Spielfigur", "dein aktueller Skin"]],
     klicks: [["Jeder Tipp", "1 Klick"], ["Zeit", "10 Sekunden ab dem ersten Tipp"], ["Mehrere Finger", "erlaubt"], ["Alle 25 Klicks", "Combo-Sound und Vibration"]],
     merken: [["Richtig angetippt", "1 Punkt"], ["Ganze Folge geschafft", "nächstes Level, eins mehr zu merken"], ["Falsche Reihenfolge", "1 Leben weg, neue Folge gleicher Länge"], ["Tempo", "mit jedem Level blitzen die Begriffe kürzer auf"]],
     ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
@@ -1481,6 +1486,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     taeuschung: [["Tap green", "1 point"], ["Other color or trick word", "lose 1 life"], ["Missed green or too early", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     farbwort: [["Right ink color", "1 point"], ["Wrong or too slow", "lose 1 life"], ["From 20 points", "buttons get shuffled"], ["Streak", "sound and vibration, no extra points"]],
     lanes: [["Tap a yellow block", "1 point"], ["Tap a 2× block", "double points: 2"], ["Block falls out the bottom", "lose 1 life"], ["Tap a red rock", "lose 1 life, just let it fall"], ["Streak", "sound and vibration, no extra points"]],
+    ausweichen: [["Row of obstacles cleared", "1 point"], ["Swipe / mouse / ← →", "helmet moves left or right"], ["Hit a tyre, car or cone", "lose 1 life"], ["With every point", "it gets faster"], ["Your character", "your current skin"]],
+    helmflug: [["Fly through a gap", "1 point"], ["Tap", "helmet flies up"], ["Hit a tyre wall or the ground", "lose 1 life"], ["Every 10 points", "combo sound, it gets faster"], ["Your character", "your current skin"]],
     klicks: [["Every tap", "1 click"], ["Time", "10 seconds from your first tap"], ["Multiple fingers", "allowed"], ["Every 25 clicks", "combo sound and vibration"]],
     merken: [["Right tap", "1 point"], ["Whole sequence done", "next level, one more to remember"], ["Wrong order", "lose 1 life, new sequence of the same length"], ["Speed", "items flash shorter every level"]],
     ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
@@ -2452,7 +2459,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // Münzen pro Runde aus der Leistung (pro Modus vergleichbar gemacht)
   const EARN = {
     ziele: (v) => v, farbwort: (v) => v * 2, taeuschung: (v) => v * 2, lanes: (v) => v, augenwinkel: (v) => v * 2,
-    turm: (v) => v * 1.5, ballon: (v) => v / 12, klicks: (v) => v / 2.5, merken: (v) => v * 1.2, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
+    turm: (v) => v * 1.5, ballon: (v) => v / 12, klicks: (v) => v / 2.5, helmflug: (v) => v * 2, ausweichen: (v) => v * 1.2, merken: (v) => v * 1.2, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
   };
   function gainXP(x) {
     const ups = []; let xp = W.xp + x, l = W.lvl;
@@ -2892,15 +2899,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   // ---------- career ----------
-  // alle 12 Spiele abwechselnd; 100 Level = gut 8 Runden durch alle Spiele, Ziele steigen pro Runde
+  // alle 14 Spiele abwechselnd; 100 Level = gut 7 Runden durch alle Spiele, Ziele steigen pro Runde
   const CAR_MAX = 100;
-  const CAREER = ["ziele", "klicks", "startampel", "farbwort", "ballon", "stoppuhr", "turm", "taeuschung", "merken", "lanes", "augenwinkel", "praezision"];
+  const CAREER = ["ziele", "klicks", "startampel", "helmflug", "farbwort", "ballon", "ausweichen", "stoppuhr", "turm", "taeuschung", "merken", "lanes", "augenwinkel", "praezision"];
   function level(n) {
     const i = n - 1, mode = CAREER[i % CAREER.length], tier = Math.floor(i / CAREER.length), t = tier * 0.9;
     const goals = {
       ziele: Math.round(10 + t * 12), startampel: Math.round(420 - t * 25), farbwort: Math.round(8 + t * 5), stoppuhr: Math.min(98.5, Math.round((90 + t * 1.15) * 10) / 10),
       taeuschung: Math.round(8 + t * 5), lanes: Math.round(15 + t * 12), augenwinkel: Math.round(8 + t * 5), praezision: Math.round(40 + t * 20),
-      klicks: Math.min(125, Math.round(50 + t * 10)), ballon: Math.round(250 + t * 60), turm: Math.round(8 + t * 6), merken: Math.round(7 + t * 6)
+      klicks: Math.min(125, Math.round(50 + t * 10)), helmflug: Math.round(5 + t * 6), ausweichen: Math.round(15 + t * 10), ballon: Math.round(250 + t * 60), turm: Math.round(8 + t * 6), merken: Math.round(7 + t * 6)
     };
     return { n, mode, tier, goal: goals[mode], lower: !!MODES[mode].lower, target: mode === "stoppuhr" ? [3, 5, 8, 12, 20, 30, 45][Math.min(Math.round(t), 6)] : undefined };
   }
@@ -3060,8 +3067,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // ---------- Tastatur (Desktop) ----------
   const FINE = () => { try { return matchMedia("(pointer: fine)").matches; } catch (e) { return false; } };
   function keyHint(id, two) {
-    const one = { klicks: tr("Leertaste", "Space"), ballon: tr("Leertaste halten", "Hold Space"), turm: tr("Leertaste", "Space"), startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
-    const duo = { klicks: "A · L", ballon: "A · L", turm: "A · L", startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
+    const one = { ausweichen: tr("Maus oder ← →", "Mouse or ← →"), helmflug: tr("Leertaste oder Klick", "Space or click"), klicks: tr("Leertaste", "Space"), ballon: tr("Leertaste halten", "Hold Space"), turm: tr("Leertaste", "Space"), startampel: tr("Leertaste", "Space"), stoppuhr: tr("Leertaste", "Space"), taeuschung: tr("Leertaste", "Space"), farbwort: "1 2 3 4", lanes: "A S D " + tr("oder", "or") + " ← ↓ →" }[id];
+    const duo = { ausweichen: "A D · ← →", helmflug: "A · L", klicks: "A · L", ballon: "A · L", turm: "A · L", startampel: "A · L", stoppuhr: "A · L", taeuschung: "A · L", farbwort: "A S D F · H J K L", lanes: "A S D · J K L" }[id];
     const k = two ? duo : one;
     return k ? '<p class="note keyhint">' + (two ? tr("Zu zweit am Computer: ", "Two players on a computer: ") : tr("Am Computer: ", "On a computer: ")) + "<kbd>" + k + "</kbd>" + (id === "farbwort" && !two ? tr(" (Knöpfe von links nach rechts)", " (buttons left to right)") : "") + "</p>" : "";
   }
@@ -3087,6 +3094,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (!layer.hidden && (e.key === " " || e.key === "Enter") && (E.active || Date.now() - layerAt < 900)) { if (!/BUTTON|A/.test(tag) || Date.now() - layerAt < 900) { e.preventDefault(); return; } }
     if (!E.active || !layer.hidden || e.repeat) return;
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key, id = E.id;
+    if (id === "ausweichen") { const st = steerKey(k); if (st) { const P = E.players[st[0]]; if (P && P.root && P.root.__steer) P.root.__steer(st[1]); e.preventDefault(); } return; }
     const L1 = { a: 0, s: 1, d: 2, f: 3 }, L2 = { h: 0, j: 1, k: 2, l: 3 }, NUM = { 1: 0, 2: 1, 3: 2, 4: 3 }, AR = { ArrowLeft: 0, ArrowDown: 1, ArrowRight: 2 };
     let pi = 0, idx = null;
     const two = E.players.length > 1 || (E.opts && E.opts.local2);
@@ -3096,12 +3104,18 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (id === "startampel" && E.opts && E.opts.local2) { const r = E.players[0] && E.players[0].root; if (!r) return; const lk = k === " " ? "a" : k === "Enter" ? "l" : k; fire(r.querySelector(lk in L1 ? ".half.p1" : ".half.p2")); e.preventDefault(); return; }
     const P = E.players[pi]; if (!P || !P.root) return;
     const r = P.root;
-    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung" || id === "turm" || id === "ballon" || id === "klicks") { fire(r); e.preventDefault(); return; }
+    if (id === "startampel" || id === "stoppuhr" || id === "taeuschung" || id === "turm" || id === "ballon" || id === "klicks" || id === "helmflug") { fire(r); e.preventDefault(); return; }
     if (id === "lanes") { if (idx <= 2) laneTap(r, idx); e.preventDefault(); return; }
     if (id === "farbwort") { const bs = visBtns(r, "button[data-i]"); if (bs[idx]) fire(bs[idx]); e.preventDefault(); return; }
   });
+  function steerKey(k) {
+    const two = E.players.length > 1 || (E.opts && E.opts.local2);
+    if (two) return { a: [0, -1], d: [0, 1], ArrowLeft: [1, -1], ArrowRight: [1, 1], j: [1, -1], l: [1, 1] }[k] || null;
+    return { a: [0, -1], d: [0, 1], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[k] || null;
+  }
   document.addEventListener("keyup", (e) => {
     if (!E.active) return;
+    if (E.id === "ausweichen") { const st = steerKey(e.key.length === 1 ? e.key.toLowerCase() : e.key); if (st) { const P = E.players[st[0]]; if (P && P.root && P.root.__steer) P.root.__steer(0); } return; }
     if (E.id === "ballon") {
       const k = e.key.length === 1 ? e.key.toLowerCase() : e.key, two = E.players.length > 1;
       const pi = two ? ("asdf ".includes(k) ? 0 : "hjkl".includes(k) || k === "Enter" ? 1 : -1) : 0;
@@ -3987,7 +4001,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
 
   // ---------- Bot: passt sich deinem Niveau an, bleibt aber knapp vor dir ----------
-  const BOT_BASE = { klicks: [70, 10800], merken: [20, 60000], ballon: [430, 32000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
+  const BOT_BASE = { ausweichen: [28, 50000], helmflug: [12, 40000], klicks: [70, 10800], merken: [20, 60000], ballon: [430, 32000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
   function recordSkill(mode, value, dur) {
     if (value == null || !BOT_BASE[mode]) return;
     const sk = store.get("skill:" + mode, []); sk.push(value); store.set("skill:" + mode, sk.slice(-6));
@@ -4203,7 +4217,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const tourId = (t) => t.host + "-" + t.created;
   const tuEnded = (t) => !t || Date.now() >= t.ends;
   // feste Reihenfolge für Turnier-Seeds (neue Spiele hinten anhängen, damit laufende Turniere gleich bleiben)
-  const SEED_ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision", "ballon", "klicks", "merken"];
+  const SEED_ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision", "ballon", "klicks", "merken", "helmflug", "ausweichen"];
   const tuSeed = (t, m) => (t.seed ^ Math.imul(SEED_ORDER.indexOf(m) + 1, 2654435761)) >>> 0;
   function cleanEntry(d) {
     if (!d || typeof d.t !== "string" || typeof d.uname !== "string" || !UNAME_RE.test(d.uname)) return null;
@@ -5663,6 +5677,316 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       tick() {},
       revive() { lives = 1; ctx.lives(lives, max); state = "pause"; ctx.at(400, startRound); },
       result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: tr("Level ", "Level ") + lvl + " · " + tr("bis zu ", "up to ") + Math.max(maxLen, 0) + tr(" gemerkt", " remembered") })
+    };
+  }
+
+  // =====================================================
+  // MODE: Helmflug (Flappy-Stil auf der Rennstrecke, der Vogel ist dein Helm/Skin)
+  // =====================================================
+  function makeHelmflug(ctx) {
+    const r = ctx.root; r.classList.add("tower", "hflug");
+    r.innerHTML = '<canvas class="tw-cv"></canvas><div class="hint">' + tr("Tippen zum Hochfliegen. Nicht gegen die Reifenstapel!", "Tap to fly up. Don't hit the tyre walls!") + "</div>";
+    const cv = r.firstChild, g = cv.getContext("2d"), hint = r.querySelector(".hint");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+    const size = () => { const w = ctx.W(), hh = ctx.H(); if (w === W && hh === H) return; W = w; H = hh; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); };
+    size();
+    // dein aktueller Skin als Spielfigur
+    const pr = profile() || {}, sk = skinValid(pr.sk) ? pr.sk : null;
+    const img = new Image(); let imgOk = false; img.onload = () => { imgOk = true; };
+    const holder = { set src(v) { img.src = v; }, get src() { return img.src; }, classList: { add() {}, remove() {}, contains() { return false; } } };
+    if (sk) paintAvatar(holder, { sk }); else paintAvatar(holder, { av: pr.av || 0, photo: pr.photo || null });
+    let pal = ["#ffd23f", "#ff4632", "#63d9ff"]; skinPalette(sk).then((p) => { pal = p; }).catch(() => {});
+    const GROUND = () => Math.round(H * 0.13), R = () => Math.max(16, Math.min(W, H) * 0.055);
+    let hwhy = null, started = false, py = 0, vy = 0, rot = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, pipes = [], parts = [], scroll = 0, lastT = null, nextGap = 0, dead = false;
+    const max = lives; ctx.lives(lives, max); ctx.score(0);
+    const PX = () => W * 0.28;
+    const reset = () => { py = (H - GROUND()) * 0.45; vy = 0; rot = 0; };
+    reset();
+    const speed = () => Math.min(W * 0.78, W * 0.4 + score * 4 + ctx.boost * 6);
+    const gapH = () => Math.max(H * 0.2, H * 0.3 - score * 1.6);
+    const pipeW = () => Math.max(54, W * 0.16);
+    function addPipe(x) {
+      const top = H * 0.12, bottom = H - GROUND() - H * 0.12, gh = gapH();
+      const cy = top + gh / 2 + ctx.rng() * Math.max(10, bottom - top - gh);
+      pipes.push({ x, cy, gh, passed: false });
+    }
+    function flap(e) {
+      if (!ctx.live() || dead) return;
+      if (e) e.preventDefault();
+      if (!started) { started = true; hint.hidden = true; nextGap = W * 0.75; }
+      vy = -H * 0.74;
+      AU.tone(180, 0.09, "sawtooth", 0.09, 2.2); AU.tone(360, 0.06, "square", 0.04, 1.6, 0.02); buzz(6);
+      for (let i = 0; i < 6; i++) parts.push({ x: PX() - R() * 0.8, y: py + R() * 0.3, vx: -60 - Math.random() * 120, vy: (Math.random() - 0.3) * 80, life: 0.45, c: pal[i % 3] });
+    }
+    r.addEventListener("pointerdown", flap);
+    function crash() {
+      dead = true; lives--; ctx.lives(lives, max); ctx.hurt(); buzz([50, 30, 80]);
+      for (let i = 0; i < 22; i++) { const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 260; parts.push({ x: PX(), y: py, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.8, c: pal[i % 3] }); }
+      if (lives <= 0) { ctx.at(700, () => ctx.die()); return; }
+      ctx.at(700, () => { pipes = pipes.filter((p) => p.x > PX() + W * 0.45); reset(); dead = false; inv = 1.6; started = false; hint.hidden = false; });
+    }
+    r.__hf = () => ({ hwhy, started, py, vy, score, lives, dead, H, R: R(), px: PX(), pw: pipeW(), pipes: pipes.map((p) => ({ x: p.x, cy: p.cy, gh: p.gh })) }); // für Tests
+    // ---- Zeichnen ----
+    function tyreWall(x, y0, y1, w) {
+      if (y1 - y0 < 2) return;
+      const th = Math.max(14, w * 0.36);
+      g.save(); g.beginPath(); g.rect(x, y0, w, y1 - y0); g.clip();
+      g.fillStyle = "#121216"; g.fillRect(x, y0, w, y1 - y0);
+      for (let yy = y1; yy > y0 - th; yy -= th) {
+        g.fillStyle = "#1e1e24"; g.beginPath(); g.roundRect ? g.roundRect(x + 2, yy - th + 2, w - 4, th - 3, th / 2.2) : g.rect(x + 2, yy - th + 2, w - 4, th - 3); g.fill();
+        g.fillStyle = "#2c2c35"; g.fillRect(x + w * 0.22, yy - th * 0.62, w * 0.56, th * 0.22);
+      }
+      g.restore();
+    }
+    function kerbCap(x, y, w, h) {
+      const n = 6, sw = (w + 12) / n;
+      for (let i = 0; i < n; i++) { g.fillStyle = i % 2 ? "#f3efe6" : "#ff4632"; g.fillRect(x - 6 + i * sw, y, sw + 0.5, h); }
+      g.fillStyle = "rgba(0,0,0,.25)"; g.fillRect(x - 6, y + h - 2, w + 12, 2);
+    }
+    function draw(t) {
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const gy = H - GROUND();
+      const sky = g.createLinearGradient(0, 0, 0, gy); sky.addColorStop(0, "#0b0a12"); sky.addColorStop(1, "#24203a");
+      g.fillStyle = sky; g.fillRect(0, 0, W, gy);
+      // Tribünen mit Lichtern (Parallaxe)
+      const off = (scroll * 0.2) % 140;
+      for (let x = -off; x < W + 140; x += 140) {
+        g.fillStyle = "#16141f"; g.fillRect(x, gy - H * 0.2, 120, H * 0.2);
+        g.fillStyle = "#1d1a2a"; g.fillRect(x + 6, gy - H * 0.24, 108, H * 0.04);
+        for (let i = 0; i < 8; i++) { const on = ((Math.floor(t / 400) + i + Math.floor(x)) % 5) !== 0; g.fillStyle = on ? "rgba(255,210,63,.55)" : "rgba(255,255,255,.08)"; g.fillRect(x + 10 + i * 13, gy - H * 0.17, 5, 3); }
+      }
+      // Hindernisse: Reifenstapel mit Curbs
+      const pw = pipeW();
+      for (const p of pipes) {
+        const top = p.cy - p.gh / 2, bot = p.cy + p.gh / 2;
+        tyreWall(p.x, 0, top, pw); kerbCap(p.x, top - 10, pw, 10);
+        tyreWall(p.x, bot, gy, pw); kerbCap(p.x, bot, pw, 10);
+      }
+      // Strecke
+      g.fillStyle = "#2a2a30"; g.fillRect(0, gy, W, GROUND());
+      const so = scroll % 40;
+      for (let x = -so; x < W + 40; x += 40) { g.fillStyle = (Math.floor((x + scroll) / 40) % 2) ? "#ff4632" : "#f3efe6"; g.fillRect(x, gy, 40, 8); }
+      const lo = scroll % 70; g.fillStyle = "rgba(255,255,255,.55)";
+      for (let x = -lo; x < W + 70; x += 70) g.fillRect(x, gy + GROUND() * 0.55, 34, 4);
+      // Abgas-Partikel
+      for (const q of parts) { g.globalAlpha = Math.max(0, q.life * 1.8); g.fillStyle = q.c; g.beginPath(); g.arc(q.x, q.y, 3.5, 0, Math.PI * 2); g.fill(); }
+      g.globalAlpha = 1;
+      // Helm
+      const rr = R(), x = PX();
+      if (!(dead && lives <= 0)) {
+        g.save(); g.translate(x, py); g.rotate(rot);
+        if (inv > 0 && Math.floor(t / 90) % 2) g.globalAlpha = 0.35;
+        g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(0, rr * 1.05, rr * 0.8, rr * 0.2, 0, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.arc(0, 0, rr, 0, Math.PI * 2); g.closePath(); g.save(); g.clip();
+        if (imgOk) g.drawImage(img, -rr, -rr, rr * 2, rr * 2); else { g.fillStyle = "#ffd23f"; g.fill(); }
+        g.restore();
+        g.lineWidth = 2.5; g.strokeStyle = pal[0]; g.beginPath(); g.arc(0, 0, rr, 0, Math.PI * 2); g.stroke();
+        g.restore(); g.globalAlpha = 1;
+      }
+    }
+    return {
+      tick(t) {
+        size();
+        if (lastT == null) lastT = t;
+        const dt = Math.min(40, t - lastT) / 1000; lastT = t;
+        const gy = H - GROUND(), rr = R(), pw = pipeW();
+        if (inv > 0) inv -= dt;
+        if (!started && !dead) { py = (gy * 0.45) + Math.sin(t / 260) * 8; rot = 0; scroll += W * 0.25 * dt; }
+        else if (!dead) {
+          const v = speed();
+          vy += H * 2.35 * dt; vy = Math.min(vy, H * 1.3); py += vy * dt;
+          rot = Math.max(-0.45, Math.min(1.1, vy / (H * 1.1)));
+          scroll += v * dt;
+          for (const p of pipes) p.x -= v * dt;
+          pipes = pipes.filter((p) => p.x > -pw - 20);
+          nextGap -= v * dt;
+          if (nextGap <= 0) { addPipe(W + 10); nextGap = Math.max(W * 0.55, 200); }
+          if (py - rr < 0) { py = rr; vy = 0; }
+          if (py + rr * 0.85 >= gy) { py = gy - rr * 0.85; hwhy = ['ground']; crash(); }
+          for (const p of pipes) {
+            if (!p.passed && p.x + pw < PX() - rr) { p.passed = true; score++; ctx.score(score); SFX.hit(Math.min(score, 24)); if (score % 10 === 0) ctx.milestone(score + tr(" geschafft!", " cleared!"), Math.min(6, 2 + score / 10)); }
+            if (inv <= 0 && !dead) {
+              const hr = rr * 0.78, cx = Math.max(p.x, Math.min(PX(), p.x + pw));
+              const topY = p.cy - p.gh / 2, botY = p.cy + p.gh / 2;
+              const nyTop = Math.min(py, topY), dyTop = py - nyTop, nyBot = Math.max(py, botY), dyBot = py - nyBot;
+              const hitTop = py - hr < topY && Math.hypot(PX() - cx, dyTop) < hr;
+              const hitBot = py + hr > botY && Math.hypot(PX() - cx, dyBot) < hr;
+              if ((PX() + hr > p.x && PX() - hr < p.x + pw) && (hitTop || hitBot || py < topY || py > botY)) { hwhy = ['pipe', Math.round(p.x), Math.round(topY), Math.round(botY), Math.round(PX()), Math.round(py), Math.round(hr)]; crash(); }
+            }
+          }
+        }
+        for (const q of parts) { q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 300 * dt; q.life -= dt; }
+        parts = parts.filter((q) => q.life > 0);
+        if (started && !dead && Math.random() < 0.5) parts.push({ x: PX() - R() * 0.9, y: py + R() * 0.2, vx: -80 - Math.random() * 60, vy: (Math.random() - 0.5) * 30, life: 0.3, c: pal[Math.floor(Math.random() * 3)] });
+        draw(t);
+      },
+      revive() { lives = 1; ctx.lives(lives, max); pipes = pipes.filter((p) => p.x > PX() + W * 0.45); reset(); dead = false; inv = 1.6; started = false; hint.hidden = false; lastT = null; },
+      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: score + tr(" Reifenstapel geschafft", " tyre walls cleared") })
+    };
+  }
+
+  // =====================================================
+  // MODE: Ausweichen (Rennstrecke von oben, dein Skin weicht links/rechts aus)
+  // =====================================================
+  function makeAusweichen(ctx) {
+    const r = ctx.root; r.classList.add("tower", "ausw");
+    r.innerHTML = '<canvas class="tw-cv"></canvas><div class="hint">' + tr("Wisch oder schieb nach links und rechts. Am Computer: Maus oder ← →", "Swipe or slide left and right. On a computer: mouse or ← →") + "</div>";
+    const cv = r.firstChild, g = cv.getContext("2d"), hint = r.querySelector(".hint");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+    const size = () => { const w = ctx.W(), hh = ctx.H(); if (w === W && hh === H) return; W = w; H = hh; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); };
+    size();
+    const pr = profile() || {}, sk = skinValid(pr.sk) ? pr.sk : null;
+    const img = new Image(); let imgOk = false; img.onload = () => { imgOk = true; };
+    const holder = { set src(v) { img.src = v; }, get src() { return img.src; }, classList: { add() {}, remove() {}, contains() { return false; } } };
+    if (sk) paintAvatar(holder, { sk }); else paintAvatar(holder, { av: pr.av || 0, photo: pr.photo || null });
+    let pal = ["#ffd23f", "#3ee27a", "#ff4632"]; skinPalette(sk).then((p) => { pal = p; }).catch(() => {});
+    const TW = () => Math.min(W - 20, 460), TL = () => (W - TW()) / 2, R = () => Math.max(15, TW() * 0.07), PY = () => H * 0.8;
+    let px = W / 2, tx = W / 2, vx = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, obs = [], rows = [], parts = [], scroll = 0, lastT = null, until = 0, moved = false, dead = false, steer = 0, el = 0, why = null;
+    const max = lives; ctx.lives(lives, max); ctx.score(0);
+    const speed = () => Math.min(H * 1.9, H * 0.55 + score * H * 0.012 + ctx.boost * 8);
+    const RIVAL = ["#3a7bff", "#ff8a1f", "#b14cff", "#20c997", "#ff4d8d", "#e8e8ee"];
+    function spawnRow(y) {
+      const l = TL(), w = TW(), rr = R(), gapW = Math.max(rr * 2.7, rr * 3.6 - score * 0.03 * rr);
+      const kind = score < 3 ? "wall" : ["wall", "cars", "cones", "wall", "cars"][Math.floor(ctx.rng() * 5)];
+      const row = { y, passed: false, items: [] };
+      if (kind === "wall") {
+        const gx = l + gapW / 2 + 6 + ctx.rng() * (w - gapW - 12);
+        const th = rr * 1.25;
+        if (gx - gapW / 2 - l > 4) row.items.push({ k: "tyre", x: l, y, w: gx - gapW / 2 - l, h: th });
+        if (l + w - (gx + gapW / 2) > 4) row.items.push({ k: "tyre", x: gx + gapW / 2, y, w: l + w - (gx + gapW / 2), h: th });
+      } else if (kind === "cars") {
+        const lanes = 4, lw = w / lanes, free = Math.floor(ctx.rng() * lanes), n = score < 15 || ctx.rng() < 0.6 ? 2 : 3;
+        const pick = [0, 1, 2, 3].filter((i) => i !== free).sort(() => ctx.rng() - 0.5).slice(0, n);
+        for (const i of pick) { const cw = Math.min(lw * 0.62, rr * 1.9); row.items.push({ k: "car", x: l + i * lw + (lw - cw) / 2, y, w: cw, h: cw * 1.75, c: RIVAL[Math.floor(ctx.rng() * RIVAL.length)] }); }
+      } else {
+        const n = 3 + Math.floor(ctx.rng() * 2), cs = rr * 0.9; let tries = 0;
+        while (row.items.length < n && tries++ < 30) {
+          const x = l + 4 + ctx.rng() * (w - cs - 8), yy = y + ctx.rng() * rr * 2;
+          if (row.items.some((o) => Math.abs(o.x - x) < cs * 1.6)) continue;
+          row.items.push({ k: "cone", x, y: yy, w: cs, h: cs });
+        }
+        // sicherstellen, dass eine Lücke bleibt
+        const xs = row.items.map((o) => [o.x, o.x + o.w]).sort((a, b) => a[0] - b[0]);
+        let edge = l, best = 0; for (const [a, b] of xs) { best = Math.max(best, a - edge); edge = Math.max(edge, b); } best = Math.max(best, l + w - edge);
+        if (best < rr * 2.7) row.items.pop();
+      }
+      rows.push(row); obs.push(...row.items.map((o) => Object.assign(o, { row })));
+      return row.items.reduce((m, o) => Math.max(m, o.y + o.h - y), 0); // Tiefe der Reihe
+    }
+    function setX(cx) { tx = Math.max(TL() + R(), Math.min(TL() + TW() - R(), cx)); if (!moved) { moved = true; hint.hidden = true; } }
+    let drag = null;
+    r.addEventListener("pointerdown", (e) => { if (!ctx.live()) return; e.preventDefault(); const b = r.getBoundingClientRect(); drag = { id: e.pointerId, ox: e.clientX - b.left, sx: tx }; try { r.setPointerCapture(e.pointerId); } catch (x) {} if (e.pointerType === "mouse") setX(e.clientX - b.left); });
+    r.addEventListener("pointermove", (e) => {
+      if (!ctx.live()) return;
+      const b = r.getBoundingClientRect(), x = e.clientX - b.left;
+      if (e.pointerType === "mouse") { setX(x); return; }
+      if (drag && drag.id === e.pointerId) setX(drag.sx + (x - drag.ox) * 1.15);
+    });
+    const endDrag = () => { drag = null; };
+    r.addEventListener("pointerup", endDrag); r.addEventListener("pointercancel", endDrag);
+    r.__steer = (d) => { steer = d; if (d && !moved) { moved = true; hint.hidden = true; } };
+    r.__aw = () => ({ why, px, tx, score, lives, obs: obs.length, dead, speed: speed(), l: TL(), w: TW(), R: R(), py: PY(), list: obs.map((o) => [o.x, o.y, o.w, o.h]) }); // für Tests
+    function crash() {
+      dead = true; lives--; ctx.lives(lives, max); ctx.hurt(); buzz([50, 30, 80]);
+      for (let i = 0; i < 22; i++) { const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 240; parts.push({ x: px, y: PY(), vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.8, c: pal[i % 3] }); }
+      if (lives <= 0) { ctx.at(700, () => ctx.die()); return; }
+      ctx.at(700, () => revive(false));
+    }
+    function revive(full) {
+      if (full) { lives = 1; ctx.lives(lives, max); }
+      obs = obs.filter((o) => o.y + o.h < PY() - H * 0.45); rows = rows.filter((w) => w.y < PY() - H * 0.45);
+      dead = false; inv = 1.6; lastT = null;
+    }
+    // ---- Zeichnen ----
+    function rrect(x, y, w, h, rad) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, rad); else g.rect(x, y, w, h); }
+    function draw(t) {
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const l = TL(), w = TW(), rr = R();
+      // Gras mit Streifen
+      g.fillStyle = "#123a24"; g.fillRect(0, 0, W, H);
+      const so = scroll % 80; g.fillStyle = "#164629";
+      for (let y = -80 + so; y < H; y += 80) g.fillRect(0, y, W, 40);
+      // Asphalt
+      g.fillStyle = "#2a2a30"; g.fillRect(l, 0, w, H);
+      // Curbs links/rechts
+      const ko = scroll % 36;
+      for (let y = -36 + ko; y < H; y += 36) { const c = Math.floor((y - ko) / 36 + 100) % 2 ? "#f3efe6" : "#ff4632"; g.fillStyle = c; g.fillRect(l - 10, y, 10, 36); g.fillRect(l + w, y, 10, 36); }
+      // Mittellinien
+      const lo = scroll % 70; g.fillStyle = "rgba(255,255,255,.35)";
+      for (let i = 1; i < 4; i++) { const x = l + (w / 4) * i - 1.5; for (let y = -70 + lo; y < H; y += 70) g.fillRect(x, y, 3, 34); }
+      // Zielflagge alle 25 Punkte
+      for (const row of rows) if (row.flag) { const y = row.flag, s = 12; for (let i = 0; i * s < w; i++) for (let j = 0; j < 2; j++) { g.fillStyle = (i + j) % 2 ? "#fff" : "#111"; g.fillRect(l + i * s, y + j * s, s, s); } }
+      // Hindernisse
+      for (const o of obs) {
+        if (o.k === "tyre") {
+          g.fillStyle = "#121216"; rrect(o.x, o.y, o.w, o.h, 6); g.fill();
+          const d = o.h * 0.92; for (let x = o.x + d / 2; x < o.x + o.w - d / 3; x += d) { g.fillStyle = "#24242c"; g.beginPath(); g.arc(x, o.y + o.h / 2, d * 0.42, 0, Math.PI * 2); g.fill(); g.fillStyle = "#0c0c10"; g.beginPath(); g.arc(x, o.y + o.h / 2, d * 0.18, 0, Math.PI * 2); g.fill(); }
+          const n = Math.max(2, Math.round(o.w / 14)), sw = o.w / n; for (let i = 0; i < n; i++) { g.fillStyle = i % 2 ? "#f3efe6" : "#ff4632"; g.fillRect(o.x + i * sw, o.y + o.h - 5, sw + 0.5, 5); }
+        } else if (o.k === "car") {
+          g.fillStyle = "rgba(0,0,0,.35)"; rrect(o.x + 3, o.y + 5, o.w, o.h, o.w * 0.3); g.fill();
+          g.fillStyle = "#0b0b0e"; for (const [ax, ay] of [[-0.14, 0.18], [0.94, 0.18], [-0.14, 0.7], [0.94, 0.7]]) g.fillRect(o.x + ax * o.w - 1, o.y + ay * o.h, o.w * 0.2, o.h * 0.16);
+          g.fillStyle = o.c; rrect(o.x, o.y, o.w, o.h, o.w * 0.3); g.fill();
+          g.fillStyle = "rgba(10,12,20,.75)"; rrect(o.x + o.w * 0.18, o.y + o.h * 0.5, o.w * 0.64, o.h * 0.22, 4); g.fill();
+          g.fillStyle = "rgba(255,255,255,.5)"; g.fillRect(o.x + o.w * 0.45, o.y + 2, o.w * 0.1, o.h * 0.42);
+        } else {
+          g.fillStyle = "#ff7a1a"; g.beginPath(); g.moveTo(o.x + o.w / 2, o.y); g.lineTo(o.x + o.w, o.y + o.h); g.lineTo(o.x, o.y + o.h); g.closePath(); g.fill();
+          g.fillStyle = "#fff"; g.fillRect(o.x + o.w * 0.3, o.y + o.h * 0.5, o.w * 0.4, o.h * 0.14);
+        }
+      }
+      for (const q of parts) { g.globalAlpha = Math.max(0, q.life * 1.8); g.fillStyle = q.c; g.beginPath(); g.arc(q.x, q.y, 3.5, 0, Math.PI * 2); g.fill(); }
+      g.globalAlpha = 1;
+      if (!(dead && lives <= 0)) {
+        g.save(); g.translate(px, PY()); g.rotate(Math.max(-0.35, Math.min(0.35, vx / (W * 2.2))));
+        if (inv > 0 && Math.floor(t / 90) % 2) g.globalAlpha = 0.35;
+        g.fillStyle = "rgba(0,0,0,.4)"; g.beginPath(); g.ellipse(4, rr * 0.25, rr, rr * 0.95, 0, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.arc(0, 0, rr, 0, Math.PI * 2); g.save(); g.clip();
+        if (imgOk) g.drawImage(img, -rr, -rr, rr * 2, rr * 2); else { g.fillStyle = "#ffd23f"; g.fill(); }
+        g.restore();
+        g.lineWidth = 2.5; g.strokeStyle = pal[0]; g.beginPath(); g.arc(0, 0, rr, 0, Math.PI * 2); g.stroke();
+        g.restore(); g.globalAlpha = 1;
+      }
+    }
+    return {
+      tick(t) {
+        size();
+        if (lastT == null) { lastT = t; if (!until) until = t + 900; }
+        const dt = Math.min(40, t - lastT) / 1000; lastT = t;
+        const rr = R(), v = speed();
+        if (px < TL() || px > TL() + TW()) { px = tx = W / 2; }
+        if (steer) setX(tx + steer * TW() * 1.8 * dt);
+        const nx = px + (tx - px) * Math.min(1, dt * 18); vx = (nx - px) / Math.max(dt, 0.001); px = nx;
+        if (inv > 0) inv -= dt;
+        if (!dead) {
+          scroll += v * dt; el += v * dt;
+          for (const o of obs) o.y += v * dt;
+          for (const w of rows) { w.y += v * dt; if (w.flag) w.flag += v * dt; }
+          const gapD = Math.max(rr * 6, H * 0.3 - score * rr * 0.03); // freie Strecke zwischen zwei Reihen
+          if (t > until && el >= gapD) { el = -spawnRow(-rr * 4); }
+          for (const w of rows) {
+            if (!w.passed && w.items.every((o) => o.y > PY() + rr)) {
+              w.passed = true; score++; ctx.score(score); SFX.hit(Math.min(score, 24));
+              if (score % 25 === 0) { ctx.milestone(score + tr(" ausgewichen!", " dodged!"), Math.min(6, 2 + score / 25)); }
+              else if (score % 10 === 0) ctx.info(tr("Schneller!", "Faster!"));
+            }
+          }
+          if (inv <= 0) {
+            const hr = rr * 0.8, cy = PY();
+            for (const o of obs) {
+              const cx = Math.max(o.x, Math.min(px, o.x + o.w)), cyy = Math.max(o.y, Math.min(cy, o.y + o.h));
+              if (Math.hypot(px - cx, cy - cyy) < hr) { why = [o.k, Math.round(o.x), Math.round(o.y), Math.round(o.w), Math.round(o.h), Math.round(px), Math.round(cy)]; crash(); break; }
+            }
+          }
+          obs = obs.filter((o) => o.y < H + 40); rows = rows.filter((w) => w.y < H + 80 || !w.passed);
+          if (Math.random() < 0.6) parts.push({ x: px + (Math.random() - 0.5) * rr * 0.8, y: PY() + rr * 0.9, vx: (Math.random() - 0.5) * 30, vy: 90 + Math.random() * 60, life: 0.35, c: pal[Math.floor(Math.random() * 3)] });
+        }
+        for (const q of parts) { q.x += q.vx * dt; q.y += q.vy * dt; q.life -= dt; }
+        parts = parts.filter((q) => q.life > 0);
+        draw(t);
+      },
+      revive() { revive(true); },
+      result: () => ({ value: score, text: String(score), unit: tr("Punkte", "points"), sub: score + tr(" Hindernissen ausgewichen", " obstacles dodged") })
     };
   }
 
