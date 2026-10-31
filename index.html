@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.0.2"></script>
-<script src="backend.js?v=2.0.2"></script>
+<script src="config.js?v=2.0.3"></script>
+<script src="backend.js?v=2.0.3"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -55,6 +55,8 @@ img { max-width: 100%; }
   --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 html, body { height: 100%; }
+/* iOS Safari: Höhe folgt der echten sichtbaren Fläche (auch wenn die Adressleiste einklappt) – sonst bleibt unten ein leerer Streifen */
+@supports (height: 100dvh) { html, body { height: 100dvh; } }
 body {
   background: var(--asphalt); color: var(--chalk);
   font-family: var(--font-body); font-size: 15px;
@@ -69,7 +71,7 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid var(--volt); o
   display: flex; flex-direction: column;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 14px;
+  padding-block: 14px max(14px, env(safe-area-inset-bottom, 0px));
 }
 .screen { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; position: relative; }
 .scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; gap: 16px; }
