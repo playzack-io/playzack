@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.8"></script>
-<script src="backend.js?v=1.9.8"></script>
+<script src="config.js?v=1.9.9"></script>
+<script src="backend.js?v=1.9.9"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -5735,13 +5735,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const PX = () => W * 0.28;
     const reset = () => { py = (H - GROUND()) * 0.45; vy = 0; rot = 0; };
     reset();
-    const diff = () => Math.min(1, passed / 45); // 0 = Anfang, 1 = volle Schwierigkeit (nach Reifenstapeln, nicht Punkten)
-    const speed = () => Math.min(W * 0.8, W * (0.33 + 0.27 * diff()) + Math.max(0, passed - 45) * 3 + ctx.boost * 6);
-    const gapH = () => H * (0.4 - 0.19 * diff());
+    const diff = () => Math.min(1, passed / 120); // 0 = Anfang, 1 = volle Schwierigkeit erst nach 120 Reifenstapeln
+    const speed = () => Math.min(W * 0.52, W * (0.33 + 0.17 * diff()) + ctx.boost * 4);
+    const gapH = () => H * (0.4 - 0.13 * diff());
     const pipeW = () => Math.max(54, W * 0.16);
     function addPipe(x) {
       const top = H * 0.12, bottom = H - GROUND() - H * 0.12, gh = gapH();
-      const lo = top + gh / 2, hi = Math.max(lo + 1, bottom - gh / 2), shift = H * (0.14 + 0.3 * diff());
+      const lo = top + gh / 2, hi = Math.max(lo + 1, bottom - gh / 2), shift = H * (0.14 + 0.2 * diff());
       const base = prevCy == null ? (lo + hi) / 2 : prevCy;
       const cy = Math.max(lo, Math.min(hi, base + (ctx.rng() * 2 - 1) * shift)); prevCy = cy;
       np++; const bonus = np >= nextBonus; if (bonus) nextBonus = np + 7 + Math.floor(ctx.rng() * 6);
@@ -5764,16 +5764,38 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     r.__hf = () => ({ x2, passed, hwhy, started, py, vy, score, lives, dead, H, R: R(), px: PX(), pw: pipeW(), pipes: pipes.map((p) => ({ x: p.x, cy: p.cy, gh: p.gh, bonus: p.bonus, got: p.got })) }); // für Tests
     // ---- Zeichnen ----
-    function tyreWall(x, y0, y1, w) {
-      if (y1 - y0 < 2) return;
-      const th = Math.max(14, w * 0.36);
-      g.save(); g.beginPath(); g.rect(x, y0, w, y1 - y0); g.clip();
-      g.fillStyle = "#121216"; g.fillRect(x, y0, w, y1 - y0);
-      for (let yy = y1; yy > y0 - th; yy -= th) {
-        g.fillStyle = "#1e1e24"; g.beginPath(); g.roundRect ? g.roundRect(x + 2, yy - th + 2, w - 4, th - 3, th / 2.2) : g.rect(x + 2, yy - th + 2, w - 4, th - 3); g.fill();
-        g.fillStyle = "#2c2c35"; g.fillRect(x + w * 0.22, yy - th * 0.62, w * 0.56, th * 0.22);
+    // Reifensäule und Hintergrund einmal vorzeichnen (pro Größe) – pro Bild nur noch drawImage, das bleibt flüssig
+    let colC = null, colKey = "", bgC = null, bgKey = "";
+    function column(w) {
+      const key = Math.round(w) + "x" + Math.round(H) + "@" + dpr; if (key === colKey) return colC;
+      colKey = key; const th = Math.max(14, w * 0.36), hh = H + th * 2;
+      colC = document.createElement("canvas"); colC.width = Math.ceil(w * dpr); colC.height = Math.ceil(hh * dpr);
+      const c = colC.getContext("2d"); c.scale(dpr, dpr);
+      c.fillStyle = "#121216"; c.fillRect(0, 0, w, hh);
+      for (let yy = 0; yy < hh; yy += th) {
+        c.fillStyle = "#1e1e24"; c.beginPath(); if (c.roundRect) c.roundRect(2, yy + 2, w - 4, th - 3, th / 2.2); else c.rect(2, yy + 2, w - 4, th - 3); c.fill();
+        c.fillStyle = "#2c2c35"; c.fillRect(w * 0.22, yy + th * 0.38, w * 0.56, th * 0.22);
       }
-      g.restore();
+      return colC;
+    }
+    function tyreWall(x, y0, y1, w) {
+      const hgt = y1 - y0; if (hgt < 2) return;
+      const col = column(w), sh = Math.min(col.height, hgt * dpr);
+      g.drawImage(col, 0, 0, col.width, sh, x, y0, w, sh / dpr);
+    }
+    function backdrop(gy) {
+      const key = Math.round(W) + "x" + Math.round(H) + "@" + dpr; if (key === bgKey) return bgC;
+      bgKey = key; const bw = Math.ceil(W / 140 + 2) * 140;
+      bgC = document.createElement("canvas"); bgC.width = Math.ceil(bw * dpr); bgC.height = Math.ceil(gy * dpr);
+      const c = bgC.getContext("2d"); c.scale(dpr, dpr);
+      const sky = c.createLinearGradient(0, 0, 0, gy); sky.addColorStop(0, "#0b0a12"); sky.addColorStop(1, "#24203a");
+      c.fillStyle = sky; c.fillRect(0, 0, bw, gy);
+      for (let x = 0; x < bw; x += 140) {
+        c.fillStyle = "#16141f"; c.fillRect(x, gy - H * 0.2, 120, H * 0.2);
+        c.fillStyle = "#1d1a2a"; c.fillRect(x + 6, gy - H * 0.24, 108, H * 0.04);
+        for (let i = 0; i < 8; i++) { c.fillStyle = (i * 3 + x / 140) % 5 ? "rgba(255,210,63,.55)" : "rgba(255,255,255,.08)"; c.fillRect(x + 10 + i * 13, gy - H * 0.17, 5, 3); }
+      }
+      return bgC;
     }
     function kerbCap(x, y, w, h) {
       const n = 6, sw = (w + 12) / n;
@@ -5783,15 +5805,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     function draw(t) {
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       const gy = H - GROUND();
-      const sky = g.createLinearGradient(0, 0, 0, gy); sky.addColorStop(0, "#0b0a12"); sky.addColorStop(1, "#24203a");
-      g.fillStyle = sky; g.fillRect(0, 0, W, gy);
-      // Tribünen mit Lichtern (Parallaxe)
-      const off = (scroll * 0.2) % 140;
-      for (let x = -off; x < W + 140; x += 140) {
-        g.fillStyle = "#16141f"; g.fillRect(x, gy - H * 0.2, 120, H * 0.2);
-        g.fillStyle = "#1d1a2a"; g.fillRect(x + 6, gy - H * 0.24, 108, H * 0.04);
-        for (let i = 0; i < 8; i++) { const on = ((Math.floor(t / 400) + i + Math.floor(x)) % 5) !== 0; g.fillStyle = on ? "rgba(255,210,63,.55)" : "rgba(255,255,255,.08)"; g.fillRect(x + 10 + i * 13, gy - H * 0.17, 5, 3); }
-      }
+      // Himmel + Tribünen (Parallaxe), vorgezeichnet
+      const bg = backdrop(gy), off = (scroll * 0.2) % 140;
+      g.drawImage(bg, -off, 0, bg.width / dpr, gy);
       // Hindernisse: Reifenstapel mit Curbs
       const pw = pipeW();
       for (const p of pipes) {
@@ -5841,13 +5857,13 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           for (const p of pipes) p.x -= v * dt;
           pipes = pipes.filter((p) => p.x > -pw - 20);
           nextGap -= v * dt;
-          if (nextGap <= 0) { addPipe(W + 10); nextGap = Math.max(200, W * (0.78 - 0.22 * diff())); }
+          if (nextGap <= 0) { addPipe(W + 10); nextGap = Math.max(pw * 3.2, speed() * (2.3 - 0.8 * diff())); } // Abstand nach Zeit: nie zu nah
           if (py - rr < 0) { py = rr; vy = 0; }
           if (py + rr * 0.85 >= gy) { py = gy - rr * 0.85; hwhy = ['ground']; crash(); }
           for (const p of pipes) {
             if (!p.passed && p.x + pw < PX() - rr) {
               p.passed = true; passed++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); SFX.hit(Math.min(passed, 24));
-              if (add > 1) ctx.float(PX(), py - rr * 2.2, "+2", "fast");
+              if (add > 1) ctx.float(PX() + rr * 1.6, py - rr * 1.2, "+2", "fast");
               if (passed % 10 === 0) ctx.milestone(passed + tr(" geschafft!", " cleared!"), Math.min(6, 2 + passed / 10));
             }
             if (p.bonus && !p.got && Math.hypot(PX() - (p.x + pw / 2), py - p.cy) < rr + rr * 0.7) { p.got = true; x2 = X2_SEC; x2Sound(); ctx.milestone(tr("2× Punkte!", "2× points!"), 4); x2Shown = -1; }
@@ -6025,7 +6041,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           for (const w of rows) {
             if (!w.passed && w.items.every((o) => o.y > PY() + rr)) {
               w.passed = true; rowsOk++; const add = x2 > 0 ? 2 : 1; score += add; ctx.score(score); SFX.hit(Math.min(rowsOk, 24));
-              if (add > 1) ctx.float(px, PY() - R() * 2.2, "+2", "fast");
+              if (add > 1) ctx.float(px + R() * 1.6, PY() - R() * 1.2, "+2", "fast");
               if (rowsOk % 25 === 0) { ctx.milestone(rowsOk + tr(" ausgewichen!", " dodged!"), Math.min(6, 2 + rowsOk / 25)); }
               else if (rowsOk % 10 === 0 && x2 <= 0) ctx.info(tr("Schneller!", "Faster!"));
             }
