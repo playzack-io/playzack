@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.0.0"></script>
-<script src="backend.js?v=2.0.0"></script>
+<script src="config.js?v=2.0.1"></script>
+<script src="backend.js?v=2.0.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -1453,7 +1453,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     helmflug:    { name: ["Helmflug", "Helmet Flight"], kind: ["Endlos · neu", "Endless · new"], desc: ["Dein Helm fliegt über die Rennstrecke. Tippen hält ihn oben, zwischen den Reifenstapeln durch.", "Your helmet flies over the race track. Tap to stay up and fly between the tyre walls."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     klicks:      { name: ["Klicks", "Clicks"], kind: ["10 Sek. · neu", "10 sec · new"], desc: ["Tippe 10 Sekunden lang so schnell du kannst. Wer schafft die meisten Klicks?", "Tap as fast as you can for 10 seconds. Who gets the most clicks?"], unit: ["Klicks", "clicks"], bestLabel: ["Rekord", "Best"] },
     merken:      { name: ["Merken", "Memory"], kind: ["Endlos · neu", "Endless · new"], desc: ["Tiere, Wörter und Zahlen blitzen nacheinander auf. Tippe sie in derselben Reihenfolge. Jede Runde eins mehr.", "Animals, words and numbers flash one after another. Tap them in the same order. One more every round."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
-    ballon:      { name: ["Ballon", "Balloon"], kind: ["10 Ballons · neu", "10 balloons · new"], desc: ["Pump den Ballon auf und lass rechtzeitig los. Je größer, desto mehr Punkte. Platzt er, gibt's 0.", "Pump the balloon and let go in time. Bigger means more points. If it pops, you get 0."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
+    ballon:      { name: ["Ballon", "Balloon"], kind: ["10 Ballons · neu", "10 balloons · new"], desc: ["Pump den Ballon auf und lass rechtzeitig los. Je größer, desto mehr Punkte. Manche halten sogar über 100. Platzt er, gibt's 0.", "Pump the balloon and let go in time. Bigger means more points. Some even last past 100. If it pops, you get 0."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     turm:        { name: ["Turm", "Tower"], kind: ["Endlos", "Endless"], desc: ["Der Block schwingt hin und her. Tippen zum Absetzen. Was übersteht, fällt ab.", "The block swings back and forth. Tap to drop it. Whatever hangs over falls off."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] },
     praezision:  { name: ["Präzision", "Precision"], kind: ["30 Sek.", "30 sec"], desc: ["Ein bewegtes Ziel. Je näher an der Mitte, desto mehr Punkte.", "A moving target. The closer to the center, the more points."], unit: ["Punkte", "points"], bestLabel: ["Rekord", "Best"] }
   };
@@ -1485,7 +1485,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     helmflug: [["Durch eine Lücke geflogen", "1 Punkt"], ["Tippen", "Helm fliegt hoch"], ["Reifenstapel oder Boden berührt", "1 Leben weg"], ["2×-Münze einsammeln", "7 Sekunden doppelte Punkte"], ["Mit jedem Reifenstapel", "wird es etwas schneller und enger"], ["Spielfigur", "dein aktueller Skin"]],
     klicks: [["Jeder Tipp", "1 Klick"], ["Zeit", "10 Sekunden ab dem ersten Tipp"], ["Mehrere Finger", "erlaubt"], ["Alle 25 Klicks", "Combo-Sound und Vibration"]],
     merken: [["Richtig angetippt", "1 Punkt"], ["Ganze Folge geschafft", "nächstes Level, eins mehr zu merken"], ["Falsche Reihenfolge", "1 Leben weg, neue Folge gleicher Länge"], ["Tempo", "mit jedem Level blitzen die Begriffe kürzer auf"]],
-    ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
+    ballon: [["Gedrückt halten", "der Ballon wächst, die Zahl zeigt die Punkte"], ["Loslassen", "Punkte kassiert"], ["Platzt er", "0 Punkte für diesen Ballon"], ["Grün / Gelb / Rot", "robust / normal / empfindlich"], ["Ab und zu ein Riesenballon", "hält über 100, bis ca. 250"], ["Bis 5 vor dem Platzen losgelassen", "+10 Nervenstark"], ["Runde", "10 Ballons, alle spielen dieselben"]],
     turm: [["Block absetzen", "1 Punkt"], ["Perfekt auf den Turm", "+1 extra, ab 3 in Folge wächst der Block wieder"], ["Überstand", "fällt ab, der Turm wird schmaler"], ["Komplett daneben", "1 Leben weg"]],
     augenwinkel: [["Punkt am Rand antippen", "1 Punkt"], ["Verpasst", "1 Leben weg"], ["Serie", "Sound und Vibration, keine Extrapunkte"]],
     praezision: [["Gelbe Mitte", "10 Punkte"], ["Roter Ring", "5 Punkte"], ["Weißer Rand", "2 Punkte"], ["Daneben", "0 Punkte"], ["Zeit", "30 Sekunden"]]
@@ -1501,7 +1501,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     helmflug: [["Fly through a gap", "1 point"], ["Tap", "helmet flies up"], ["Hit a tyre wall or the ground", "lose 1 life"], ["Grab a 2× coin", "double points for 7 seconds"], ["With every tyre wall", "it gets a bit faster and tighter"], ["Your character", "your current skin"]],
     klicks: [["Every tap", "1 click"], ["Time", "10 seconds from your first tap"], ["Multiple fingers", "allowed"], ["Every 25 clicks", "combo sound and vibration"]],
     merken: [["Right tap", "1 point"], ["Whole sequence done", "next level, one more to remember"], ["Wrong order", "lose 1 life, new sequence of the same length"], ["Speed", "items flash shorter every level"]],
-    ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
+    ballon: [["Hold", "the balloon grows, the number shows the points"], ["Let go", "points cashed in"], ["It pops", "0 points for that balloon"], ["Green / yellow / red", "sturdy / normal / fragile"], ["Now and then a giant balloon", "lasts past 100, up to about 250"], ["Let go within 5 of popping", "+10 nerves of steel"], ["Round", "10 balloons, everyone gets the same ones"]],
     turm: [["Drop a block", "1 point"], ["Perfect on the tower", "+1 extra, 3 in a row make the block grow back"], ["Overhang", "falls off, the tower gets narrower"], ["Missed completely", "lose 1 life"]],
     augenwinkel: [["Tap a dot at the edge", "1 point"], ["Missed", "lose 1 life"], ["Streak", "sound and vibration, no extra points"]],
     praezision: [["Yellow center", "10 points"], ["Red ring", "5 points"], ["White edge", "2 points"], ["Miss", "0 points"], ["Time", "30 seconds"]]
@@ -2470,7 +2470,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // Münzen pro Runde aus der Leistung (pro Modus vergleichbar gemacht)
   const EARN = {
     ziele: (v) => v, farbwort: (v) => v * 2, taeuschung: (v) => v * 2, lanes: (v) => v, augenwinkel: (v) => v * 2,
-    turm: (v) => v * 1.5, ballon: (v) => v / 12, klicks: (v) => v / 2.5, helmflug: (v) => v * 2, ausweichen: (v) => v * 1.2, merken: (v) => v * 1.2, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
+    turm: (v) => v * 1.5, ballon: (v) => v / 15, klicks: (v) => v / 2.5, helmflug: (v) => v * 2, ausweichen: (v) => v * 1.2, merken: (v) => v * 1.2, praezision: (v) => v / 5, startampel: (v) => Math.max(0, (450 - v) / 4), stoppuhr: (v) => Math.max(0, (v - 80) * 3)
   };
   function gainXP(x) {
     const ups = []; let xp = W.xp + x, l = W.lvl;
@@ -2918,7 +2918,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const goals = {
       ziele: Math.round(10 + t * 12), startampel: Math.round(420 - t * 25), farbwort: Math.round(8 + t * 5), stoppuhr: Math.min(98.5, Math.round((90 + t * 1.15) * 10) / 10),
       taeuschung: Math.round(8 + t * 5), lanes: Math.round(15 + t * 12), augenwinkel: Math.round(8 + t * 5), praezision: Math.round(40 + t * 20),
-      klicks: Math.min(125, Math.round(50 + t * 10)), helmflug: Math.round(5 + t * 6), ausweichen: Math.round(15 + t * 10), ballon: Math.round(250 + t * 60), turm: Math.round(8 + t * 6), merken: Math.round(7 + t * 6)
+      klicks: Math.min(125, Math.round(50 + t * 10)), helmflug: Math.round(5 + t * 6), ausweichen: Math.round(15 + t * 10), ballon: Math.round(300 + t * 70), turm: Math.round(8 + t * 6), merken: Math.round(7 + t * 6)
     };
     return { n, mode, tier, goal: goals[mode], lower: !!MODES[mode].lower, target: mode === "stoppuhr" ? [3, 5, 8, 12, 20, 30, 45][Math.min(Math.round(t), 6)] : undefined };
   }
@@ -4012,7 +4012,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
 
   // ---------- Bot: passt sich deinem Niveau an, bleibt aber knapp vor dir ----------
-  const BOT_BASE = { ausweichen: [28, 50000], helmflug: [12, 40000], klicks: [70, 10800], merken: [20, 60000], ballon: [430, 32000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
+  const BOT_BASE = { ausweichen: [28, 50000], helmflug: [12, 40000], klicks: [70, 10800], merken: [20, 60000], ballon: [540, 36000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
   function recordSkill(mode, value, dur) {
     if (value == null || !BOT_BASE[mode]) return;
     const sk = store.get("skill:" + mode, []); sk.push(value); store.set("skill:" + mode, sk.slice(-6));
@@ -6094,19 +6094,24 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     size();
     const N = 10;
     const KINDS = {
-      green: { lo: 55, c1: "#7cf3a6", c2: "#1f9c55", name: ["Robust", "Sturdy"] },
-      yellow: { lo: 33, c1: "#ffe68a", c2: "#d19a00", name: ["Normal", "Normal"] },
-      red: { lo: 12, c1: "#ff9a8f", c2: "#c4271b", name: ["Empfindlich", "Fragile"] }
+      green: { lo: 55, giant: 0.24, hi: 250, c1: "#7cf3a6", c2: "#1f9c55", name: ["Robust", "Sturdy"] },
+      yellow: { lo: 33, giant: 0.15, hi: 210, c1: "#ffe68a", c2: "#d19a00", name: ["Normal", "Normal"] },
+      red: { lo: 12, giant: 0.06, hi: 160, c1: "#ff9a8f", c2: "#c4271b", name: ["Empfindlich", "Fragile"] }
     };
     // Alle Ballons stehen vorher fest (gleicher Seed = gleiche Ballons im Duell)
     const balloons = Array.from({ length: N }, (_, i) => {
       const q = ctx.rng(), kind = q < 0.37 ? "green" : q < 0.75 ? "yellow" : "red", k = KINDS[kind];
-      return { kind, pop: Math.round(k.lo + ctx.rng() * (100 - k.lo)), T: Math.max(1500, 2500 - i * 90 - ctx.boost * 10) };
+      // meist platzt er zwischen lo und 100 – ab und zu ist es ein Riesenballon, der bis weit über 100 hält
+      const a = ctx.rng(), giant = ctx.rng() < k.giant, c = ctx.rng();
+      const pop = giant ? Math.round(101 + Math.pow(c, 1.4) * (k.hi - 101)) : Math.round(k.lo + a * (100 - k.lo));
+      return { kind, pop, T: Math.max(1500, 2500 - i * 90 - ctx.boost * 10) };
     });
     let idx = 0, total = 0, popped = 0, cur = null, state = "wait", nextAt = ctx.t() + 500, holdId = null, downAt = 0, snd = null, fx = [], parts = [], lastT = null, shown = 0;
     ctx.score(0); ctx.side("1/" + N);
-    const sizeAt = (b, ms) => Math.min(100, 100 * Math.pow(Math.max(0, ms) / b.T, 1.25));
-    function next() { cur = { b: balloons[idx], s: 0, y: 0, a: 1 }; state = "ready"; ctx.side(idx + 1 + "/" + N); }
+    const MAXS = 250, sizeAt = (b, ms) => Math.min(MAXS, 100 * Math.pow(Math.max(0, ms) / b.T, 1.25));
+    const pitch = (s) => (s <= 100 ? (s / 100) * 0.85 : 0.85 + 0.15 * Math.min(1, (s - 100) / 150));
+    let over100 = false;
+    function next() { cur = { b: balloons[idx], s: 0, y: 0, a: 1 }; over100 = false; state = "ready"; ctx.side(idx + 1 + "/" + N); }
     function startPump(e) {
       if (!ctx.live() || state !== "ready") return;
       hint.hidden = true; holdId = e ? e.pointerId : 0; downAt = e ? ctx.evT(e) : ctx.t(); state = "pump";
@@ -6147,7 +6152,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (state !== "pump" || (e.pointerId != null && holdId != null && e.pointerId !== holdId)) return; bank(ctx.evT(e));
     };
     addEventListener("pointerup", up); addEventListener("pointercancel", up);
-    const radius = (s) => Math.min(W * 0.42, H * 0.3) * (0.22 + 0.78 * Math.sqrt(s / 100));
+    const radius = (s) => Math.min(W * 0.42, H * 0.3) * (0.22 + 0.78 * Math.sqrt(Math.min(s, 100) / 100)) * (1 + 0.18 * Math.min(1, Math.max(0, s - 100) / 150));
     r.__blUp = () => { if (state === "pump") bank(ctx.t()); };
     r.__bl = () => ({ state, idx, cur: cur && { kind: cur.b.kind, pop: cur.b.pop, s: cur.s }, total, popped, balloons }); // für Tests
     function drawBalloon(cx, cy, rad, k, alpha, wob) {
@@ -6168,7 +6173,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     function draw(t) {
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const k = cur ? KINDS[cur.b.kind] : KINDS.yellow, danger = state === "pump" ? cur.s / 100 : 0;
+      const k = cur ? KINDS[cur.b.kind] : KINDS.yellow, danger = state === "pump" ? Math.min(1.6, cur.s / 100) : 0;
       const bg = g.createLinearGradient(0, 0, 0, H);
       bg.addColorStop(0, "rgba(" + Math.round(40 + danger * 70) + ",22,38,1)"); bg.addColorStop(1, "#141218");
       g.fillStyle = bg; g.fillRect(0, 0, W, H);
@@ -6176,7 +6181,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       for (let i = 0; i < N; i++) { const x = W / 2 + (i - (N - 1) / 2) * 22, y = 18, done = i < idx; g.fillStyle = done ? (balloons[i].res === 0 ? "#4a4654" : KINDS[balloons[i].kind].c2) : i === idx ? "#f3efe6" : "rgba(255,255,255,.18)"; g.beginPath(); g.arc(x, y, i === idx ? 6 : 5, 0, Math.PI * 2); g.fill(); }
       if (cur && (state === "ready" || state === "pump" || state === "fly")) {
         const s = state === "ready" ? 0 : cur.s, rad = radius(s), cx = W / 2;
-        const shake = state === "pump" && s > 55 ? (Math.random() - 0.5) * (s - 55) * 0.12 : 0;
+        const shake = state === "pump" && s > 55 ? (Math.random() - 0.5) * Math.min(12, (s - 55) * 0.12) : 0;
         const cy = H * 0.44 - cur.y;
         drawBalloon(cx, cy, rad, k, cur.a, shake);
         if (state !== "fly") {
@@ -6197,7 +6202,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         const dt = Math.min(50, t - lastT) / 1000; lastT = t;
         if (state === "pump") {
           const ms = t - downAt; cur.s = sizeAt(cur.b, ms);
-          if (snd) snd.set(cur.s / 100); hapticHold();
+          if (snd) snd.set(pitch(cur.s)); hapticHold();
+          if (!over100 && cur.s > 100) { over100 = true; ctx.float(W / 2, H * 0.16, tr("Über 100!", "Over 100!"), "fast"); buzz([12, 30, 12]); }
           if (sizeAt(cur.b, ms - 60) >= cur.b.pop) pop(t);
         }
         if (state === "fly") { cur.y += dt * 520; cur.a = Math.max(0, cur.a - dt * 1.4); if (t >= nextAt) state = "wait"; }
