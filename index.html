@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=1.9.6"></script>
-<script src="backend.js?v=1.9.6"></script>
+<script src="config.js?v=1.9.7"></script>
+<script src="backend.js?v=1.9.7"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -5845,11 +5845,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const TW = () => Math.min(W - 20, 460), TL = () => (W - TW()) / 2, R = () => Math.max(15, TW() * 0.07), PY = () => H * 0.8;
     let px = W / 2, tx = W / 2, vx = 0, score = 0, lives = 1 + ctx.extraLife, inv = 0, obs = [], rows = [], parts = [], scroll = 0, lastT = null, until = 0, moved = false, dead = false, steer = 0, el = 0, why = null;
     const max = lives; ctx.lives(lives, max); ctx.score(0);
-    const speed = () => Math.min(H * 1.9, H * 0.55 + score * H * 0.012 + ctx.boost * 8);
+    const diff = () => Math.min(1, score / 70); // 0 = Anfang, 1 = volle Schwierigkeit
+    const speed = () => Math.min(H * 1.9, H * (0.36 + 0.84 * diff()) + Math.max(0, score - 70) * H * 0.006 + ctx.boost * 8);
     const RIVAL = ["#3a7bff", "#ff8a1f", "#b14cff", "#20c997", "#ff4d8d", "#e8e8ee"];
     function spawnRow(y) {
-      const l = TL(), w = TW(), rr = R(), gapW = Math.max(rr * 2.7, rr * 3.6 - score * 0.03 * rr);
-      const kind = score < 3 ? "wall" : ["wall", "cars", "cones", "wall", "cars"][Math.floor(ctx.rng() * 5)];
+      const l = TL(), w = TW(), rr = R(), d = diff(), gapW = rr * (6 - 3.1 * d); // Lücke: anfangs sehr breit
+      const kind = score < 4 ? (score % 2 ? "cars" : "wall") : score < 10 ? ["wall", "cars", "wall", "cones"][Math.floor(ctx.rng() * 4)] : ["wall", "cars", "cones", "wall", "cars"][Math.floor(ctx.rng() * 5)];
       const row = { y, passed: false, items: [] };
       if (kind === "wall") {
         const gx = l + gapW / 2 + 6 + ctx.rng() * (w - gapW - 12);
@@ -5857,11 +5858,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         if (gx - gapW / 2 - l > 4) row.items.push({ k: "tyre", x: l, y, w: gx - gapW / 2 - l, h: th });
         if (l + w - (gx + gapW / 2) > 4) row.items.push({ k: "tyre", x: gx + gapW / 2, y, w: l + w - (gx + gapW / 2), h: th });
       } else if (kind === "cars") {
-        const lanes = 4, lw = w / lanes, free = Math.floor(ctx.rng() * lanes), n = score < 15 || ctx.rng() < 0.6 ? 2 : 3;
+        const lanes = 4, lw = w / lanes, free = Math.floor(ctx.rng() * lanes), n = score < 8 ? 1 : score < 25 ? (ctx.rng() < 0.5 ? 1 : 2) : score < 45 || ctx.rng() < 0.6 ? 2 : 3;
         const pick = [0, 1, 2, 3].filter((i) => i !== free).sort(() => ctx.rng() - 0.5).slice(0, n);
         for (const i of pick) { const cw = Math.min(lw * 0.62, rr * 1.9); row.items.push({ k: "car", x: l + i * lw + (lw - cw) / 2, y, w: cw, h: cw * 1.75, c: RIVAL[Math.floor(ctx.rng() * RIVAL.length)] }); }
       } else {
-        const n = 3 + Math.floor(ctx.rng() * 2), cs = rr * 0.9; let tries = 0;
+        const n = score < 15 ? 2 : score < 35 ? 3 : 3 + Math.floor(ctx.rng() * 2), cs = rr * 0.9; let tries = 0;
         while (row.items.length < n && tries++ < 30) {
           const x = l + 4 + ctx.rng() * (w - cs - 8), yy = y + ctx.rng() * rr * 2;
           if (row.items.some((o) => Math.abs(o.x - x) < cs * 1.6)) continue;
@@ -5870,7 +5871,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         // sicherstellen, dass eine Lücke bleibt
         const xs = row.items.map((o) => [o.x, o.x + o.w]).sort((a, b) => a[0] - b[0]);
         let edge = l, best = 0; for (const [a, b] of xs) { best = Math.max(best, a - edge); edge = Math.max(edge, b); } best = Math.max(best, l + w - edge);
-        if (best < rr * 2.7) row.items.pop();
+        while (best < gapW && row.items.length > 1) { row.items.pop(); const ys = row.items.map((o) => [o.x, o.x + o.w]).sort((a, b) => a[0] - b[0]); let e2 = l; best = 0; for (const [a, b] of ys) { best = Math.max(best, a - e2); e2 = Math.max(e2, b); } best = Math.max(best, l + w - e2); }
       }
       rows.push(row); obs.push(...row.items.map((o) => Object.assign(o, { row })));
       return row.items.reduce((m, o) => Math.max(m, o.y + o.h - y), 0); // Tiefe der Reihe
@@ -5951,7 +5952,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     return {
       tick(t) {
         size();
-        if (lastT == null) { lastT = t; if (!until) until = t + 900; }
+        if (lastT == null) { lastT = t; if (!until) until = t + 1400; }
         const dt = Math.min(40, t - lastT) / 1000; lastT = t;
         const rr = R(), v = speed();
         if (px < TL() || px > TL() + TW()) { px = tx = W / 2; }
@@ -5962,7 +5963,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
           scroll += v * dt; el += v * dt;
           for (const o of obs) o.y += v * dt;
           for (const w of rows) { w.y += v * dt; if (w.flag) w.flag += v * dt; }
-          const gapD = Math.max(rr * 6, H * 0.3 - score * rr * 0.03); // freie Strecke zwischen zwei Reihen
+          const gapD = Math.max(rr * 6, H * (0.55 - 0.3 * diff())); // freie Strecke zwischen zwei Reihen: anfangs viel Platz
           if (t > until && el >= gapD) { el = -spawnRow(-rr * 4); }
           for (const w of rows) {
             if (!w.passed && w.items.every((o) => o.y > PY() + rr)) {
