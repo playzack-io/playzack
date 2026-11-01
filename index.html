@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.1.0"></script>
-<script src="backend.js?v=2.1.0"></script>
+<script src="config.js?v=2.1.1"></script>
+<script src="backend.js?v=2.1.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -2762,8 +2762,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function openClipper(focus, back) {
     const done = back || closeLayer;
     const storyGot = hasSkin(STORY_SK) || !!store.get("storyClaimed", false);
-    const myLink = DL + (store.get("clipHandle", "") ? "/?c=" + store.get("clipHandle", "") : "");
-    const caption = tr("Wie schnell bist du wirklich? ⚡ Spiel ZACK! gratis: " + myLink + " · " + IG + " #zack #reaktionstest", "How fast are you really? ⚡ Play ZACK! free: " + myLink + " · " + IG + " #zack #reactiontest");
+    const linkFor = (c) => DL + "/?c=" + c;
+    const captionFor = (c) => tr("Wie schnell bist du wirklich? ⚡ Spiel ZACK! gratis: " + linkFor(c) + " · " + IG + " #zack #reaktionstest", "How fast are you really? ⚡ Play ZACK! free: " + linkFor(c) + " · " + IG + " #zack #reactiontest");
     const rule = (t) => '<li><span class="cl-ok">✓</span><span>' + t + "</span></li>";
     openLayer('<span class="eyebrow">' + tr("Clipper-Programm", "Clipper program") + "</span><h2>" + tr("Verdiene Geld mit Clips", "Earn money with clips") + "</h2>" +
       "<p>" + tr("Poste TikToks oder Instagram-Reels mit ZACK!. Ab 10.000 Views zahlen wir dich aus.", "Post TikToks or Instagram Reels with ZACK!. From 10,000 views we pay you.") + "</p>" +
@@ -2775,12 +2775,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         rule(tr("<b>" + IG + "</b> in deiner Bio", "<b>" + IG + "</b> in your bio")) +
         rule(tr("Dein persönlicher Link <b>" + DL + "/?c=deinname</b> in der Beschreibung und in deiner Bio (darüber zählen wir echte Klicks)", "Your personal link <b>" + DL + "/?c=yourname</b> in the caption and in your bio (we count real clicks through it)")) +
         rule(tr("Öffentliches, eigenes Video, keine gekauften Views", "Public video of your own, no bought views")) + "</ul>" +
-      '<div class="cl-copy"><button class="sbtn" type="button" data-cp="' + esc(IG) + '">' + esc(IG) + tr(" kopieren", " copy") + '</button><button class="sbtn" type="button" data-cp="' + esc(DL) + '">' + esc(DL) + tr(' kopieren', ' copy') + '</button><button class="sbtn quiet" type="button" data-cp="' + esc(caption) + '">' + tr("Beschreibung kopieren", "Copy caption") + "</button></div>" +
+      '<span class="eyebrow">' + tr("Dein persönlicher Link", "Your personal link") + "</span>" +
+      '<input class="search" id="clHandle" autocomplete="off" autocapitalize="none" placeholder="' + tr("Dein Account (@name)", "Your account (@name)") + '">' +
+      '<div class="cl-link" id="clLink" hidden><span>' + tr("Dein Link:", "Your link:") + ' <b id="clLinkT"></b></span><small id="clLinkSt"></small></div>' +
+      '<p class="msg-bad" id="clLinkErr" hidden></p>' +
+      '<div class="cl-copy"><button class="sbtn" type="button" data-cp="' + esc(IG) + '">' + esc(IG) + tr(" kopieren", " copy") + '</button><button class="sbtn" id="clCpLink" type="button">' + tr("Meinen Link kopieren", "Copy my link") + '</button><button class="sbtn quiet" id="clCpCap" type="button">' + tr("Beschreibung kopieren", "Copy caption") + "</button></div>" +
       '<span class="eyebrow" id="clFormHead">' + tr("Video einreichen", "Submit a video") + "</span>" +
       '<div class="seg two cl-plat"><button type="button" data-pl="tt" class="on">TikTok</button><button type="button" data-pl="ig">Instagram</button></div>' +
       '<input class="search" id="clUrl" type="url" inputmode="url" autocomplete="off" placeholder="' + tr("Link zum Video", "Link to the video") + '">' +
-      '<input class="search" id="clHandle" autocomplete="off" autocapitalize="none" placeholder="' + tr("Dein Account (@name)", "Your account (@name)") + '">' +
-      '<div class="cl-link" id="clLink" hidden><span>' + tr("Dein Link:", "Your link:") + ' <b id="clLinkT"></b></span><button class="sbtn" id="clLinkCp" type="button">' + tr("Kopieren", "Copy") + '</button><small id="clLinkSt"></small></div>' +
       '<label class="cl-check"><input type="checkbox" id="clOk"> <span>' + tr("Ich habe alle Punkte oben erfüllt und die ", "I've met every point above and accept the ") + '<button class="link cl-tlink" id="clTerms" type="button">' + tr("Teilnahmebedingungen", "terms") + "</button>" + tr(" gelesen.", ".") + "</span></label>" +
       '<p class="msg-bad" id="clErr" hidden></p><button class="btn" id="clSend" type="button">' + tr("Einreichen", "Submit") + "</button>" +
       '<div id="clMine"></div>' +
@@ -2799,7 +2801,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const showLink = () => {
       const c = clipCode($("clHandle").value), box = $("clLink");
       if (c.length < 2) { box.hidden = true; return; }
-      box.hidden = false; $("clLinkT").textContent = DL + "/?c=" + c; store.set("clipHandle", c);
+      $("clLinkErr").hidden = true; box.hidden = false; $("clLinkT").textContent = DL + "/?c=" + c; store.set("clipHandle", c);
       clearTimeout(linkT); linkT = setTimeout(async () => {
         const st = $("clLinkSt"); if (!st || !NET.ok) return;
         try { const d = await NET.db.doc("clickstats/" + c).get(); const x = d.exists ? d.data() : {}; st.textContent = "🔗 " + fmtN(x.clicks || 0) + tr(" Klicks · 🎮 ", " clicks · 🎮 ") + fmtN(x.plays || 0) + tr(" haben gespielt", " played"); } catch (e) {}
@@ -2807,7 +2809,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     };
     $("clHandle").value = store.get("clipHandle", "") || "";
     $("clHandle").addEventListener("input", showLink); showLink();
-    on("clLinkCp", () => copyText("https://" + $("clLinkT").textContent, $("clLinkCp")));
+    // Link und Beschreibung immer mit deinem Namen – ohne Namen erst das Feld ausfüllen lassen
+    const needHandle = () => {
+      const c = clipCode($("clHandle").value), e = $("clLinkErr");
+      if (c.length >= 2) { e.hidden = true; return c; }
+      e.hidden = false; e.textContent = tr("Trag zuerst deinen TikTok- oder Instagram-Namen ein. Daraus wird dein persönlicher Link.", "Enter your TikTok or Instagram name first. It becomes your personal link.");
+      const f = $("clHandle"); f.focus(); f.scrollIntoView({ block: "center", behavior: "smooth" }); return null;
+    };
+    on("clCpLink", () => { const c = needHandle(); if (c) copyText("https://" + linkFor(c), $("clCpLink")); });
+    on("clCpCap", () => { const c = needHandle(); if (c) copyText(captionFor(c), $("clCpCap")); });
     on("clSend", async () => {
       const url = ($("clUrl").value || "").trim(), hd = cleanHandle($("clHandle").value);
       if (!CLIP_RE[plat].test(url)) { err(plat === "tt" ? tr("Bitte einen TikTok-Link einfügen (https://www.tiktok.com/…).", "Please paste a TikTok link (https://www.tiktok.com/…).") : tr("Bitte einen Instagram-Link einfügen (https://www.instagram.com/reel/…).", "Please paste an Instagram link (https://www.instagram.com/reel/…).")); return; }
@@ -3563,7 +3573,10 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function copyText(text, btn) {
     const fb = () => { const b = $("shareBox"); if (b) { b.hidden = false; b.value = text; b.focus(); b.select(); } };
-    try { navigator.clipboard.writeText(text).then(() => { btn.textContent = tr("Kopiert", "Copied"); }, fb); } catch (e) { fb(); }
+    try { navigator.clipboard.writeText(text).then(() => {
+      if (!btn) return; if (btn.dataset.lbl == null) btn.dataset.lbl = btn.textContent;
+      btn.textContent = tr("Kopiert ✓", "Copied ✓"); clearTimeout(btn._cpT); btn._cpT = setTimeout(() => { btn.textContent = btn.dataset.lbl; }, 1600);
+    }, fb); } catch (e) { fb(); }
   }
   let CD_ON = false;
   // ---------- VS-Intro vor Online-Runden: du gegen Gegner, Name + Skin, dann 3-2-1 ----------
