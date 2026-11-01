@@ -77,12 +77,17 @@ service cloud.firestore {
         && request.resource.data.paypal is string && request.resource.data.paypal.size() <= 120
         && request.resource.data.iban is string && request.resource.data.iban.size() <= 34;
     }
-    // Story-Skin: einmal pro Konto melden
+    // Story-Skin: Spieler meldet seine Story (Status "neu"), nur der Admin bestätigt oder lehnt ab.
+    // Nach Ablehnung darf der Spieler erneut melden.
+    function storyNew(uid) { return request.resource.data.keys().hasOnly(['by', 'handle', 'at', 'status']) && request.resource.data.by == uid
+        && request.resource.data.handle is string && request.resource.data.handle.size() <= 30 && request.resource.data.status == 'neu'; }
     match /stories/{uid} {
       allow read: if isMe(uid) || isAdmin();
+      allow create: if isMe(uid) && storyNew(uid);
+      allow update: if (isMe(uid) && resource.data.get('status', '') == 'abgelehnt' && storyNew(uid))
+        || (isAdmin() && request.resource.data.by == resource.data.by && request.resource.data.handle == resource.data.handle
+          && request.resource.data.status in ['neu', 'ok', 'abgelehnt']);
       allow delete: if isMe(uid);
-      allow create: if isMe(uid) && request.resource.data.keys().hasOnly(['by', 'handle', 'at']) && request.resource.data.by == uid
-        && request.resource.data.handle is string && request.resource.data.handle.size() <= 30;
     }
     // Clipper-Links: playzack.io/?c=name – pro Gerät ein Klick und ein Spieler, Zähler nur um +1
     function markOk(id) { return signedIn() && id == request.resource.data.c + '_' + request.auth.uid && request.resource.data.by == request.auth.uid

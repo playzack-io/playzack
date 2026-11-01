@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.1.1"></script>
-<script src="backend.js?v=2.1.1"></script>
+<script src="config.js?v=2.1.2"></script>
+<script src="backend.js?v=2.1.2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -306,6 +306,7 @@ textarea.code { width: 100%; box-sizing: border-box; min-height: 74px; resize: v
 .cl-item small { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cl-st { grid-column: 1 / -1; font-size: 12px; font-weight: 700; color: var(--volt); }
 .cl-st.ok, .cl-st.bezahlt { color: var(--go); } .cl-st.abgelehnt { color: var(--signal); }
+.ad-item > .cl-st { display: block; margin: 2px 0 4px; }
 .cl-story { display: flex; gap: 12px; align-items: center; text-align: left; padding: 12px; border-radius: 16px; margin-top: 8px; background: linear-gradient(120deg, rgba(255, 61, 119, .18), rgba(138, 61, 255, .14)); border: 1px solid rgba(255, 61, 119, .45); }
 .cl-story.hi { box-shadow: 0 0 0 2px #ff3d77, 0 0 22px rgba(255, 61, 119, .5); }
 .cl-story img { width: 58px; height: 58px; border-radius: 50%; flex: none; }
@@ -1165,7 +1166,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh && S.lang === lang) done && done();
     }).catch(() => {});
   }
-  const I18N_VER = "1";
+  const I18N_VER = "2";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -2759,9 +2760,29 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       "</ol>" + '<button class="btn" id="ctOk" type="button">' + tr("Verstanden", "Got it") + "</button>");
     on("ctOk", back);
   }
+  // Story-Skin erst nach Prüfung durch den Admin: Status aus stories/{uid} holen
+  async function checkStory() {
+    if (!NET.ok || hasSkin(STORY_SK)) return false;
+    try {
+      const d = await NET.db.doc("stories/" + NET.me).get();
+      if (!d.exists) { const had = !!store.get("storyState", null); store.set("storyState", null); return had; }
+      const x = d.data(), s = x.status || "ok", old = store.get("storyState", null) || {};
+      if (s === "ok") {
+        store.set("storyState", null); grantSkins([STORY_SK]); SFX.record(); buzz([20, 40, 20]);
+        openLayer('<span class="eyebrow">' + tr("Story bestätigt!", "Story approved!") + '</span><h2>' + tr("Neuer Skin!", "New skin!") + '</h2><div class="sk-big pop"><img alt="" id="stNew"></div><p>' + tr("Danke fürs Teilen. „Story-Star“ gehört jetzt dir.", "Thanks for sharing. \"Story Star\" is yours now.") + '</p><button class="btn" id="stEq" type="button">' + tr("Ausrüsten", "Equip") + '</button><button class="link" id="stLater" type="button">' + tr("Später", "Later") + "</button>");
+        paintAvatar($("stNew"), { sk: STORY_SK });
+        on("stEq", () => { equipSkin(STORY_SK); closeLayer(); renderMenu(); });
+        on("stLater", () => { closeLayer(); renderMenu(); });
+        return false;
+      }
+      const nw = { s, h: x.handle || "", why: x.why || "" };
+      store.set("storyState", nw);
+      return nw.s !== old.s || nw.why !== (old.why || "");
+    } catch (e) { return false; }
+  }
   function openClipper(focus, back) {
     const done = back || closeLayer;
-    const storyGot = hasSkin(STORY_SK) || !!store.get("storyClaimed", false);
+    const storyGot = hasSkin(STORY_SK), stSt = store.get("storyState", null) || {}, stWait = !storyGot && stSt.s === "neu", stNo = !storyGot && stSt.s === "abgelehnt";
     const linkFor = (c) => DL + "/?c=" + c;
     const captionFor = (c) => tr("Wie schnell bist du wirklich? ⚡ Spiel ZACK! gratis: " + linkFor(c) + " · " + IG + " #zack #reaktionstest", "How fast are you really? ⚡ Play ZACK! free: " + linkFor(c) + " · " + IG + " #zack #reactiontest");
     const rule = (t) => '<li><span class="cl-ok">✓</span><span>' + t + "</span></li>";
@@ -2787,8 +2808,10 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<p class="msg-bad" id="clErr" hidden></p><button class="btn" id="clSend" type="button">' + tr("Einreichen", "Submit") + "</button>" +
       '<div id="clMine"></div>' +
       '<div class="cl-story' + (focus === "story" ? " hi" : "") + '" id="clStory"><img alt="" id="clStoryImg"><div><b>' + tr("Story posten = Gratis-Skin", "Post a story = free skin") + "</b><small>" +
-        (storyGot ? tr("Erledigt – „Story-Star“ gehört dir.", "Done – \"Story Star\" is yours.") : tr("Einmalig: Poste eine Instagram-Story mit ZACK! (z. B. dein Ergebnis) und markiere " + IG + ". Dann hier deinen Instagram-Namen eintragen.", "Once: post an Instagram story with ZACK! (e.g. your result) and tag " + IG + ". Then enter your Instagram name here.")) + "</small></div></div>" +
-      (storyGot ? "" : '<div class="cl-row"><input class="search" id="stHandle" autocomplete="off" autocapitalize="none" placeholder="' + tr("Dein Instagram (@name)", "Your Instagram (@name)") + '"><button class="btn" id="stGo" type="button">' + tr("Gepostet, Skin holen", "Posted, get skin") + "</button></div>") +
+        (storyGot ? tr("Erledigt – „Story-Star“ gehört dir.", "Done – \"Story Star\" is yours.")
+          : stWait ? tr("Wird geprüft", "In review") + " (@" + esc(stSt.h || "") + "). " + tr("Lass deine Story bitte 24 Stunden online. Sobald wir sie gesehen haben, bekommst du den Skin automatisch.", "Please keep your story online for 24 hours. As soon as we've seen it, you get the skin automatically.")
+          : (stNo ? tr("Wir konnten deine Story nicht finden", "We couldn't find your story") + (stSt.why ? ": " + esc(stSt.why) : "") + ". " + tr("Poste sie nochmal und melde sie erneut.", "Post it again and send it in once more.") + " " : "") + tr("Einmalig: Poste eine Instagram-Story mit ZACK! (z. B. dein Ergebnis) und markiere " + IG + ". Dann hier deinen Instagram-Namen eintragen.", "Once: post an Instagram story with ZACK! (e.g. your result) and tag " + IG + ". Then enter your Instagram name here.") + " " + tr("Wir prüfen die Story und schalten den Skin frei.", "We check the story and unlock the skin.")) + "</small></div></div>" +
+      (storyGot || stWait ? "" : '<div class="cl-row"><input class="search" id="stHandle" autocomplete="off" autocapitalize="none" placeholder="' + tr("Dein Instagram (@name)", "Your Instagram (@name)") + '"><button class="btn" id="stGo" type="button">' + tr("Story gepostet, prüfen lassen", "Story posted, send for review") + "</button></div>") +
       '<p class="note">' + tr("Auszahlung nach Prüfung per PayPal oder Überweisung, wir melden uns per DM bei deinem Account. Ab 18 Jahren oder mit Erlaubnis der Eltern. Fake-Views oder fehlende Markierung = keine Auszahlung.", "Payout after review via PayPal or bank transfer, we contact you by DM. 18+ or with parental consent. Fake views or missing tags = no payout.") + ' <button class="link cl-tlink" id="clTerms2" type="button">' + tr("Teilnahmebedingungen", "Terms") + "</button></p>" +
       '<button class="link" id="clBack" type="button">' + tr("Zurück", "Back") + "</button>", "wide-sheet");
     paintAvatar($("clStoryImg"), { sk: STORY_SK });
@@ -2852,14 +2875,17 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     on("stGo", async () => {
       const hd = cleanHandle($("stHandle").value);
       if (!/^[a-z0-9._]{2,30}$/i.test(hd)) { err(tr("Gib deinen Instagram-Namen ein.", "Enter your Instagram name.")); $("clErr").scrollIntoView({ block: "center" }); return; }
-      if (NET.ok) { try { await NET.db.doc("stories/" + NET.me).set({ by: NET.me, handle: hd, at: Date.now() }); } catch (e) {} }
-      store.set("storyClaimed", true); grantSkins([STORY_SK]);
-      SFX.record(); buzz([20, 40, 20]);
-      openLayer('<span class="eyebrow">' + tr("Danke fürs Teilen!", "Thanks for sharing!") + '</span><h2>' + tr("Neuer Skin!", "New skin!") + '</h2><div class="sk-big pop"><img alt="" id="stNew"></div><p>' + tr("„Story-Star“ gehört jetzt dir.", "\"Story Star\" is yours now.") + '</p><button class="btn" id="stEq" type="button">' + tr("Ausrüsten", "Equip") + '</button><button class="link" id="stLater" type="button">' + tr("Später", "Later") + "</button>");
+      if (!NET.ok) { err(tr("Dafür brauchst du Internet.", "You need internet for this.")); $("clErr").scrollIntoView({ block: "center" }); return; }
+      const sb = $("stGo"); sb.disabled = true;
+      try { await NET.db.doc("stories/" + NET.me).set({ by: NET.me, handle: hd, at: Date.now(), status: "neu" }); }
+      catch (e) { sb.disabled = false; err(tr("Das ging gerade nicht. Versuch es nochmal.", "That didn't work. Try again.")); $("clErr").scrollIntoView({ block: "center" }); return; }
+      store.set("storyState", { s: "neu", h: hd });
+      SFX.coin(); buzz([20, 40, 20]);
+      openLayer('<span class="eyebrow">' + tr("Danke fürs Teilen!", "Thanks for sharing!") + '</span><h2>' + tr("Wird geprüft", "In review") + '</h2><div class="sk-big pop"><img alt="" id="stNew"></div><p>' + "<b>@" + esc(hd) + "</b><br>" + tr("Wir schauen uns deine Story an. Lass sie bitte 24 Stunden online. Ist alles okay, gehört „Story-Star“ automatisch dir.", "We'll check your story. Please keep it online for 24 hours. If everything's fine, \"Story Star\" is yours automatically.") + '</p><button class="btn" id="stLater" type="button">OK</button>');
       paintAvatar($("stNew"), { sk: STORY_SK });
-      on("stEq", () => { equipSkin(STORY_SK); openClipper(null, back); });
       on("stLater", () => openClipper(null, back));
     });
+    if (!storyGot) checkStory().then((ch) => { if (ch && $("clStory")) openClipper(focus, back); });
     on("clBack", done);
     on("clTerms2", () => clipTerms(() => openClipper(focus, back)));
     on("clTerms", (ev) => { ev.preventDefault(); clipTerms(() => openClipper(focus, back)); });
@@ -2883,9 +2909,26 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (!NET.ok) { sum.textContent = tr("Keine Verbindung.", "No connection."); return; }
     try {
       if (ADM.tab === "story") {
-        const q = await NET.db.collection("stories").orderBy("at", "desc").limit(200).get();
-        sum.textContent = q.size + tr(" Story-Skins vergeben", " story skins given");
-        box.innerHTML = q.docs.map((d) => { const x = d.data(); return '<div class="ad-item"><div class="ad-h"><b>@' + esc(x.handle) + '</b><small>' + new Date(x.at).toLocaleString("de-DE") + '</small></div><a class="ad-url" href="https://www.instagram.com/' + encodeURIComponent(x.handle) + '/" target="_blank" rel="noopener">instagram.com/' + esc(x.handle) + "</a></div>"; }).join("") || '<p class="empty">' + tr("Noch keine.", "None yet.") + "</p>";
+        const q = await NET.db.collection("stories").orderBy("at", "desc").limit(300).get();
+        const rows = q.docs.map((d) => Object.assign({ id: d.id }, d.data())), stOf = (x) => x.status || "ok", ordr = { neu: 0, abgelehnt: 1, ok: 2 };
+        rows.sort((a, b) => ordr[stOf(a)] - ordr[stOf(b)] || b.at - a.at);
+        const cnt = (k) => rows.filter((x) => stOf(x) === k).length;
+        sum.textContent = cnt("neu") + tr(" zu prüfen · ", " to review · ") + cnt("ok") + tr(" Skins vergeben · ", " skins given · ") + cnt("abgelehnt") + tr(" abgelehnt", " rejected");
+        const lbl = { neu: tr("Wird geprüft", "In review"), ok: tr("Bestätigt", "Approved"), abgelehnt: tr("Abgelehnt", "Rejected") };
+        box.innerHTML = '<p class="note">' + tr("Stories sind nur 24 Stunden sichtbar – am besten täglich prüfen. Bestätigen schaltet den Skin beim Spieler frei.", "Stories are only visible for 24 hours – best check daily. Approving unlocks the skin for the player.") + "</p>" + rows.map((x) => { const s = stOf(x), hd = encodeURIComponent(x.handle || "");
+          return '<div class="ad-item" data-sid="' + esc(x.id) + '"><div class="ad-h"><b>@' + esc(x.handle) + '</b><small>' + new Date(x.at).toLocaleString("de-DE") + '</small></div>' +
+            '<span class="cl-st ' + esc(s) + '">' + esc(lbl[s] || s) + (x.why ? ": " + esc(x.why) : "") + "</span>" +
+            '<a class="ad-url" href="https://www.instagram.com/stories/' + hd + '/" target="_blank" rel="noopener">' + tr("Story öffnen", "Open story") + " · instagram.com/stories/" + esc(x.handle) + "</a>" +
+            '<a class="ad-url" href="https://www.instagram.com/' + hd + '/" target="_blank" rel="noopener">' + tr("Profil öffnen", "Open profile") + "</a>" +
+            (s === "ok" ? "" : '<input class="search ad-why" data-w placeholder="' + tr("Grund bei Ablehnung (optional)", "Reason if rejected (optional)") + '" value="' + esc(x.why || "") + '">' +
+              '<div class="ad-btns"><button class="sbtn" type="button" data-sdo="ok">' + tr("Bestätigen", "Approve") + "</button>" + (s === "neu" ? '<button class="sbtn quiet" type="button" data-sdo="abgelehnt">' + tr("Ablehnen", "Reject") + "</button>" : "") + "</div>") + "</div>"; }).join("") || '<p class="empty">' + tr("Noch keine.", "None yet.") + "</p>";
+        box.querySelectorAll("[data-sdo]").forEach((b) => b.addEventListener("click", async () => {
+          const it = b.closest("[data-sid]"), upd = { status: b.dataset.sdo, doneAt: Date.now() }, w = it.querySelector("[data-w]");
+          upd.why = b.dataset.sdo === "abgelehnt" && w ? w.value.trim().slice(0, 120) : "";
+          b.disabled = true;
+          try { await NET.db.doc("stories/" + it.dataset.sid).update(upd); SFX.coin(); openAdmin("story"); }
+          catch (e) { b.disabled = false; b.textContent = tr("Fehler – nochmal", "Error – retry"); }
+        }));
         return;
       }
       if (ADM.tab === "links") {
@@ -3907,6 +3950,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       setTimeout(() => { claimWeekly().catch(() => {}); }, 2500);
       setTimeout(() => { ensureName().catch(() => {}); }, 1500);
       setTimeout(() => { trackClip("click"); if (store.get("clipRefPending", false)) trackClip("play"); }, 2200);
+      if (store.get("storyState", null)) { let tries = 0; const stTry = () => { if (layer.hidden && !E.active) checkStory().catch(() => {}); else if (++tries < 40) setTimeout(stTry, 15000); }; setTimeout(stTry, 3500); }
     }
     netReadyResolve();
     renderOnline();
