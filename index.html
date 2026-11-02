@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.2.0"></script>
-<script src="backend.js?v=2.2.0"></script>
+<script src="config.js?v=2.2.1"></script>
+<script src="backend.js?v=2.2.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -1131,8 +1131,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   // ---------- Sprachen ----------
   // Deutsch ist das Original, Englisch der Schlüssel. Alle anderen Sprachen kommen als lang/xx.json (Englisch -> Übersetzung).
-  const LANGS = [["de", "Deutsch"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["it", "Italiano"], ["pt", "Português"], ["tr", "Türkçe"], ["pl", "Polski"], ["nl", "Nederlands"], ["ru", "Русский"], ["ar", "العربية"], ["hi", "हिन्दी"], ["id", "Bahasa Indonesia"], ["ja", "日本語"], ["ko", "한국어"], ["zh", "中文"], ["vi", "Tiếng Việt"], ["th", "ไทย"]];
-  const LOCALE = { de: "de-DE", en: "en-US", es: "es-ES", fr: "fr-FR", it: "it-IT", pt: "pt-BR", tr: "tr-TR", pl: "pl-PL", nl: "nl-NL", ru: "ru-RU", ar: "ar-AE-u-nu-latn", hi: "hi-IN-u-nu-latn", id: "id-ID", ja: "ja-JP", ko: "ko-KR", zh: "zh-CN", vi: "vi-VN", th: "th-TH-u-nu-latn" };
+  const LANGS = [["de", "Deutsch"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["it", "Italiano"], ["pt", "Português"], ["tr", "Türkçe"], ["pl", "Polski"], ["nl", "Nederlands"], ["ru", "Русский"], ["ar", "العربية"], ["hi", "हिन्दी"], ["id", "Bahasa Indonesia"], ["ja", "日本語"], ["ko", "한국어"], ["zh", "中文"], ["vi", "Tiếng Việt"], ["th", "ไทย"], ["uk", "Українська"], ["fa", "فارسی"]];
+  const LOCALE = { de: "de-DE", en: "en-US", es: "es-ES", fr: "fr-FR", it: "it-IT", pt: "pt-BR", tr: "tr-TR", pl: "pl-PL", nl: "nl-NL", ru: "ru-RU", ar: "ar-AE-u-nu-latn", hi: "hi-IN-u-nu-latn", id: "id-ID", ja: "ja-JP", ko: "ko-KR", zh: "zh-CN", vi: "vi-VN", th: "th-TH-u-nu-latn", uk: "uk-UA", fa: "fa-IR-u-nu-latn" };
   function detectLang() {
     const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"]);
     for (const l of list) { const c = String(l || "").slice(0, 2).toLowerCase(); if (LANGS.some((x) => x[0] === c)) return c; }
@@ -3907,7 +3907,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function setLang2() { applyLang(); renderMenu(); if (!$("career").hidden) renderCareer(); if (!$("ranks").hidden) renderRanks(); if (!$("social").hidden) renderSocial(); }
   function applyLang() {
-    document.documentElement.lang = S.lang; document.documentElement.dir = S.lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = S.lang; document.documentElement.dir = S.lang === "ar" || S.lang === "fa" ? "rtl" : "ltr";
     document.querySelectorAll("[data-en]").forEach((el) => { if (el.dataset.de == null) el.dataset.de = el.textContent; el.textContent = S.lang === "de" ? el.dataset.de : S.lang === "en" ? el.dataset.en : tx(el.dataset.en); });
     document.querySelectorAll("[data-en-ph]").forEach((el) => { if (el.dataset.dePh == null) el.dataset.dePh = el.placeholder; el.placeholder = S.lang === "de" ? el.dataset.dePh : S.lang === "en" ? el.dataset.enPh : tx(el.dataset.enPh); });
   }
@@ -4708,7 +4708,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     store.set(hk, { ref, last });
     const moveOf = (id, rank) => { if (!ref || !ref.r) return null; const was = ref.r[id]; return was == null ? "new" : was - rank; };
     const myMove = moveOf(NET.me, cur[NET.me]);
-    if (typeof myMove === "number" && myMove !== 0) note.textContent = (myMove > 0 ? "▲ " + tr("Du bist " + myMove + (myMove === 1 ? " Platz" : " Plätze") + " aufgestiegen", "You climbed " + myMove + (myMove === 1 ? " place" : " places")) : "▼ " + tr("Du bist " + -myMove + (myMove === -1 ? " Platz" : " Plätze") + " abgerutscht", "You dropped " + -myMove + (myMove === -1 ? " place" : " places"))) + " · " + note.textContent;
+    if (typeof myMove === "number" && myMove !== 0) note.textContent = (myMove > 0 ? "▲ " : "▼ ") + tr("Rangliste", "Leaderboard") + " " + (myMove > 0 ? "+" : "−") + fmtN(Math.abs(myMove)) + " · " + note.textContent;
     docs.forEach((d, i) => {
       const r = h("div", "rrow" + (d.id === NET.me ? " me" : "") + (i < 3 ? " top" + (i + 1) : ""));
       const rk = h("div", "rkc"), rkn = h("b", "rk"); rkn.textContent = i + 1; rk.appendChild(rkn);
