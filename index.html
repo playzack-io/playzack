@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.3.0"></script>
-<script src="backend.js?v=2.3.0"></script>
+<script src="config.js?v=2.3.1"></script>
+<script src="backend.js?v=2.3.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -752,6 +752,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 /* Konto */
 .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .soc-tabs { margin-bottom: 4px; }
+#socMain:not([hidden]) { display: contents; }
+.zt { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); opacity: 0; z-index: 60; padding: 10px 16px; border-radius: 99px; background: var(--chalk); color: #111; font-weight: 800; font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .4); transition: opacity .2s, transform .2s; pointer-events: none; max-width: calc(100% - 32px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zt.on { opacity: 1; transform: translate(-50%, 0); }
+.cr-vs { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin: 10px 0 14px; }
+.cr-vs div { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 14px; background: var(--asphalt-2); border: 1px solid var(--line); min-width: 0; }
+.cr-vs div.win { border-color: var(--go); box-shadow: 0 0 0 1px var(--go); }
+.cr-vs small { color: var(--muted); font-size: 13px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cr-vs b { font-family: var(--font-num); font-size: 22px; }
+.cr-vs > span { font-weight: 900; color: var(--muted); }
 .sw-wrap { display: flex; flex-direction: column; gap: 12px; }
 .sw-hint { margin: 0; text-align: center; color: var(--muted); font-size: 14px; }
 .sw-stack { position: relative; height: min(58vh, 430px); }
@@ -1207,7 +1216,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "4";
+  const I18N_VER = "5";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -4826,6 +4835,42 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   // ---------- Freunde-Bildschirm ----------
   function openSocial() { closeLayer(); stopEngine(); show("social"); socTab(SW.tab); renderSocial(); }
+  let zToastT = 0;
+  function zToast(t) {
+    let el = $("zToast"); if (!el) { el = h("div", "zt"); el.id = "zToast"; document.body.appendChild(el); }
+    el.textContent = t; requestAnimationFrame(() => el.classList.add("on"));
+    clearTimeout(zToastT); zToastT = setTimeout(() => el.classList.remove("on"), 2200);
+  }
+  // ---------- Herausforderungen: Hinweis bei neuer Herausforderung und wenn der Gegner deine gespielt hat ----------
+  let chalBusy = false;
+  async function chalNotify() {
+    if (chalBusy || !NET.ok || E.active || !layer.hidden || !$("play").hidden) return;
+    let seen = store.get("chalSeen", null);
+    if (!seen) { seen = {}; NET.sent.forEach((c) => { if (c.status === "done") seen["d" + c.id] = 1; }); NET.incoming.forEach((c) => { seen["i" + c.id] = 1; }); store.set("chalSeen", seen); return; }
+    const res = NET.sent.filter((c) => c.status === "done" && c.tv != null && c.v != null && !seen["d" + c.id]).sort((a, b) => (b.done_at || 0) - (a.done_at || 0))[0];
+    const inc = res ? null : NET.incoming.filter((c) => c.status === "open" && !seen["i" + c.id]).sort((a, b) => (b.at || 0) - (a.at || 0))[0];
+    const c = res || inc; if (!c) return;
+    seen[(res ? "d" : "i") + c.id] = 1;
+    const ks = Object.keys(seen); if (ks.length > 300) ks.slice(0, ks.length - 300).forEach((k) => delete seen[k]);
+    store.set("chalSeen", seen);
+    chalBusy = true;
+    const other = res ? c.to : c.from, ps = await names([other]), p = ps[other] || { name: tr("Spieler", "Player") }, nm = nameOf(p), m = MODES[c.mode];
+    chalBusy = false;
+    if (E.active || !layer.hidden) return;
+    if (res) {
+      const won = m.lower ? c.v < c.tv : c.v > c.tv, draw = c.v === c.tv;
+      SFX[won ? "record" : "coin"](); buzz(won ? [20, 40, 20] : 15);
+      openLayer('<span class="eyebrow">' + tr("Ergebnis deiner Herausforderung", "Challenge result") + " · " + esc(m.name) + "</span><h2>" + (draw ? tr("Unentschieden", "Draw") : won ? tr("Du hast gewonnen!", "You won!") + " 🏆" : tr("Du hast verloren", "You lost")) + "</h2>" +
+        '<div class="cr-vs"><div class="' + (won && !draw ? "win" : "") + '"><small>' + tr("Du", "You") + "</small><b>" + esc(fmtVal(c.mode, c.v)) + '</b></div><span>vs</span><div class="' + (!won && !draw ? "win" : "") + '"><small>' + esc(nm) + "</small><b>" + esc(fmtVal(c.mode, c.tv)) + "</b></div></div>" +
+        '<button class="btn" id="crRe" type="button">' + tr("Revanche", "Rematch") + '</button><button class="link" id="crOk" type="button">' + tr("Später", "Later") + "</button>");
+      on("crRe", () => { closeLayer(); challenge(other, c.mode, nm); });
+    } else {
+      SFX.coin(); buzz([15, 30, 15]);
+      openLayer('<span class="eyebrow">' + tr("Neue Herausforderung", "New challenge") + " · " + esc(m.name) + "</span><h2>" + esc(nm) + "</h2><p>" + tr("Zu schlagen: ", "To beat: ") + (c.v == null ? "–" : esc(fmtVal(c.mode, c.v))) + '</p><button class="btn" id="crRe" type="button">' + tr("Annehmen", "Accept") + '</button><button class="link" id="crOk" type="button">' + tr("Später", "Later") + "</button>");
+      on("crRe", () => { closeLayer(); acceptChallenge(c, nm); });
+    }
+    on("crOk", () => { closeLayer(); setTimeout(chalNotify, 400); });
+  }
   // ---------- Freunde finden: Spieler-Karten wischen (rechts = herausfordern, links = weiter) ----------
   const SW = { tab: "list", pool: [], loading: false, loadedAt: 0 };
   const SW_AD_EVERY = 8;
@@ -4861,7 +4906,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     bm.forEach((m) => { const t = h("span"); t.textContent = MODES[m].name + " · " + fmtVal(m, p.bests[m]); bests.appendChild(t); });
     if (!bm.length) { const t = h("span"); t.textContent = tr("Noch keine Rekorde", "No records yet"); bests.appendChild(t); }
     c.append(img, nm, sub, rk, bests);
-    if (!back) { const y = h("div", "sw-stamp yes"); y.textContent = tr("Herausfordern", "Challenge"); const n = h("div", "sw-stamp no"); n.textContent = tr("Weiter", "Next"); c.append(y, n); }
+    if (!back) { const y = h("div", "sw-stamp yes"); y.textContent = tr("Folgen", "Follow"); const n = h("div", "sw-stamp no"); n.textContent = tr("Weiter", "Next"); c.append(y, n); }
     return c;
   }
   async function renderFind() {
@@ -4874,7 +4919,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       on("swRandom", () => $("socRandom").click());
       return;
     }
-    const hint = h("p", "sw-hint"); hint.textContent = tr("Wisch nach rechts zum Herausfordern, nach links für den nächsten Spieler.", "Swipe right to challenge, left for the next player.");
+    const hint = h("p", "sw-hint"); hint.textContent = tr("Nach rechts wischen = folgen, nach links = nächster Spieler. Herausfordern mit dem grünen Knopf.", "Swipe right to follow, left for the next player. Challenge with the green button.");
     const stack = h("div", "sw-stack");
     const p = SW.pool[0], nx = SW.pool[1];
     if (nx) stack.appendChild(swCard(nx, true));
@@ -4882,12 +4927,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const btns = h("div", "sw-btns");
     const bNo = h("button", "sw-btn no"); bNo.type = "button"; bNo.textContent = "✕"; bNo.setAttribute("aria-label", tr("Weiter", "Next"));
     const bYes = h("button", "sw-btn yes"); bYes.type = "button"; bYes.textContent = "⚔"; bYes.setAttribute("aria-label", tr("Herausfordern", "Challenge"));
-    const bFol = h("button", "sw-btn fol"); bFol.type = "button"; bFol.textContent = NET.follows.includes(p.id) ? tr("Du folgst ✓", "Following ✓") : "+ " + tr("Folgen", "Follow");
+    const bFol = h("button", "sw-btn fol"); bFol.type = "button"; bFol.textContent = "+ " + tr("Folgen", "Follow");
     btns.append(bNo, bYes, bFol);
     box.append(hint, stack, btns);
     bNo.addEventListener("click", () => swipeOut(card, -1, p));
-    bYes.addEventListener("click", () => swipeOut(card, 1, p));
-    bFol.addEventListener("click", async () => { if (NET.follows.includes(p.id)) return; bFol.disabled = true; await follow(p.id); bFol.textContent = tr("Du folgst ✓", "Following ✓"); });
+    bFol.addEventListener("click", () => swipeOut(card, 1, p));
+    bYes.addEventListener("click", () => chooseModeFor(p.id, nameOf(p)));
     // Wischen mit Finger oder Maus
     let x0 = null, y0 = 0, dx = 0, pid = null;
     const yes = card.querySelector(".sw-stamp.yes"), no = card.querySelector(".sw-stamp.no");
@@ -4906,11 +4951,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const skip = store.get("swSkip", {}) || {}; skip[p.id] = Date.now(); store.set("swSkip", skip);
     SW.pool = SW.pool.filter((x) => x.id !== p.id);
     const n = (store.get("swipes", 0) || 0) + 1; store.set("swipes", n);
-    const act = () => { if (dir > 0) chooseModeFor(p.id, nameOf(p)); };
+    if (dir > 0) { follow(p.id).then(() => zToast(tr("Du folgst ", "Following ") + nameOf(p) + " ✓")); }
     setTimeout(() => {
       renderFind();
       // Nach jedem 8. Wisch ein Werbevideo – außer mit Werbefrei
-      if (n % SW_AD_EVERY === 0 && !S.premium) showInterstitial(act); else act();
+      if (n % SW_AD_EVERY === 0 && !S.premium) showInterstitial(() => {});
     }, 300);
   }
   function row(id, p, sub, buttons, online) {
@@ -4942,6 +4987,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       }
     }
     if (!$("social").hidden && !socialRenderQueued) { socialRenderQueued = true; setTimeout(() => { socialRenderQueued = false; renderSocial(); }, 150); }
+    clearTimeout(renderOnline.cn); renderOnline.cn = setTimeout(() => chalNotify().catch(() => {}), 900);
   }
   async function renderSocial() {
     const st = $("socStatus");
@@ -5039,6 +5085,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   function renderMenu() {
+    clearTimeout(renderOnline.cn); renderOnline.cn = setTimeout(() => chalNotify().catch(() => {}), 1200);
     const pb = $("premBtn");
     pb.textContent = S.premium ? tr("Werbefrei aktiv", "Ad-free active") : tr("Werbefrei", "Remove ads");
     pb.classList.toggle("on", S.premium);
