@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.2.1"></script>
-<script src="backend.js?v=2.2.1"></script>
+<script src="config.js?v=2.3.0"></script>
+<script src="backend.js?v=2.3.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -751,6 +751,32 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 @keyframes skpop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 /* Konto */
 .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.soc-tabs { margin-bottom: 4px; }
+.sw-wrap { display: flex; flex-direction: column; gap: 12px; }
+.sw-hint { margin: 0; text-align: center; color: var(--muted); font-size: 14px; }
+.sw-stack { position: relative; height: min(58vh, 430px); }
+.sw-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px 16px; border-radius: 22px; background: radial-gradient(circle at 50% 28%, rgba(255, 210, 63, .14), transparent 62%), var(--asphalt-2); border: 1px solid var(--line); box-shadow: 0 14px 30px rgba(0, 0, 0, .35); touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; will-change: transform; }
+.sw-card.back { transform: scale(.94) translateY(12px); opacity: .55; pointer-events: none; }
+.sw-card.fly { transition: transform .32s ease-in, opacity .32s ease-in; }
+.sw-card.snap { transition: transform .22s ease-out; }
+.sw-card img { width: 46%; max-width: 170px; aspect-ratio: 1; border-radius: 50%; object-fit: cover; pointer-events: none; }
+.sw-card img.ring-on { box-shadow: 0 0 0 4px var(--go); }
+.sw-name { font-family: var(--font-num); font-weight: 800; font-size: 26px; letter-spacing: .01em; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sw-name .flag-img { height: .8em; }
+.sw-sub { color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.sw-rank { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--volt); }
+.sw-bests { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 4px; }
+.sw-bests span { font-size: 12.5px; padding: 5px 9px; border-radius: 99px; background: var(--housing); border: 1px solid var(--line); color: var(--chalk); }
+.sw-stamp { position: absolute; top: 22px; padding: 6px 12px; border: 3px solid; border-radius: 10px; font-family: var(--font-num); font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: .04em; opacity: 0; pointer-events: none; }
+.sw-stamp.yes { left: 18px; color: var(--go); border-color: var(--go); transform: rotate(-12deg); }
+.sw-stamp.no { right: 18px; color: var(--signal); border-color: var(--signal); transform: rotate(12deg); }
+.sw-btns { display: flex; justify-content: center; align-items: center; gap: 18px; }
+.sw-btn { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--line); background: var(--asphalt-2); color: var(--chalk); font-size: 26px; display: grid; place-items: center; }
+.sw-btn.no { color: var(--signal); border-color: color-mix(in srgb, var(--signal) 60%, transparent); }
+.sw-btn.yes { width: 76px; height: 76px; font-size: 32px; color: #111; background: var(--go); border-color: var(--go); }
+.sw-btn.fol { font-size: 13px; font-weight: 800; width: auto; height: 44px; padding: 0 14px; border-radius: 99px; }
+.sw-btn:active { transform: scale(.94); }
+.sw-empty { text-align: center; padding: 30px 10px; display: flex; flex-direction: column; gap: 14px; align-items: center; }
 .sso { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 2px; }
 .sso-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border-radius: 14px; padding: 13px 14px; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer; border: 1px solid transparent; }
 .sso-btn svg { width: 20px; height: 20px; flex: none; }
@@ -1080,6 +1106,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   <section id="social" class="screen scroll" aria-label="Freunde und Gegner" hidden>
     <div class="subhead"><button class="pill" type="button" data-menu data-en="Menu">Menü</button><h2 data-en="Friends">Freunde</h2></div>
+    <div class="seg two soc-tabs" id="socTabs"><button type="button" data-st="list" class="on" data-en="Friends">Freunde</button><button type="button" data-st="find" data-en="Find friends">Freunde finden</button></div>
+    <div id="socFind" class="sw-wrap" hidden></div>
+    <div id="socMain">
     <div class="status-line" id="socStatus"><span class="sdot"></span>…</div>
     <button class="btn" id="socRandom" type="button" data-en="Random opponent">Zufälliger Gegner</button>
     <div class="howto">
@@ -1104,6 +1133,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     <div class="slist" id="socRecent"></div>
     <h3 class="sec" data-en="Sent by you">Von dir gesendet</h3>
     <div class="slist" id="socSent"></div>
+    </div>
   </section>
 
   <section id="play" class="screen" aria-label="Spiel" hidden>
@@ -1177,7 +1207,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "3";
+  const I18N_VER = "4";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -4795,7 +4825,94 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
 
   // ---------- Freunde-Bildschirm ----------
-  function openSocial() { closeLayer(); stopEngine(); show("social"); renderSocial(); }
+  function openSocial() { closeLayer(); stopEngine(); show("social"); socTab(SW.tab); renderSocial(); }
+  // ---------- Freunde finden: Spieler-Karten wischen (rechts = herausfordern, links = weiter) ----------
+  const SW = { tab: "list", pool: [], loading: false, loadedAt: 0 };
+  const SW_AD_EVERY = 8;
+  function socTab(t) {
+    SW.tab = t === "find" ? "find" : "list";
+    document.querySelectorAll("#socTabs [data-st]").forEach((b) => b.classList.toggle("on", b.dataset.st === SW.tab));
+    $("socMain").hidden = SW.tab !== "list"; $("socFind").hidden = SW.tab !== "find";
+    if (SW.tab === "find") renderFind();
+  }
+  async function loadFindPool() {
+    if (!NET.ok || SW.loading) return;
+    SW.loading = true;
+    try {
+      const skip = store.get("swSkip", {}) || {}, now = Date.now();
+      Object.keys(skip).forEach((k) => { if (now - skip[k] > 3 * 86400000) delete skip[k]; }); store.set("swSkip", skip);
+      const q = await NET.db.collection("players").orderBy("seen", "desc").limit(60).get();
+      const ids = q.docs.map((d) => d.id).filter((id) => id !== NET.me && !NET.follows.includes(id) && !skip[id]).slice(0, 30);
+      const ps = await names(ids);
+      SW.pool = ids.filter((id) => ps[id]).map((id) => Object.assign({ id }, ps[id])).sort((a, b) => (!!peerOf(b.id) - !!peerOf(a.id)) || ((b.seen || 0) - (a.seen || 0)));
+      SW.loadedAt = Date.now();
+    } catch (e) { SW.pool = []; }
+    SW.loading = false;
+  }
+  function swCard(p, back) {
+    const c = h("div", "sw-card" + (back ? " back" : ""));
+    const on = !!peerOf(p.id);
+    const img = h("img"); img.alt = ""; if (on) img.classList.add("ring-on"); paintAvatar(img, p);
+    const nm = h("div", "sw-name"); nm.textContent = nameOf(p); appendFlags(nm, p.flags);
+    const sub = h("div", "sw-sub"); sub.innerHTML = '<span class="sdot' + (on ? " on" : "") + '"></span>'; sub.appendChild(document.createTextNode(on ? "online" : fmtAgo(p.seen)));
+    const rk = h("div", "sw-rank"); rk.textContent = tr("Stufe ", "Rank ") + (p.lvl || 1);
+    const bests = h("div", "sw-bests");
+    const bm = ORDER.filter((m) => p.bests && p.bests[m] != null).slice(0, 4);
+    bm.forEach((m) => { const t = h("span"); t.textContent = MODES[m].name + " · " + fmtVal(m, p.bests[m]); bests.appendChild(t); });
+    if (!bm.length) { const t = h("span"); t.textContent = tr("Noch keine Rekorde", "No records yet"); bests.appendChild(t); }
+    c.append(img, nm, sub, rk, bests);
+    if (!back) { const y = h("div", "sw-stamp yes"); y.textContent = tr("Herausfordern", "Challenge"); const n = h("div", "sw-stamp no"); n.textContent = tr("Weiter", "Next"); c.append(y, n); }
+    return c;
+  }
+  async function renderFind() {
+    const box = $("socFind"); if (!box || box.hidden) return;
+    if (!NET.ok) { box.innerHTML = '<div class="sw-empty"><p>' + esc(offNote()) + "</p></div>"; return; }
+    if (!SW.pool.length && !SW.loading && Date.now() - SW.loadedAt > 20000) { box.innerHTML = '<div class="sw-empty"><p>' + tr("Lade Spieler …", "Loading players …") + "</p></div>"; await loadFindPool(); if (SW.tab !== "find") return; }
+    box.innerHTML = "";
+    if (!SW.pool.length) {
+      box.innerHTML = '<div class="sw-empty"><p>' + tr("Gerade keine neuen Spieler. Schau später nochmal vorbei oder spiel gegen einen zufälligen Gegner.", "No new players right now. Check back later or play a random opponent.") + '</p><button class="btn" id="swRandom" type="button">' + tr("Zufälliger Gegner", "Random opponent") + "</button></div>";
+      on("swRandom", () => $("socRandom").click());
+      return;
+    }
+    const hint = h("p", "sw-hint"); hint.textContent = tr("Wisch nach rechts zum Herausfordern, nach links für den nächsten Spieler.", "Swipe right to challenge, left for the next player.");
+    const stack = h("div", "sw-stack");
+    const p = SW.pool[0], nx = SW.pool[1];
+    if (nx) stack.appendChild(swCard(nx, true));
+    const card = swCard(p, false); stack.appendChild(card);
+    const btns = h("div", "sw-btns");
+    const bNo = h("button", "sw-btn no"); bNo.type = "button"; bNo.textContent = "✕"; bNo.setAttribute("aria-label", tr("Weiter", "Next"));
+    const bYes = h("button", "sw-btn yes"); bYes.type = "button"; bYes.textContent = "⚔"; bYes.setAttribute("aria-label", tr("Herausfordern", "Challenge"));
+    const bFol = h("button", "sw-btn fol"); bFol.type = "button"; bFol.textContent = NET.follows.includes(p.id) ? tr("Du folgst ✓", "Following ✓") : "+ " + tr("Folgen", "Follow");
+    btns.append(bNo, bYes, bFol);
+    box.append(hint, stack, btns);
+    bNo.addEventListener("click", () => swipeOut(card, -1, p));
+    bYes.addEventListener("click", () => swipeOut(card, 1, p));
+    bFol.addEventListener("click", async () => { if (NET.follows.includes(p.id)) return; bFol.disabled = true; await follow(p.id); bFol.textContent = tr("Du folgst ✓", "Following ✓"); });
+    // Wischen mit Finger oder Maus
+    let x0 = null, y0 = 0, dx = 0, pid = null;
+    const yes = card.querySelector(".sw-stamp.yes"), no = card.querySelector(".sw-stamp.no");
+    const paint = () => { card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 18 + "deg)"; yes.style.opacity = Math.max(0, Math.min(1, dx / 90)); no.style.opacity = Math.max(0, Math.min(1, -dx / 90)); };
+    card.addEventListener("pointerdown", (e) => { x0 = e.clientX; y0 = e.clientY; dx = 0; pid = e.pointerId; card.classList.remove("snap"); try { card.setPointerCapture(pid); } catch (er) {} });
+    card.addEventListener("pointermove", (e) => { if (x0 == null || e.pointerId !== pid) return; dx = e.clientX - x0; if (Math.abs(e.clientY - y0) > 60 && Math.abs(dx) < 30) { x0 = null; dx = 0; paint(); return; } paint(); });
+    const end = () => { if (x0 == null) return; x0 = null; if (Math.abs(dx) > 90) swipeOut(card, dx > 0 ? 1 : -1, p); else { card.classList.add("snap"); dx = 0; paint(); } };
+    card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+  }
+  function swipeOut(card, dir, p) {
+    if (card.dataset.gone) return; card.dataset.gone = "1";
+    card.classList.remove("snap"); card.classList.add("fly");
+    const st = card.querySelector(dir > 0 ? ".sw-stamp.yes" : ".sw-stamp.no"); if (st) st.style.opacity = 1;
+    card.style.transform = "translateX(" + dir * 520 + "px) rotate(" + dir * 26 + "deg)"; card.style.opacity = "0";
+    buzz(dir > 0 ? [15, 30, 15] : 12);
+    const skip = store.get("swSkip", {}) || {}; skip[p.id] = Date.now(); store.set("swSkip", skip);
+    SW.pool = SW.pool.filter((x) => x.id !== p.id);
+    const n = (store.get("swipes", 0) || 0) + 1; store.set("swipes", n);
+    const act = () => { if (dir > 0) chooseModeFor(p.id, nameOf(p)); };
+    setTimeout(() => {
+      renderFind();
+      // Nach jedem 8. Wisch ein Werbevideo – außer mit Werbefrei
+      if (n % SW_AD_EVERY === 0 && !S.premium) showInterstitial(act); else act();
+    }, 300);
+  }
   function row(id, p, sub, buttons, online) {
     const r = h("div", "srow");
     const img = h("img"); img.alt = "";
@@ -4862,6 +4979,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     ORDER.forEach((mid) => { const b = h("button"); b.type = "button"; b.textContent = MODES[mid].name; b.addEventListener("click", () => startSeek(mid)); $("rmGrid").appendChild(b); });
   });
   let searchTimer = 0;
+  document.querySelectorAll("#socTabs [data-st]").forEach((b) => b.addEventListener("click", () => socTab(b.dataset.st)));
   $("socSearch").addEventListener("input", (e) => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(async () => {
