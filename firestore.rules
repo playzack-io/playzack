@@ -32,9 +32,21 @@ service cloud.firestore {
       allow delete: if signedIn() && resource.data.get('uid', null) == request.auth.uid;
     }
 
-    // Turniere: eins pro Gastgeber, eine Teilnahme pro Spieler
-    match /tourneys/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
-    match /tentries/{uid} { allow read: if signedIn(); allow write: if isMe(uid); }
+    // Turniere: beliebig viele pro Gastgeber (alt: Dokument = uid, neu: uid-Erstellzeit); nur der Gastgeber schreibt
+    match /tourneys/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.host == request.auth.uid
+        && (id == request.auth.uid || id == request.auth.uid + '-' + string(request.resource.data.created));
+      allow update: if signedIn() && resource.data.host == request.auth.uid && request.resource.data.host == request.auth.uid;
+      allow delete: if signedIn() && resource.data.host == request.auth.uid;
+    }
+    // Teilnahmen: eine pro Spieler und Turnier (alt: Dokument = uid, neu: turnierId_uid)
+    match /tentries/{id} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && (id == request.auth.uid
+        || (request.resource.data.by == request.auth.uid && id == request.resource.data.t + '_' + request.auth.uid));
+      allow delete: if signedIn() && (id == request.auth.uid || resource.data.get('by', '') == request.auth.uid);
+    }
 
     // Chat: nur gegenseitige Freunde, nur Text bis 300 Zeichen
     function follows(a, b) { return exists(/databases/$(database)/documents/follows/$(a)) && b in get(/databases/$(database)/documents/follows/$(a)).data.ids; }

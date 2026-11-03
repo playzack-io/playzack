@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.5.1"></script>
-<script src="backend.js?v=2.5.1"></script>
+<script src="config.js?v=2.6.0"></script>
+<script src="backend.js?v=2.6.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -844,6 +844,21 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .tu-lbl { margin: 6px 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); text-align: left; }
 .tu-pick { display: flex; flex-wrap: wrap; gap: 6px; }
 .tu-maxin { margin-top: 8px; }
+.tu-prz { display: flex; flex-direction: column; gap: 6px; }
+.tu-prz label { display: flex; align-items: center; gap: 8px; } .tu-prz label span { font-size: 22px; } .tu-prz input { flex: 1; } .tu-prz input:disabled { opacity: .45; }
+.tu-prizes { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--volt) 45%, transparent); background: color-mix(in srgb, var(--volt) 7%, var(--asphalt-2)); }
+.tu-prizes > small { color: var(--muted); font-size: 12px; }
+.tu-pz { display: flex; align-items: center; gap: 8px; font-weight: 700; } .tu-pz span:first-child { font-size: 20px; } .tu-pz small { color: var(--go); font-weight: 800; }
+.tu-cdur { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.tu-mine { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 10px; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--asphalt-2); color: var(--chalk); }
+.tu-mine b { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tu-mine small { grid-column: 1; color: var(--muted); font-size: 13px; }
+.tu-mine span { grid-column: 2; grid-row: 1 / 3; align-self: center; font-family: var(--font-num); font-weight: 800; letter-spacing: .08em; color: var(--volt); }
+.tu-ended.ok { color: var(--go); border-color: color-mix(in srgb, var(--go) 50%, transparent); }
+.tu-earn { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--volt) 45%, transparent); background: color-mix(in srgb, var(--volt) 8%, var(--asphalt-2)); }
+.tu-earn div { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tu-earn small { color: var(--muted); font-size: 12.5px; }
+.tu-earn .btn { width: auto; margin: 0; padding: 10px 14px; font-size: 15px; }
 .tu-per { display: block; font-weight: 500; font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
 .tv { position: fixed; inset: 0; z-index: 60; background: radial-gradient(1200px 600px at 20% -10%, rgba(168, 85, 247, .28), transparent 60%), var(--asphalt); padding: max(18px, env(safe-area-inset-top)) clamp(16px, 4vw, 56px) 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; }
 .tv-top { display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap; }
@@ -1226,7 +1241,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "10";
+  const I18N_VER = "11";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -2531,6 +2546,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const me = NET.me, pr = profile() || {}, del = (path) => NET.db.doc(path).delete().catch(() => {});
     const jobs = ["players/", "follows/", "runs/", "saves/", "payout/", "stories/", "tentries/", "tourneys/"].map((c) => del(c + me));
     if (pr.uname) jobs.push((async () => { try { const own = typeof NET.db.nameOwner === "function" ? await NET.db.nameOwner(pr.uname) : null; if (own === me) await del("unames/" + pr.uname); } catch (e) {} })());
+    jobs.push((async () => { try { const q = await NET.db.collection("tourneys").where("host", "==", me).limit(100).get(); await Promise.all(q.docs.map((d) => del("tourneys/" + d.id))); } catch (e) {} })());
+    jobs.push((async () => { try { const q = await NET.db.collection("tentries").where("by", "==", me).limit(200).get(); await Promise.all(q.docs.map((d) => del("tentries/" + d.id))); } catch (e) {} })());
     jobs.push((async () => { try { const q = await NET.db.collection("clips").where("by", "==", me).limit(100).get(); await Promise.all(q.docs.filter((d) => ["neu", "abgelehnt"].includes(d.data().status || "neu")).map((d) => del("clips/" + d.id))); } catch (e) {} })());
     await Promise.all(jobs);
   }
@@ -4460,10 +4477,28 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function validTour(d) {
     return d && typeof d.code === "string" && TU_CODE_RE.test(d.code) && Array.isArray(d.modes) && d.modes.length >= 1 && d.modes.length <= 12 && new Set(d.modes).size === d.modes.length && d.modes.every((m) => MODES[m]) &&
       Number.isInteger(d.seed) && Number.isFinite(d.ends) && Number.isFinite(d.created) && typeof d.host === "string" && (d.tries === 0 || [1, 3].includes(d.tries)) &&
-      (d.max == null || (Number.isInteger(d.max) && d.max >= 0 && d.max <= 100000));
+      (d.max == null || (Number.isInteger(d.max) && d.max >= 0 && d.max <= 100000)) && (d.starts == null || Number.isFinite(d.starts)) && (d.fee == null || (Number.isInteger(d.fee) && d.fee >= 0 && d.fee <= 100000)) &&
+      (d.prizes == null || (Array.isArray(d.prizes) && d.prizes.length <= 3 && d.prizes.every((x) => typeof x === "string" && x.length <= 60)));
   }
   const tourId = (t) => t.host + "-" + t.created;
   const tuEnded = (t) => !t || Date.now() >= t.ends;
+  // Version 2: beliebig viele Turniere pro Gastgeber (Dokument = tourId), Teilnahmen pro Turnier (tourId_uid)
+  const tuDoc = (t) => (t.v === 2 ? tourId(t) : t.host);
+  const tuStart = (t) => (t && Number.isFinite(t.starts) ? t.starts : t ? t.created : 0);
+  const tuNotYet = (t) => !!t && Date.now() < tuStart(t);
+  const entryPath = (t) => "tentries/" + (t.v === 2 ? tourId(t) + "_" + NET.me : NET.me);
+  const TU_FEE_ZACK = 0.3; // 30 % jeder Startgebühr gehen an ZACK!, 70 % an den Gastgeber
+  function fmtLeft(ms) {
+    const s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), hh = Math.floor((s % 86400) / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
+    if (d) return d + tr(" T ", " d ") + hh + tr(" Std", " h");
+    return (hh ? hh + ":" + String(mm).padStart(2, "0") : mm) + ":" + String(ss).padStart(2, "0");
+  }
+  const fmtWhen = (ms) => { try { return new Date(ms).toLocaleString(loc(), { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return new Date(ms).toLocaleString(); } };
+  function tuRemember(t) {
+    const l = (store.get("tour:mine", []) || []).filter((x) => x && x.id !== tuDoc(t));
+    l.unshift({ id: tuDoc(t), code: t.code, name: t.name || "ZACK!", starts: tuStart(t), ends: t.ends, host: t.host === NET.me });
+    store.set("tour:mine", l.filter((x) => Date.now() < x.ends + 7 * 86400000).slice(0, 20));
+  }
   // feste Reihenfolge für Turnier-Seeds (neue Spiele hinten anhängen, damit laufende Turniere gleich bleiben)
   const SEED_ORDER = ["ziele", "turm", "startampel", "stoppuhr", "taeuschung", "farbwort", "lanes", "augenwinkel", "praezision", "ballon", "klicks", "merken", "helmflug", "ausweichen"];
   const tuSeed = (t, m) => (t.seed ^ Math.imul(SEED_ORDER.indexOf(m) + 1, 2654435761)) >>> 0;
@@ -4472,7 +4507,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const r = {};
     if (d.r && typeof d.r === "object") Object.keys(d.r).forEach((m) => { const x = d.r[m]; if (MODES[m] && x && Number.isInteger(x.n) && x.n >= 0 && (x.v == null || Number.isFinite(x.v))) r[m] = { v: x.v == null ? null : x.v, n: x.n }; });
     const photo = typeof d.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(d.photo) && d.photo.length < 60000 ? d.photo : null;
-    return { id: d.id, t: d.t, uname: d.uname, av: Number.isInteger(d.av) ? d.av : 0, photo, sk: skinValid(d.sk) ? d.sk : null, flags: cleanFlags(d.flags), r };
+    return { id: d.id, uid: typeof d.by === "string" ? d.by : d.id, paid: Number.isInteger(d.paid) && d.paid > 0 ? d.paid : 0, t: d.t, uname: d.uname, av: Number.isInteger(d.av) ? d.av : 0, photo, sk: skinValid(d.sk) ? d.sk : null, flags: cleanFlags(d.flags), r };
   }
   function tuStandings(t, entries) {
     const rows = entries.map((e) => ({ e, pts: 0, per: {} }));
@@ -4494,9 +4529,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   function tuWatch(t) {
     tuUnsub();
     TU.t = t; TU.entries = [];
-    store.set("tour:last", { host: t.host, code: t.code });
+    store.set("tour:last", { id: tuDoc(t), code: t.code }); tuRemember(t);
     const ign = () => {};
-    TU.offs.push(NET.db.doc("tourneys/" + t.host).onSnapshot((s) => {
+    TU.offs.push(NET.db.doc("tourneys/" + tuDoc(t)).onSnapshot((s) => {
       const d = s.exists ? s.data() : null;
       if (!validTour(d) || tourId(d) !== tourId(TU.t)) { if (TU.t && tourId(TU.t) === tourId(t)) { TU.t = Object.assign({}, TU.t, { ends: Math.min(TU.t.ends, Date.now()), gone: true }); renderTour(); } return; }
       TU.t = d; renderTour();
@@ -4505,33 +4540,32 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       TU.entries = q.docs.map((d) => cleanEntry(Object.assign({ id: d.id }, d.data()))).filter(Boolean);
       renderTour();
     }, ign));
-    TU.wasEnded = tuEnded(t);
-    TU.tick = setInterval(() => { const c = $("tuClock"), tv = $("tvClock"); const txt = tuClockText(); if (c) c.textContent = txt; if (tv) tv.textContent = txt; const en = tuEnded(TU.t); if (en && !TU.wasEnded) { TU.wasEnded = true; renderTour(); } }, 1000);
+    TU.wasEnded = tuEnded(t); TU.wasWaiting = tuNotYet(t);
+    TU.tick = setInterval(() => { const c = $("tuClock"), tv = $("tvClock"); const txt = tuClockText(); if (c) c.textContent = txt; if (tv) tv.textContent = txt; const en = tuEnded(TU.t), wt = tuNotYet(TU.t); if ((en && !TU.wasEnded) || (!wt && TU.wasWaiting)) { TU.wasEnded = en; TU.wasWaiting = wt; renderTour(); } }, 1000);
   }
   function tuClockText() {
     const t = TU.t; if (!t) return "";
+    if (tuNotYet(t)) return tr("startet in ", "starts in ") + fmtLeft(tuStart(t) - Date.now());
     const ms = t.ends - Date.now();
     if (ms <= 0) return tr("Beendet", "Finished");
-    const s = Math.floor(ms / 1000), hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
-    return tr("noch ", "") + (hh ? hh + ":" + String(mm).padStart(2, "0") : mm) + ":" + String(ss).padStart(2, "0") + tr("", " left");
+    return tr("noch ", "") + fmtLeft(ms) + tr("", " left");
   }
-  const myEntry = () => TU.entries.find((e) => e.id === NET.me) || null;
-  function entryDoc(r) {
+  const myEntry = () => TU.entries.find((e) => e.uid === NET.me) || null;
+  function entryDoc(r, paid) {
     const pr = profile() || {};
-    return { t: tourId(TU.t), code: TU.t.code, uname: pr.uname, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags), r, at: Date.now() };
+    return { t: tourId(TU.t), code: TU.t.code, by: NET.me, paid: paid || 0, uname: pr.uname, av: pr.av || 0, photo: pr.photo || null, sk: skinValid(pr.sk) ? pr.sk : null, flags: cleanFlags(pr.flags), r, at: Date.now() };
   }
-  async function tuWrite(r) {
-    const me = myEntry(), doc = entryDoc(r);
+  async function tuWrite(r, paid) {
+    const me = myEntry(), doc = entryDoc(r, me ? me.paid : paid);
     if (me) me.r = r; else TU.entries.push(cleanEntry(Object.assign({ id: NET.me }, doc)));
-    try { await NET.db.doc("tentries/" + NET.me).set(doc); return true; } catch (e) { return false; }
+    try { await NET.db.doc(entryPath(TU.t)).set(doc); return true; } catch (e) { return false; }
   }
 
   function openTour() {
     closeLayer(); stopEngine(); show("tour");
     if (TU.t) { renderTour(); return; }
     renderTourHome();
-    const last = store.get("tour:last", null);
-    if (NET.ok && last && typeof last.host === "string") tuLoadByHost(last.host, true);
+    tuMineList();
   }
   function tuNeedOnline() {
     if (NET.ok) return false;
@@ -4551,7 +4585,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       tr("Du erstellst ein Turnier und teilst den Code. Wer mitmacht, landet in einer Live-Rangliste. Am Ende gewinnt, wer vorne steht.", "Create a tournament and share the code. Everyone who joins lands on a live leaderboard. Whoever is on top at the end wins.") + "</p></div>" +
       '<button class="btn" id="tuNew" type="button">' + tr("Turnier erstellen", "Create tournament") + "</button>" +
       '<div class="tu-join"><input class="flagq" id="tuCodeIn" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="' + tr("Code, z. B. K7P2Q", "Code, e.g. K7P2Q") + '"><button class="btn ghost" id="tuJoin" type="button">' + tr("Beitreten", "Join") + "</button></div>" +
-      '<p class="note" id="tuHomeNote"></p>' +
+      '<p class="note" id="tuHomeNote"></p><div id="tuMine"></div>' +
       '<div class="tu-how"><b>' + tr("So zählt es", "How it counts") + "</b><p>" + tr("Ein Modus: dein bestes Ergebnis zählt. Mehrere Modi: Punkte wie in der Formel 1 pro Modus (25, 18, 15 …), zusammengezählt. Extra-Leben gibt es im Turnier nicht, damit es fair bleibt.", "One mode: your best result counts. Several modes: points like in Formula 1 per mode (25, 18, 15 …), added up. No extra lives in tournaments, so it stays fair.") + "</p></div>";
     on("tuNew", () => { if (tuNeedOnline() || tuNeedName()) return; tuCreateSheet(); });
     const inp = $("tuCodeIn");
@@ -4569,16 +4603,31 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       tuWatch(d); renderTour();
     } catch (e) { if (n) n.textContent = tr("Konnte nicht laden. Versuch es nochmal.", "Couldn't load. Try again."); }
   }
-  async function tuLoadByHost(host, quiet) {
+  async function tuLoadById(id) {
     try {
-      const s = await NET.db.doc("tourneys/" + host).get(); const d = s.exists ? s.data() : null;
-      if (!validTour(d)) return;
-      if (quiet && Date.now() > d.ends + 6 * 3600 * 1000) return;
-      const n = $("tuHomeNote");
-      if (quiet && (TU.t || !n)) return;
-      if (quiet) { n.innerHTML = ""; const b = h("button", "link"); b.type = "button"; b.textContent = tr("Zurück zum letzten Turnier: ", "Back to your last tournament: ") + (d.name || d.code) + " · " + d.code; b.addEventListener("click", () => { tuWatch(d); renderTour(); }); n.appendChild(b); return; }
+      const s = await NET.db.doc("tourneys/" + id).get(); const d = s.exists ? s.data() : null;
+      if (!validTour(d)) { note(tr("Turnier nicht gefunden", "Tournament not found"), tr("Dieses Turnier gibt es nicht mehr.", "This tournament no longer exists.")); return; }
       tuWatch(d); renderTour();
     } catch (e) {}
+  }
+  // Liste „Meine Turniere“: erstellt oder mitgespielt, bis 7 Tage nach dem Ende
+  function tuMineList() {
+    const box = $("tuMine"); if (!box) return;
+    const old = store.get("tour:last", null);
+    let l = (store.get("tour:mine", []) || []).filter((x) => x && typeof x.id === "string" && Date.now() < x.ends + 7 * 86400000);
+    if (old && old.host && !l.some((x) => x.id === old.host)) l.push({ id: old.host, code: old.code, name: old.code, starts: 0, ends: Date.now() + 1, host: false });
+    if (!l.length) { box.innerHTML = ""; return; }
+    l.sort((a, b) => (Date.now() >= a.ends) - (Date.now() >= b.ends) || a.starts - b.starts);
+    box.innerHTML = '<h3 class="sec">' + tr("Meine Turniere", "My tournaments") + '</h3><div class="slist" id="tuMineL"></div>';
+    const L = $("tuMineL");
+    l.forEach((x) => {
+      const now = Date.now(), st = now < x.starts ? tr("Geplant · ", "Scheduled · ") + fmtWhen(x.starts) : now < x.ends ? tr("Läuft · noch ", "Live · ") + fmtLeft(x.ends - now) : tr("Beendet", "Finished");
+      const b = h("button", "tu-mine"); b.type = "button";
+      b.innerHTML = "<b></b><small></small><span>" + x.code + "</span>";
+      b.querySelector("b").textContent = (x.host ? "👑 " : "") + x.name; b.querySelector("small").textContent = st;
+      b.addEventListener("click", () => { if (!tuNeedOnline()) tuLoadById(x.id); });
+      L.appendChild(b);
+    });
   }
 
   function tuPendGo() {
@@ -4595,35 +4644,64 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function tuCreateSheet() {
     const pr = profile() || {};
-    let modes = ["ziele"], dur = 60, tries = 3, max = 0;
-    const MAXQ = [2, 4, 8, 16, 32, 100];
-    const DUR = [[15, "15 Min"], [60, tr("1 Std", "1 hr")], [180, tr("3 Std", "3 hrs")], [1440, tr("24 Std", "24 hrs")]];
+    let modes = ["ziele"], dur = 60, tries = 3, max = 0, plan = false, fee = 0, cdur = { n: 2, u: 1440 };
+    const MAXQ = [2, 4, 8, 16, 32, 100], FEES = [0, 50, 100, 250, 500];
+    const DUR = [[15, "15 Min"], [60, tr("1 Std", "1 hr")], [180, tr("3 Std", "3 hrs")], [1440, tr("24 Std", "24 hrs")], [4320, tr("3 Tage", "3 days")], [10080, tr("7 Tage", "7 days")], [-1, "✏️ " + tr("Manuell", "Manual")]];
+    const UNITS = [[1, tr("Minuten", "Minutes")], [60, tr("Stunden", "Hours")], [1440, tr("Tage", "Days")]];
+    const pad2 = (n) => String(n).padStart(2, "0"), dtl = (ms) => { const d = new Date(ms); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + "T" + pad2(d.getHours()) + ":" + pad2(d.getMinutes()); };
+    const startDef = (() => { const d = new Date(Date.now() + 3600000); d.setMinutes(0, 0, 0); return d.getTime(); })();
     const TRY = [[1, tr("1 Versuch", "1 try")], [3, tr("3 Versuche", "3 tries")], [0, tr("Unbegrenzt", "Unlimited")]];
     openLayer('<span class="eyebrow">' + tr("Neues Turnier", "New tournament") + "</span><h2>" + tr("Turnier erstellen", "Create tournament") + "</h2>" +
       '<input class="flagq" id="tcName" maxlength="40" value="' + esc(tr("Turnier von @", "@") + (pr.uname || "") + tr("", "'s tournament")) + '">' +
       '<p class="tu-lbl">' + tr("Spiele · 1 bis alle", "Games · 1 to all") + ' <button class="link tu-all" id="tcAll" type="button">' + tr("Alle wählen", "Select all") + "</button>" + '</p><div class="tu-pick" id="tcModes"></div>' +
+      '<p class="tu-lbl">' + tr("Start", "Start") + '</p><div class="seg two"><button type="button" id="tcNow" class="on">' + tr("Sofort", "Now") + '</button><button type="button" id="tcPlan">📅 ' + tr("Planen", "Schedule") + "</button></div>" +
+      '<input class="flagq tu-maxin" id="tcStart" type="datetime-local" hidden value="' + dtl(startDef) + '" min="' + dtl(Date.now()) + '" max="' + dtl(Date.now() + 90 * 86400000) + '">' +
       '<p class="tu-lbl">' + tr("Dauer", "Duration") + '</p><div class="tu-pick" id="tcDur"></div>' +
+      '<div class="tu-cdur" id="tcCdur" hidden><input class="flagq" id="tcCn" type="number" inputmode="numeric" min="1" max="999" value="2"><div class="tu-pick" id="tcCu"></div></div>' +
       '<p class="tu-lbl">' + tr("Versuche pro Modus", "Tries per mode") + '</p><div class="tu-pick" id="tcTry"></div>' +
       '<p class="tu-lbl">' + tr("Max. Spieler", "Max. players") + '</p><div class="tu-pick" id="tcMax"></div><input class="flagq tu-maxin" id="tcMaxIn" type="number" inputmode="numeric" min="1" max="100000" placeholder="' + esc(tr("Eigene Zahl, z. B. 20", "Own number, e.g. 20")) + '">' +
+      '<p class="tu-lbl">' + tr("Startgebühr", "Entry fee") + '</p><div class="tu-pick" id="tcFee"></div><input class="flagq tu-maxin" id="tcFeeIn" type="number" inputmode="numeric" min="1" max="100000" placeholder="' + esc(tr("Eigener Betrag in Münzen", "Own amount in coins")) + '">' +
+      '<p class="note" id="tcFeeNote"></p>' +
+      '<p class="tu-lbl">' + tr("Preise für die Gewinner (optional)", "Prizes for the winners (optional)") + "</p>" +
+      '<div class="tu-prz">' + ["🥇", "🥈", "🥉"].map((e, i) => '<label><span>' + e + '</span><input class="flagq" id="tcP' + i + '" maxlength="60" autocomplete="off" placeholder="' + esc(i === 0 ? tr("z. B. 100 €, iPhone, Gutschein", "e.g. €100, iPhone, voucher") : tr("optional", "optional")) + '"></label>').join("") + "</div>" +
+      '<p class="note" id="tcPrzNote"></p>' +
       '<p class="note" id="tcNote"></p>' +
       '<button class="btn" id="tcGo" type="button">' + tr("Starten und Code teilen", "Start and share code") + '</button><button class="link" id="tcX" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
     const draw = () => {
       const m = $("tcModes"); m.innerHTML = "";
       ORDER.forEach((id) => { const b = h("button", "chip" + (modes.includes(id) ? " on" : "")); b.type = "button"; b.textContent = MODES[id].name; b.addEventListener("click", () => { if (modes.includes(id)) { if (modes.length > 1) modes = modes.filter((x) => x !== id); } else modes = modes.concat(id); $("tcNote").textContent = ""; draw(); }); m.appendChild(b); });
-      const d = $("tcDur"); d.innerHTML = ""; DUR.forEach(([v, l]) => { const b = h("button", "chip" + (dur === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { dur = v; draw(); }); d.appendChild(b); });
+      const d = $("tcDur"); d.innerHTML = ""; DUR.forEach(([v, l]) => { const b = h("button", "chip" + (dur === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { dur = v; draw(); if (v === -1) { const ci = $("tcCn"); if (ci) ci.focus(); } }); d.appendChild(b); });
+      $("tcCdur").hidden = dur !== -1;
+      const cu = $("tcCu"); cu.innerHTML = ""; UNITS.forEach(([v, l]) => { const b = h("button", "chip" + (cdur.u === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { cdur.u = v; draw(); }); cu.appendChild(b); });
+      $("tcNow").classList.toggle("on", !plan); $("tcPlan").classList.toggle("on", plan); $("tcStart").hidden = !plan;
+      const fe = $("tcFee"); fe.innerHTML = ""; FEES.forEach((v) => { const b = h("button", "chip" + (fee === v ? " on" : "")); b.type = "button"; b.textContent = v ? fmtN(v) + " 🪙" : tr("Kostenlos", "Free"); b.addEventListener("click", () => { fee = v; const fi = $("tcFeeIn"); if (fi) fi.value = v ? v : ""; draw(); }); fe.appendChild(b); });
+      const paidT = fee > 0; [0, 1, 2].forEach((i) => { const x = $("tcP" + i); if (x) x.disabled = paidT; });
+      $("tcPrzNote").textContent = paidT ? tr("Sachpreise gehen nur bei kostenlosen Turnieren. Mit Startgebühr wäre es rechtlich ein Glücksspiel.", "Real prizes only work in free tournaments. With an entry fee it would legally count as gambling.") : tr("Die Preise vergibst du selbst als Veranstalter, nicht ZACK!. Gewinner ist, wer am Ende vorne steht – keine Verlosung.", "You give out the prizes yourself as the organiser, not ZACK!. Winners are whoever is on top at the end – no raffle.");
+      $("tcFeeNote").textContent = fee ? tr("Pro Spieler ", "Per player ") + fmtN(fee) + tr(" Münzen: 70 % (", " coins: 70% (") + fmtN(Math.floor(fee * (1 - TU_FEE_ZACK))) + tr(") bekommst du, 30 % gehen an ZACK!.", ") goes to you, 30% to ZACK!.") : tr("Kostenlos: jeder kann ohne Münzen mitmachen.", "Free: anyone can join without coins.");
       const t = $("tcTry"); t.innerHTML = ""; TRY.forEach(([v, l]) => { const b = h("button", "chip" + (tries === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { tries = v; draw(); }); t.appendChild(b); });
       const mx = $("tcMax"); mx.innerHTML = ""; [[0, "∞ " + tr("Unbegrenzt", "Unlimited")]].concat(MAXQ.map((v) => [v, String(v)])).forEach(([v, l]) => { const b = h("button", "chip" + (max === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { max = v; const mi = $("tcMaxIn"); if (mi) mi.value = v ? v : ""; draw(); }); mx.appendChild(b); });
     };
     draw();
     on("tcAll", () => { modes = modes.length === ORDER.length ? [ORDER[0]] : ORDER.slice(); const a = $("tcAll"); if (a) a.textContent = modes.length === ORDER.length ? tr("Nur eins", "Just one") : tr("Alle wählen", "Select all"); draw(); });
+    on("tcNow", () => { plan = false; draw(); });
+    on("tcPlan", () => { plan = true; draw(); });
+    $("tcCn").addEventListener("input", (e) => { const v = Math.floor(Number(e.target.value)); cdur.n = Number.isFinite(v) && v > 0 ? Math.min(999, v) : 0; });
+    $("tcFeeIn").addEventListener("input", (e) => { const v = Math.floor(Number(e.target.value)); fee = Number.isFinite(v) && v >= 1 ? Math.min(100000, v) : 0; draw(); });
     $("tcMaxIn").addEventListener("input", (e) => { const v = Math.floor(Number(e.target.value)); max = Number.isFinite(v) && v >= 1 ? Math.min(100000, v) : 0; draw(); });
     on("tcX", closeLayer);
     on("tcGo", async () => {
       const btn = $("tcGo"); btn.disabled = true;
       const now = Date.now();
       const name = ($("tcName").value || "").replace(/\s+/g, " ").trim().slice(0, 40) || "ZACK!";
-      const t = { code: tuCode(), name, modes: ORDER.filter((x) => modes.includes(x)), seed: rand32(), tries, max, ends: now + dur * 60000, created: now, host: NET.me, hname: pr.uname || null };
-      try { await NET.db.doc("tourneys/" + NET.me).set(t); }
+      const mins = dur === -1 ? cdur.n * cdur.u : dur;
+      if (!(mins >= 5 && mins <= 30 * 1440)) { btn.disabled = false; $("tcNote").textContent = tr("Die Dauer muss zwischen 5 Minuten und 30 Tagen liegen.", "Duration must be between 5 minutes and 30 days."); return; }
+      let starts = now;
+      if (plan) { starts = new Date($("tcStart").value).getTime(); if (!Number.isFinite(starts) || starts < now + 60000 || starts > now + 90 * 86400000) { btn.disabled = false; $("tcNote").textContent = tr("Wähle einen Startzeitpunkt in der Zukunft (höchstens 90 Tage).", "Pick a start time in the future (max. 90 days)."); return; } }
+      const prizes = fee ? [] : [0, 1, 2].map((i) => ($("tcP" + i).value || "").replace(/\s+/g, " ").trim().slice(0, 60));
+      while (prizes.length && !prizes[prizes.length - 1]) prizes.pop();
+      const t = { v: 2, code: tuCode(), name, modes: ORDER.filter((x) => modes.includes(x)), seed: rand32(), tries, max, fee, prizes, claimed: 0, starts, ends: starts + mins * 60000, created: now, host: NET.me, hname: pr.uname || null };
+      // Neue Speicherart (mehrere Turniere); solange die neuen Regeln nicht aktiv sind, alte Art (ein Turnier pro Gastgeber)
+      try { try { await NET.db.doc("tourneys/" + tourId(t)).set(t); } catch (e1) { delete t.v; await NET.db.doc("tourneys/" + NET.me).set(t); } }
       catch (e) { btn.disabled = false; $("tcNote").textContent = tr("Speichern ging nicht. Du brauchst Bearbeiten-Rechte für diese Version.", "Couldn't save. You need edit access to this version."); return; }
       closeLayer(); tuWatch(t);
       await tuWrite({});
@@ -4632,7 +4710,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   function tuInvite() {
     const t = TU.t; if (!t) return;
-    shareOut(tr("Mach mit bei meinem ZACK!-Turnier „", "Join my ZACK! tournament \"") + t.name + tr("“. Code: ", "\". Code: ") + t.code + tr(" · Turnier öffnen, Code eingeben, los.", " · Open Tournament, enter the code, go."), appLink() + "?t=" + t.code, () => { closeLayer(); renderTour(); });
+    shareOut(tr("Mach mit bei meinem ZACK!-Turnier „", "Join my ZACK! tournament \"") + t.name + tr("“. Code: ", "\". Code: ") + t.code + (t.prizes && t.prizes[0] ? " · 🥇 " + t.prizes[0] : "") + tr(" · Turnier öffnen, Code eingeben, los.", " · Open Tournament, enter the code, go."), appLink() + "?t=" + t.code, () => { closeLayer(); renderTour(); });
   }
 
   function renderTour() {
@@ -4645,26 +4723,41 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const st = tuStandings(t, TU.entries);
     body.innerHTML = "";
     const head = h("div", "tu-head");
-    head.innerHTML = '<div class="tu-hl"><span class="eyebrow">' + (ended ? tr("Turnier beendet", "Tournament finished") : tr("Turnier läuft", "Tournament live")) + " · " + TU.entries.length + (t.max ? " / " + t.max : "") + tr(" dabei", " in") + "</span><h3>" + esc(t.name || "ZACK!") + "</h3><small>" +
-      (t.hname ? tr("von @", "by @") + esc(t.hname) + " · " : "") + (t.tries ? t.tries + (t.tries === 1 ? tr(" Versuch", " try") : tr(" Versuche", " tries")) + tr(" pro Modus", " per mode") : tr("unbegrenzt Versuche", "unlimited tries")) + (t.max ? " · " + tr("Max. Spieler", "Max. players") + ": " + t.max : "") + '</small></div><div class="tu-code"><small>Code</small><b>' + t.code + "</b></div>";
+    const waitStart = tuNotYet(t);
+    head.innerHTML = '<div class="tu-hl"><span class="eyebrow">' + (ended ? tr("Turnier beendet", "Tournament finished") : waitStart ? tr("Geplant · startet ", "Scheduled · starts ") + esc(fmtWhen(tuStart(t))) : tr("Turnier läuft", "Tournament live")) + " · " + TU.entries.length + (t.max ? " / " + t.max : "") + tr(" dabei", " in") + "</span><h3>" + esc(t.name || "ZACK!") + "</h3><small>" +
+      (t.hname ? tr("von @", "by @") + esc(t.hname) + " · " : "") + (t.tries ? t.tries + (t.tries === 1 ? tr(" Versuch", " try") : tr(" Versuche", " tries")) + tr(" pro Modus", " per mode") : tr("unbegrenzt Versuche", "unlimited tries")) + (t.max ? " · " + tr("Max. Spieler", "Max. players") + ": " + t.max : "") + " · " + (t.fee ? tr("Startgebühr: ", "Entry fee: ") + fmtN(t.fee) + " 🪙" : tr("Kostenlos", "Free")) + '</small></div><div class="tu-code"><small>Code</small><b>' + t.code + "</b></div>";
     body.appendChild(head);
     const acts = h("div", "row2");
     acts.innerHTML = '<button class="btn ghost" id="tuInv" type="button">' + tr("Einladen", "Invite") + '</button><button class="btn ghost" id="tuTV" type="button">' + tr("Stream-Ansicht", "Stream view") + "</button>";
     body.appendChild(acts);
     const expl = h("p", "note"); expl.textContent = tr("Stream-Ansicht: großer Bildschirm mit Code, Restzeit und Top 10, der sich live aktualisiert. Zum Zeigen im Stream (z. B. über OBS) oder auf einem Fernseher.", "Stream view: a big screen with code, time left and top 10 that updates live. For showing on stream (e.g. via OBS) or on a TV.");
     body.appendChild(expl);
+    const pz = (t.prizes || []).map((x, i) => [x, i]).filter(([x]) => x);
+    if (pz.length) {
+      const box = h("div", "tu-prizes");
+      box.innerHTML = "<b>🏆 " + tr("Preise", "Prizes") + "</b>" + pz.map(([x, i]) => { const w = ended && st.played[i] ? " · @" + esc(st.played[i].e.uname) : ""; return '<div class="tu-pz"><span>' + ["🥇", "🥈", "🥉"][i] + "</span><span>" + esc(x) + "</span><small>" + w + "</small></div>"; }).join("") +
+        "<small>" + tr("Preise vergibt der Veranstalter", "Prizes are given by the organiser") + (t.hname ? " @" + esc(t.hname) : "") + tr(", nicht ZACK!.", ", not ZACK!.") + "</small>";
+      body.appendChild(box);
+    }
     if (ended) { const en = h("p", "tu-ended"); en.textContent = tr("Die Zeit ist abgelaufen, das Turnier ist vorbei. Die Rangliste unten ist das Endergebnis. Für eine neue Runde: „Neues Turnier“.", "Time's up, the tournament is over. The leaderboard below is the final result. For a new round: \"New tournament\"."); body.appendChild(en); }
     const full = !!t.max && TU.entries.length >= t.max;
     if (!joined && !ended && full) { const f = h("p", "tu-ended"); f.textContent = tr("Das Turnier ist voll.", "The tournament is full."); body.appendChild(f); }
     if (!joined && !ended && !full) {
-      const j = h("button", "btn"); j.type = "button"; j.id = "tuIn"; j.textContent = tr("Mitmachen", "Join in");
+      const j = h("button", "btn"); j.type = "button"; j.id = "tuIn"; j.textContent = (waitStart ? tr("Anmelden", "Register") : tr("Mitmachen", "Join in")) + (t.fee ? " · " + fmtN(t.fee) + " 🪙" : "");
       body.appendChild(j);
+    }
+    if (joined && waitStart) { const w = h("p", "tu-ended ok"); w.textContent = tr("Du bist angemeldet ✓ Los geht's ", "You're registered ✓ It starts ") + fmtWhen(tuStart(t)) + "."; body.appendChild(w); }
+    if (host && t.fee) {
+      const total = TU.entries.filter((e) => e.uid !== t.host).reduce((a, e) => a + (e.paid || 0), 0), mine = Math.floor(total * (1 - TU_FEE_ZACK)), open = Math.max(0, mine - (t.claimed || 0));
+      const eb = h("div", "tu-earn");
+      eb.innerHTML = "<div><b>" + tr("Deine Einnahmen: ", "Your earnings: ") + fmtN(mine) + " 🪙</b><small>" + tr("70 % von ", "70% of ") + fmtN(total) + tr(" Münzen Startgebühren · 30 % gehen an ZACK!", " coins in entry fees · 30% goes to ZACK!") + "</small></div>" + (open ? '<button class="btn" id="tuClaim" type="button">' + tr("Abholen", "Collect") + " +" + fmtN(open) + "</button>" : "");
+      body.appendChild(eb);
     }
     const ml = h("div", "slist");
     t.modes.forEach((m) => {
       const r = (me && me.r[m]) || { v: null, n: 0 }, left = t.tries ? Math.max(0, t.tries - r.n) : null;
       const row = h("div", "tu-mode");
-      const can = joined && !ended && (left == null || left > 0);
+      const can = joined && !ended && !waitStart && (left == null || left > 0);
       row.innerHTML = '<div class="tu-mt"><b>' + esc(MODES[m].name) + "</b><small>" + (r.v == null ? tr("Noch nicht gespielt", "Not played yet") : tr("Dein Bestes: ", "Your best: ") + fmtVal(m, r.v)) + ", " + (left == null ? tr("unbegrenzt Versuche", "unlimited tries") : left === 1 ? tr("noch 1 Versuch", "1 try left") : tr("noch ", "") + left + tr(" Versuche", " tries left")) + "</small></div>";
       const b = h("button", "pill" + (can ? " go" : "")); b.type = "button"; b.textContent = tr("Spielen", "Play"); b.disabled = !can;
       b.addEventListener("click", () => tuPlay(m));
@@ -4683,15 +4776,28 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     body.appendChild(foot);
     on("tuInv", tuInvite);
     on("tuTV", () => { TU.tv = true; renderTV(); });
-    on("tuIn", async () => { if (tuNeedName()) return; const b = $("tuIn"); if (b) b.disabled = true;
+    on("tuClaim", async () => {
+      const b = $("tuClaim"); if (b) b.disabled = true;
+      const total = TU.entries.filter((e) => e.uid !== t.host).reduce((a, e) => a + (e.paid || 0), 0), mine = Math.floor(total * (1 - TU_FEE_ZACK)), open = Math.max(0, mine - (t.claimed || 0));
+      if (!open) return;
+      try { await NET.db.doc("tourneys/" + tuDoc(t)).set(Object.assign({}, t, { claimed: mine })); W.coins += open; renderWallet(); SFX.coin(); buzz([20, 40, 20]); zToast("+" + fmtN(open) + " 🪙"); } catch (e) { if (b) b.disabled = false; }
+    });
+    on("tuIn", async () => { if (tuNeedName()) return;
+      if (t.fee && !myEntry()) {
+        if (W.coins < t.fee) { openLayer('<span class="eyebrow">' + tr("Startgebühr", "Entry fee") + "</span><h2>" + fmtN(t.fee) + " 🪙</h2><p>" + tr("Du hast nur ", "You only have ") + fmtN(W.coins) + tr(" Münzen.", " coins.") + '</p><button class="btn" id="tfShop" type="button">' + tr("Münzen holen", "Get coins") + '</button><button class="link" id="tfX" type="button">' + tr("Abbrechen", "Cancel") + "</button>"); on("tfShop", () => showShop(() => { closeLayer(); renderTour(); })); on("tfX", closeLayer); return; }
+        const okPay = await new Promise((res) => { openLayer('<span class="eyebrow">' + tr("Startgebühr", "Entry fee") + "</span><h2>" + fmtN(t.fee) + " 🪙</h2><p>" + tr("Du hast ", "You have ") + fmtN(W.coins) + tr(" Münzen. Die Gebühr wird beim Anmelden abgezogen.", " coins. The fee is taken when you sign up.") + '</p><button class="btn" id="tfOk" type="button">' + tr("Bezahlen und mitmachen", "Pay and join") + '</button><button class="link" id="tfX" type="button">' + tr("Abbrechen", "Cancel") + "</button>"); on("tfOk", () => { closeLayer(); res(true); }); on("tfX", () => { closeLayer(); res(false); }); });
+        if (!okPay) return;
+      }
+      const b = $("tuIn"); if (b) b.disabled = true;
       if (t.max) { try { const q = await NET.db.collection("tentries").where("t", "==", tourId(t)).limit(t.max + 1).get(); if (q.size >= t.max) { note(tr("Das Turnier ist voll.", "The tournament is full."), tr("Alle Plätze sind schon vergeben.", "All spots are already taken.")); renderTour(); return; } } catch (e) {} }
-      const ok = await tuWrite({}); if (!ok) note(tr("Beitreten ging nicht", "Couldn't join"), tr("Du brauchst Bearbeiten-Rechte für diese geteilte Version.", "You need edit access to this shared version.")); renderTour(); });
-    on("tuEnd", async () => { try { await NET.db.doc("tourneys/" + NET.me).set(Object.assign({}, t, { ends: Date.now() })); } catch (e) {} });
+      const fee = t.fee && !myEntry() ? t.fee : 0;
+      const ok = await tuWrite({}, fee); if (ok && fee) { W.coins = Math.max(0, W.coins - fee); renderWallet(); } if (!ok) note(tr("Beitreten ging nicht", "Couldn't join"), tr("Du brauchst Bearbeiten-Rechte für diese geteilte Version.", "You need edit access to this shared version.")); renderTour(); });
+    on("tuEnd", async () => { try { await NET.db.doc("tourneys/" + tuDoc(t)).set(Object.assign({}, t, { ends: Date.now(), starts: Math.min(tuStart(t), Date.now()) })); } catch (e) {} });
     on("tuNew2", () => { if (!tuNeedName()) tuCreateSheet(); });
-    on("tuLeave", () => { tuUnsub(); TU.t = null; TU.entries = []; store.set("tour:last", null); renderTourHome(); });
+    on("tuLeave", () => { tuUnsub(); TU.t = null; TU.entries = []; store.set("tour:last", null); renderTourHome(); tuMineList(); });
   }
   function tuRow(t, st, x, i, big) {
-    const d = x.e, r = h("div", "rrow" + (d.id === NET.me ? " me" : "") + (i < 3 ? " top" + (i + 1) : "") + (big ? " tvrow" : ""));
+    const d = x.e, r = h("div", "rrow" + (d.uid === NET.me ? " me" : "") + (i < 3 ? " top" + (i + 1) : "") + (big ? " tvrow" : ""));
     const rk = h("b", "rk"); rk.textContent = i + 1;
     const img = h("img"); img.alt = ""; paintAvatar(img, d);
     const nm = h("span", "rn"); nm.textContent = "@" + d.uname; appendFlags(nm, d.flags);
@@ -4714,7 +4820,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   function tuPlay(m) {
     const t = TU.t, me = myEntry(); if (!t || !me) return;
-    if (tuEnded(t)) { renderTour(); return; }
+    if (tuEnded(t) || tuNotYet(t)) { renderTour(); return; }
     const r = Object.assign({}, me.r), cur = r[m] || { v: null, n: 0 };
     if (t.tries && cur.n >= t.tries) return;
     r[m] = { v: cur.v, n: cur.n + 1 };
@@ -4733,7 +4839,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const v = res.value;
     const better = v != null && (lower || v > 0) && (cur.v == null || (lower ? v < cur.v : v > cur.v));
     if (better && Date.now() <= t.ends + 15000) { r[m] = { v, n: cur.n }; tuWrite(r); }
-    const st = tuStandings(t, TU.entries), pos = st.played.findIndex((x) => x.e.id === NET.me);
+    const st = tuStandings(t, TU.entries), pos = st.played.findIndex((x) => x.e.uid === NET.me);
     info.title = better ? tr("Neues Turnier-Bestes", "New tournament best") : tr("Turnier-Runde vorbei", "Tournament round over");
     info.sub = (pos >= 0 ? tr("Platz ", "Place ") + (pos + 1) + tr(" von ", " of ") + st.played.length : "") + (cur.v != null && !better ? (pos >= 0 ? " · " : "") + tr("dein Bestes bleibt ", "your best stays ") + fmtVal(m, cur.v) : "");
   }
