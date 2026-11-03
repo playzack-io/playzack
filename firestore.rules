@@ -40,6 +40,15 @@ service cloud.firestore {
       allow update: if signedIn() && resource.data.host == request.auth.uid && request.resource.data.host == request.auth.uid;
       allow delete: if signedIn() && resource.data.host == request.auth.uid;
     }
+    // Turnier-Preise: Freigabe/Sperre und verifizierte Veranstalter setzt nur der Admin; Meldungen liest nur der Admin
+    match /prizecheck/{id} { allow read: if signedIn(); allow write: if isAdmin(); }
+    match /verified/{uid} { allow read: if signedIn(); allow write: if isAdmin(); }
+    match /treports/{id} {
+      allow read, update: if isAdmin();
+      allow create: if signedIn() && request.resource.data.by == request.auth.uid && request.resource.data.status == 'neu'
+        && request.resource.data.keys().hasOnly(['by', 'tid', 'tname', 'host', 'why', 'txt', 'at', 'status'])
+        && request.resource.data.txt is string && request.resource.data.txt.size() <= 300 && request.resource.data.why in ['prize', 'name', 'other'];
+    }
     // Teilnahmen: eine pro Spieler und Turnier (alt: Dokument = uid, neu: turnierId_uid)
     match /tentries/{id} {
       allow read: if signedIn();
