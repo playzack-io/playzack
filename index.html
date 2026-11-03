@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.3.1"></script>
-<script src="backend.js?v=2.3.1"></script>
+<script src="config.js?v=2.4.0"></script>
+<script src="backend.js?v=2.4.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -752,6 +752,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 /* Konto */
 .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .soc-tabs { margin-bottom: 4px; }
+.rlv { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+.sw-bot { font-size: 11px; font-weight: 800; letter-spacing: .06em; padding: 2px 7px; border-radius: 99px; background: var(--housing); border: 1px solid var(--line); color: var(--muted); vertical-align: middle; margin-left: 6px; }
 #socMain:not([hidden]) { display: contents; }
 .zt { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); opacity: 0; z-index: 60; padding: 10px 16px; border-radius: 99px; background: var(--chalk); color: #111; font-weight: 800; font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .4); transition: opacity .2s, transform .2s; pointer-events: none; max-width: calc(100% - 32px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .zt.on { opacity: 1; transform: translate(-50%, 0); }
@@ -1216,7 +1218,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "5";
+  const I18N_VER = "6";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -2738,7 +2740,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const t = TAUNTS[Math.floor(Math.random() * TAUNTS.length)];
       const meName = (profile() || {}).uname ? "@" + profile().uname : tr("du", "you");
       const taunt = kind === "record" ? tr("Neuer Bestwert 🏁", "New personal best 🏁") : lose ? L(t).replace("{n}", meName) : opp ? L(t).replace("{n}", opp) : tr("Gas gegeben! 🏎️", "Full throttle! 🏎️");
-      const wName = lose ? (w.bot ? "Bot" : w.name || opp || tr("Gegner", "Opponent")) : "";
+      const wName = lose ? (w.bot ? (w.named ? w.name + " · Bot" : "Bot") : w.name || opp || tr("Gegner", "Opponent")) : "";
       const cols = pal.concat(["#ffffff", pal[0], pal[1]]);
       v.innerHTML = '<div class="vfx-rays"></div>' +
         '<div class="vfx-lines">' + Array.from({ length: 14 }, (_, i) => '<b style="--y:' + (8 + Math.random() * 84).toFixed(1) + "%;--d:" + (Math.random() * 0.9).toFixed(2) + "s;--w:" + (60 + Math.random() * 140).toFixed(0) + "px;--c:" + pal[i % 3] + '"></b>').join("") + "</div>" +
@@ -3557,7 +3559,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const D = info.duel, m = MODES[D.mode];
     if (D.won) { setTimeout(() => victoryFX("win", D.oppName || (D.kind === "bot" ? "Bot" : "")), 30); }
     else if (D.draw) SFX.coin();
-    else { const op = D.kind === "bot" ? { bot: true, name: "Bot" } : Object.assign({}, D.oppProf || {}, { name: (D.oppProf && D.oppProf.name) || D.oppName }); setTimeout(() => victoryFX("lose", D.oppName, op), 30); }
+    else { const op = D.kind === "bot" ? Object.assign({ bot: true, name: "Bot" }, D.oppProf || {}) : Object.assign({}, D.oppProf || {}, { name: (D.oppProf && D.oppProf.name) || D.oppName }); setTimeout(() => victoryFX("lose", D.oppName, op), 30); }
     buzz(D.won ? [20, 40, 20, 40, 60] : 60);
     const cls = D.won ? "dwin" : D.draw ? "ddraw" : "dlose";
     const unit = info.unit ? "<small>" + esc(info.unit) + "</small>" : "";
@@ -3586,7 +3588,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     on("rsRematch", () => {
       if (D.kind === "live") { reClick(); return; }
       leaveDuel(false); closeLayer();
-      if (D.kind === "bot") launchBot(D.mode);
+      if (D.kind === "bot") launchBot(D.mode, D.botProf || null);
       else if (D.oppBy) asyncChallenge(D.oppBy, D.mode, D.oppName);
       else startSeek(D.mode);
     });
@@ -3697,7 +3699,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (typeof best === "number" && isFinite(best)) parts.push(tr("Rekord ", "Best ") + fmtVal(mode, best));
     return parts.join(" · ");
   }
-  function vsAvatar(img, p) { if (p && p.bot) img.src = BOT_AV; else paintAvatar(img, p || {}); }
+  function vsAvatar(img, p) { if (p && p.bot && !p.named) img.src = BOT_AV; else paintAvatar(img, p || {}); }
   function vsSide(cls, p, tag, sub) {
     const d = h("div", "vs-half " + cls), img = h("img"); img.alt = ""; vsAvatar(img, p);
     const tx = h("div", "vs-tx"), i = h("i"), b = h("b"), sp = h("span");
@@ -4195,17 +4197,44 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   // ---------- Bot: passt sich deinem Niveau an, bleibt aber knapp vor dir ----------
   const BOT_BASE = { ausweichen: [28, 50000], helmflug: [12, 40000], klicks: [70, 10800], merken: [20, 60000], ballon: [540, 36000], turm: [25, 45000], ziele: [25, 40000], farbwort: [15, 35000], taeuschung: [15, 40000], lanes: [30, 40000], augenwinkel: [15, 35000], praezision: [120, 30000], startampel: [330, 0], stoppuhr: [93, 0] };
+  // 100 Bot-Spieler mit Namen, Skins, Flaggen und unterschiedlichem Niveau – überall mit „Bot“ gekennzeichnet
+  const BOT_ROSTER = (() => {
+    let sd = 20261103; const r = () => { sd = (sd * 1664525 + 1013904223) >>> 0; return sd / 4294967296; };
+    const pick = (a) => a[Math.floor(r() * a.length)];
+    const FIRST = ["luca", "mia", "noah", "emma", "leo", "lina", "finn", "ella", "ben", "sofia", "kaan", "elif", "yusuf", "zeynep", "omar", "layla", "mateo", "lucia", "hugo", "chloe", "jonas", "nora", "milan", "aria", "ivan", "olga", "kenji", "yuki", "minho", "jisoo", "arjun", "priya", "rafa", "bruna", "tariq", "amira", "nico", "alva", "emil", "maja", "deniz", "can", "lea", "max", "tom", "anna", "sami", "rio", "zoe", "dani", "mert", "ayla", "jan", "ole", "vika", "lars", "nina", "eli", "tim", "lou"];
+    const TAIL = ["fast", "zx", "pro", "07", "99", "ace", "flash", "neo", "x", "2k", "fox", "gg", "run", "zap", "one", "blitz", "dash", "hd", "go", "max", "11", "23", "88", "_tv", "lab", "ttv", "kid", "jr"];
+    const CC = ["DE", "DE", "DE", "DE", "TR", "TR", "US", "US", "BR", "ES", "FR", "IT", "PL", "NL", "GB", "AT", "CH", "IN", "ID", "JP", "KR", "MX", "AR", "EG", "SA", "VN", "TH", "UA", "IR", "MA", "RU", "SE", "PT", "GR", "RO", "X-KUR"];
+    const SK = SPECIALS.filter((x) => x.r !== "m" && x.how !== "story").map((x) => "s:" + x.id);
+    const out = [], used = new Set();
+    for (let i = 0; out.length < 100 && i < 400; i++) {
+      const f = pick(FIRST), u = (f + (r() < 0.5 ? (r() < 0.5 ? "_" : ".") : "") + pick(TAIL)).replace(/[^a-z0-9_.]/g, "").slice(0, 16);
+      if (!UNAME_RE.test(u) || used.has(u)) continue; used.add(u);
+      const skill = 0.5 + Math.pow(r(), 1.1) * 0.75; // 0.5 (Anfänger) … 1.25 (stark)
+      const lvl = Math.max(1, Math.min(60, Math.round(Math.pow(skill, 3) * 18 * (0.6 + r() * 0.8))));
+      const cc = pick(CC), z = r();
+      const sk = z < 0.45 ? "c:" + cc : z < 0.85 ? pick(SK) : null;
+      const bests = {};
+      Object.keys(BOT_BASE).forEach((m) => {
+        if (!MODES[m] || r() > 0.8) return;
+        const b = BOT_BASE[m][0], w = 0.88 + r() * 0.24;
+        bests[m] = m === "stoppuhr" ? Math.round(Math.min(99.6, 82 + skill * 11 * w) * 10) / 10 : MODES[m].lower ? Math.max(m === "startampel" ? 185 : 8, Math.round(b / skill * w)) : Math.max(3, Math.round(b * skill * w));
+      });
+      out.push({ id: "bot:" + u, uname: u, name: "@" + u, bot: true, named: true, skill, lvl, sk, flags: [cc], av: Math.floor(r() * 8), bests });
+    }
+    return out;
+  })();
+  const botById = (id) => BOT_ROSTER.find((b) => b.id === id) || null;
   function recordSkill(mode, value, dur) {
     if (value == null || !BOT_BASE[mode]) return;
     const sk = store.get("skill:" + mode, []); sk.push(value); store.set("skill:" + mode, sk.slice(-6));
     if (dur > 3000) { const d = store.get("dur:" + mode, []); d.push(Math.round(dur)); store.set("dur:" + mode, d.slice(-6)); }
   }
   const avgOf = (a) => a.reduce((x, y) => x + y, 0) / a.length;
-  function makeBot(mode) {
+  function makeBot(mode, target) {
     const m = MODES[mode], base = BOT_BASE[mode];
     const sk = store.get("skill:" + mode, []), du = store.get("dur:" + mode, []);
-    const lvl = sk.length ? avgOf(sk) : base[0];
-    const adj = store.get("botAdj:" + mode, 1.06);
+    const lvl = target != null ? target : sk.length ? avgOf(sk) : base[0];
+    const adj = target != null ? 0.97 : store.get("botAdj:" + mode, 1.06);
     const wobble = 0.92 + Math.random() * 0.16;
     if (mode === "stoppuhr") return { v: Math.min(99.8, Math.round(Math.min(99.5, lvl * (0.98 + (adj - 1) * 0.3 + Math.random() * 0.03)) * 10) / 10), t: null, end: 0 };
     if (m.lower) {
@@ -4223,13 +4252,30 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     times.forEach((ms, i) => t.push([Math.round(ms), steps ? steps[i] : i + 1]));
     return { v, t, end: Math.round(D) };
   }
-  function launchBot(mode) {
-    const b = makeBot(mode);
-    vsIntro({ mode, opp: { bot: true, name: "Bot" }, oppTag: "Bot", oppSub: tr("passt sich deinem Niveau an", "adapts to your level"), tag: "Bot" }, () => {
-      startMode(mode, { online: { kind: "bot", oppName: "Bot", oppT: b.t, oppValue: b.v, oppEnd: b.end, oppProf: { bot: true, name: "Bot" } } });
-      E.again = () => launchBot(mode);
+  // Zufälliger Gegner ohne Menschen online: ein Bot aus der Liste, der zu deinem Niveau passt
+  function botNear(mode) {
+    const sk = store.get("skill:" + mode, []), mine = sk.length ? avgOf(sk) : BOT_BASE[mode][0];
+    const lower = MODES[mode].lower, dist = (b) => { const v = b.bests[mode] != null ? b.bests[mode] : BOT_BASE[mode][0] * (lower ? 1 / b.skill : b.skill); return Math.abs(Math.log(Math.max(0.1, v) / Math.max(0.1, mine))); };
+    const near = BOT_ROSTER.slice().sort((a, b) => dist(a) - dist(b)).slice(0, 12);
+    return near[Math.floor(Math.random() * near.length)];
+  }
+  function launchBot(mode, prof) {
+    // prof = bestimmter Bot (herausgefordert): spielt auf seinem eigenen Niveau. Ohne prof: passt sich deinem Niveau an.
+    const opp = prof || botNear(mode);
+    const target = prof ? (prof.bests[mode] != null ? prof.bests[mode] : BOT_BASE[mode][0] * (MODES[mode].lower ? 1 / prof.skill : prof.skill)) : null;
+    const b = makeBot(mode, target);
+    vsIntro({ mode, opp, oppTag: "Bot", oppSub: prof ? playerSub(opp, mode, false) : tr("passt sich deinem Niveau an", "adapts to your level"), tag: "Bot" }, () => {
+      startMode(mode, { online: { kind: "bot", oppName: opp.name, oppT: b.t, oppValue: b.v, oppEnd: b.end, oppProf: opp, botProf: prof || null } });
+      E.again = () => launchBot(mode, prof);
     });
   }
+  function chooseBotMode(prof) {
+    openLayer(tr("<span class=\"eyebrow\">Herausforderung</span><h2>", "<span class=\"eyebrow\">Challenge</span><h2>") + esc(prof.name) + " · Bot" + tr('</h2><p>Welcher Modus?</p><div class="modegrid" id="cmGrid"></div><button class="link" id="cmBack" type="button">Abbrechen</button>', "</h2><p>Which mode?</p><div class=\"modegrid\" id=\"cmGrid\"></div><button class=\"link\" id=\"cmBack\" type=\"button\">Cancel</button>"));
+    on("cmBack", closeLayer);
+    ORDER.forEach((mid) => { const b = h("button"); b.type = "button"; b.textContent = MODES[mid].name; b.addEventListener("click", () => { closeLayer(); launchBot(mid, prof); }); $("cmGrid").appendChild(b); });
+  }
+  const botFollows = () => (store.get("botFol", []) || []).filter((id) => botById(id));
+  function botFollow(id, on_) { const l = botFollows().filter((x) => x !== id); if (on_) l.push(id); store.set("botFol", l.slice(-100)); }
 
   // ---------- Online-Rundenende ----------
   async function onlineFinish(res, info, P) {
@@ -4283,7 +4329,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (wonFlag && info.earn) { W.coins += 20; info.earn.coins += 20; renderWallet(); }
     info.sub = o.oppName + ": " + (oppV == null ? "–" : oppV + " " + info.unit);
     info.followId = o.oppBy; info.followName = o.oppName;
-    info.duel = { mode: E.id, kind: o.kind, me, oppV, won: wonFlag && !(me != null && me === oppV), draw: me != null && me === oppV, gone, oppBy: o.oppBy || null, oppName: o.oppName, oppProf: o.oppProf || (o.kind === "bot" ? { bot: true, name: "Bot" } : null), oppPeer: o.kind === "live" && !gone ? o.oppPeer : null };
+    info.duel = { mode: E.id, kind: o.kind, me, oppV, won: wonFlag && !(me != null && me === oppV), draw: me != null && me === oppV, gone, oppBy: o.oppBy || null, oppName: o.oppName, oppProf: o.oppProf || (o.kind === "bot" ? { bot: true, name: "Bot" } : null), botProf: o.botProf || null, oppPeer: o.kind === "live" && !gone ? o.oppPeer : null };
     if (!info.againLabel) info.againLabel = tr("Neuer Gegner", "New opponent");
     info.share = tr("Online bei ZACK! (", "Online at ZACK! (") + m.name + "): " + res.text + " " + info.unit + " · " + title;
     setPresence({ st: "menu" });
@@ -4735,6 +4781,10 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     } catch (e) { list.innerHTML = ""; list.appendChild(empty(tr("Rangliste konnte nicht geladen werden.", "Couldn't load the leaderboard."))); return; }
     if (RK.mode !== mode) return;
     if (RK.scope === "friends") docs = docs.filter((d) => d.id === NET.me || NET.follows.includes(d.id));
+    if (RK.scope === "world" || RK.scope === "country") {
+      BOT_ROSTER.filter((b) => b.bests[mode] != null && (RK.scope === "world" || b.flags[0] === myFlag)).forEach((b) => docs.push({ id: b.id, uname: b.uname, flags: b.flags, sk: b.sk, av: b.av, lvl: b.lvl, bot: true, [field]: b.bests[mode] }));
+      docs.sort((a, b) => (m.lower ? a[field] - b[field] : b[field] - a[field]));
+    }
     docs = docs.filter((d) => typeof d.uname === "string" && UNAME_RE.test(d.uname) && Number.isFinite(d[field])).slice(0, 50);
     list.innerHTML = "";
     if (!docs.length) { list.appendChild(empty(tr("Noch keine Einträge. Spiel eine Runde und sei der Erste!", "No entries yet. Play a round and be the first!"))); return; }
@@ -4756,6 +4806,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const img = h("img"); img.alt = "";
       paintAvatar(img, d);
       const nm = h("span", "rn"); nm.textContent = "@" + d.uname; appendFlags(nm, d.flags);
+      if (d.lvl || d.bot) { const lv = h("small", "rlv"); lv.textContent = (d.bot ? "Bot" + (d.lvl ? " · " : "") : "") + (d.lvl ? tr("Stufe ", "Rank ") + d.lvl : ""); nm.appendChild(lv); }
       const v = h("span", "rv"); v.textContent = fmtVal(mode, d[field]);
       r.append(rk, img, nm, v); list.appendChild(r);
     });
@@ -4878,10 +4929,17 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     SW.tab = t === "find" ? "find" : "list";
     document.querySelectorAll("#socTabs [data-st]").forEach((b) => b.classList.toggle("on", b.dataset.st === SW.tab));
     $("socMain").hidden = SW.tab !== "list"; $("socFind").hidden = SW.tab !== "find";
-    if (SW.tab === "find") renderFind();
+    if (SW.tab === "find") renderFind(); else if (!$("social").hidden) renderSocial();
+  }
+  function botPool() {
+    const skip = store.get("swSkip", {}) || {}, fol = botFollows();
+    const list = BOT_ROSTER.filter((b) => !skip[b.id] && !fol.includes(b.id));
+    for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
+    return list.slice(0, 25);
   }
   async function loadFindPool() {
-    if (!NET.ok || SW.loading) return;
+    if (SW.loading) return;
+    if (!NET.ok) { SW.pool = botPool(); SW.loadedAt = Date.now(); return; }
     SW.loading = true;
     try {
       const skip = store.get("swSkip", {}) || {}, now = Date.now();
@@ -4889,7 +4947,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const q = await NET.db.collection("players").orderBy("seen", "desc").limit(60).get();
       const ids = q.docs.map((d) => d.id).filter((id) => id !== NET.me && !NET.follows.includes(id) && !skip[id]).slice(0, 30);
       const ps = await names(ids);
-      SW.pool = ids.filter((id) => ps[id]).map((id) => Object.assign({ id }, ps[id])).sort((a, b) => (!!peerOf(b.id) - !!peerOf(a.id)) || ((b.seen || 0) - (a.seen || 0)));
+      SW.pool = ids.filter((id) => ps[id]).map((id) => Object.assign({ id }, ps[id])).sort((a, b) => (!!peerOf(b.id) - !!peerOf(a.id)) || ((b.seen || 0) - (a.seen || 0))).concat(botPool());
       SW.loadedAt = Date.now();
     } catch (e) { SW.pool = []; }
     SW.loading = false;
@@ -4899,7 +4957,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const on = !!peerOf(p.id);
     const img = h("img"); img.alt = ""; if (on) img.classList.add("ring-on"); paintAvatar(img, p);
     const nm = h("div", "sw-name"); nm.textContent = nameOf(p); appendFlags(nm, p.flags);
-    const sub = h("div", "sw-sub"); sub.innerHTML = '<span class="sdot' + (on ? " on" : "") + '"></span>'; sub.appendChild(document.createTextNode(on ? "online" : fmtAgo(p.seen)));
+    if (p.bot) { const bt = h("span", "sw-bot"); bt.textContent = "BOT"; nm.appendChild(bt); }
+    const sub = h("div", "sw-sub"); if (p.bot) sub.textContent = tr("Bot · spielt auf seinem Niveau", "Bot · plays at its own level"); else { sub.innerHTML = '<span class="sdot' + (on ? " on" : "") + '"></span>'; sub.appendChild(document.createTextNode(on ? "online" : fmtAgo(p.seen))); }
     const rk = h("div", "sw-rank"); rk.textContent = tr("Stufe ", "Rank ") + (p.lvl || 1);
     const bests = h("div", "sw-bests");
     const bm = ORDER.filter((m) => p.bests && p.bests[m] != null).slice(0, 4);
@@ -4911,7 +4970,6 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   async function renderFind() {
     const box = $("socFind"); if (!box || box.hidden) return;
-    if (!NET.ok) { box.innerHTML = '<div class="sw-empty"><p>' + esc(offNote()) + "</p></div>"; return; }
     if (!SW.pool.length && !SW.loading && Date.now() - SW.loadedAt > 20000) { box.innerHTML = '<div class="sw-empty"><p>' + tr("Lade Spieler …", "Loading players …") + "</p></div>"; await loadFindPool(); if (SW.tab !== "find") return; }
     box.innerHTML = "";
     if (!SW.pool.length) {
@@ -4932,7 +4990,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     box.append(hint, stack, btns);
     bNo.addEventListener("click", () => swipeOut(card, -1, p));
     bFol.addEventListener("click", () => swipeOut(card, 1, p));
-    bYes.addEventListener("click", () => chooseModeFor(p.id, nameOf(p)));
+    bYes.addEventListener("click", () => (p.bot ? chooseBotMode(p) : chooseModeFor(p.id, nameOf(p))));
     // Wischen mit Finger oder Maus
     let x0 = null, y0 = 0, dx = 0, pid = null;
     const yes = card.querySelector(".sw-stamp.yes"), no = card.querySelector(".sw-stamp.no");
@@ -4951,7 +5009,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const skip = store.get("swSkip", {}) || {}; skip[p.id] = Date.now(); store.set("swSkip", skip);
     SW.pool = SW.pool.filter((x) => x.id !== p.id);
     const n = (store.get("swipes", 0) || 0) + 1; store.set("swipes", n);
-    if (dir > 0) { follow(p.id).then(() => zToast(tr("Du folgst ", "Following ") + nameOf(p) + " ✓")); }
+    if (dir > 0) { if (p.bot) { botFollow(p.id, true); zToast(tr("Du folgst ", "Following ") + nameOf(p) + " ✓"); } else follow(p.id).then(() => zToast(tr("Du folgst ", "Following ") + nameOf(p) + " ✓")); }
     setTimeout(() => {
       renderFind();
       // Nach jedem 8. Wisch ein Werbevideo – außer mit Werbefrei
@@ -4966,7 +5024,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     let avEl = img;
     if (p && online != null) { avEl = h("span", "avw"); img.title = online ? "online" : "offline"; avEl.append(img); }
     const tx = h("div", "stext"); const n = h("span", "sname"); n.textContent = nameOf(p); appendFlags(n, p && p.flags);
-    const s = h("span", "ssub"); s.innerHTML = online != null ? '<span class="sdot' + (online ? " on" : "") + '"></span>' : ""; s.appendChild(document.createTextNode(sub));
+    const s = h("span", "ssub"); s.innerHTML = online != null ? '<span class="sdot' + (online ? " on" : "") + '"></span>' : "";
+    const lv = p && p.lvl ? tr("Stufe ", "Rank ") + p.lvl : ""; s.appendChild(document.createTextNode(p && p.bot ? "Bot" + (lv ? " · " + lv : "") + (sub ? " · " + sub : "") : sub && lv ? sub + " · " + lv : sub || lv));
     tx.append(n, s);
     const bs = h("div", "sbtns");
     buttons.forEach(([label, fn, quiet, cls]) => { const b = h("button", "sbtn" + (quiet ? " quiet" : "") + (cls ? " " + cls : "")); b.type = "button"; b.textContent = label; b.addEventListener("click", fn); bs.appendChild(b); });
@@ -5008,7 +5067,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const p = peerOf(id), st2 = p && p.presence ? p.presence.st : null;
       const chatBtn = mutual(id) ? [[chatUnread(id) ? tr("Chat • neu", "Chat • new") : "Chat", () => openChat(id), false, chatUnread(id) ? "hot" : ""]] : [];
       return row(id, ps[id], p ? (st2 === "menu" ? "online" : st2 === "seek" ? tr("online · sucht Gegner", "online · looking for a match") : tr("online · spielt gerade", "online · playing")) : ago((ps[id] || {}).seen), chatBtn.concat([[tr("Herausfordern", "Challenge"), () => chooseModeFor(id, nameOf(ps[id]))], [tr("Entfolgen", "Unfollow"), () => unfollow(id), true]]), !!p);
-    }), NET.ok ? tr("Du folgst noch niemandem. Such unten nach Namen.", "You're not following anyone yet. Search for names below.") : "–");
+    }).concat(botFollows().map((bid) => { const b = botById(bid); return row(bid, b, "", [[tr("Herausfordern", "Challenge"), () => chooseBotMode(b)], [tr("Entfolgen", "Unfollow"), () => { botFollow(bid, false); renderSocial(); }, true]], null); })), NET.ok ? tr("Du folgst noch niemandem. Such unten nach Namen.", "You're not following anyone yet. Search for names below.") : "–");
     fill($("socFollowers"), NET.followers.map((id) => row(id, ps[id], NET.follows.includes(id) ? tr("ihr folgt euch", "you follow each other") : tr("folgt dir", "follows you"), NET.follows.includes(id) ? [] : [[tr("Folgen", "Follow"), () => follow(id)]], !!peerOf(id))), NET.ok ? tr("Noch niemand.", "Nobody yet.") : "–");
     fill($("socRecent"), recent.map((id) => row(id, ps[id], peerOf(id) ? "online" : tr("hat ZACK! gespielt", "played ZACK!"), [[tr("Folgen", "Follow"), () => follow(id)]], !!peerOf(id))), NET.ok ? tr("Noch keine anderen Spieler.", "No other players yet.") : "–");
     fill($("socSent"), NET.sent.slice().sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 20).map((c) => {
