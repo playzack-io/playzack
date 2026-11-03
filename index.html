@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.8.0"></script>
-<script src="backend.js?v=2.8.0"></script>
+<script src="config.js?v=2.9.0"></script>
+<script src="backend.js?v=2.9.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -1203,7 +1203,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   // ---------- Sprachen ----------
   // Deutsch ist das Original, Englisch der Schlüssel. Alle anderen Sprachen kommen als lang/xx.json (Englisch -> Übersetzung).
-  const LANGS = [["de", "Deutsch"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["it", "Italiano"], ["pt", "Português"], ["tr", "Türkçe"], ["pl", "Polski"], ["nl", "Nederlands"], ["ru", "Русский"], ["ar", "العربية"], ["hi", "हिन्दी"], ["id", "Bahasa Indonesia"], ["ja", "日本語"], ["ko", "한국어"], ["zh", "中文"], ["vi", "Tiếng Việt"], ["th", "ไทย"], ["uk", "Українська"], ["fa", "فارسی"]]; // KU_PENDING
+  const LANGS = [["de", "Deutsch"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["it", "Italiano"], ["pt", "Português"], ["tr", "Türkçe"], ["pl", "Polski"], ["nl", "Nederlands"], ["ru", "Русский"], ["ar", "العربية"], ["hi", "हिन्दी"], ["id", "Bahasa Indonesia"], ["ja", "日本語"], ["ko", "한국어"], ["zh", "中文"], ["vi", "Tiếng Việt"], ["th", "ไทย"], ["uk", "Українська"], ["fa", "فارسی"], ["ku", "Kurmancî"]];
   const LOCALE = { de: "de-DE", en: "en-US", es: "es-ES", fr: "fr-FR", it: "it-IT", pt: "pt-BR", tr: "tr-TR", pl: "pl-PL", nl: "nl-NL", ru: "ru-RU", ar: "ar-AE-u-nu-latn", hi: "hi-IN-u-nu-latn", id: "id-ID", ja: "ja-JP", ko: "ko-KR", zh: "zh-CN", vi: "vi-VN", th: "th-TH-u-nu-latn", uk: "uk-UA", fa: "fa-IR-u-nu-latn", ku: "ku-TR" };
   function detectLang() {
     const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"]);
