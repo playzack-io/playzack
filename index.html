@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.6.0"></script>
-<script src="backend.js?v=2.6.0"></script>
+<script src="config.js?v=2.6.1"></script>
+<script src="backend.js?v=2.6.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -4487,7 +4487,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   const tuStart = (t) => (t && Number.isFinite(t.starts) ? t.starts : t ? t.created : 0);
   const tuNotYet = (t) => !!t && Date.now() < tuStart(t);
   const entryPath = (t) => "tentries/" + (t.v === 2 ? tourId(t) + "_" + NET.me : NET.me);
-  const TU_FEE_ZACK = 0.3; // 30 % jeder Startgebühr gehen an ZACK!, 70 % an den Gastgeber
+  const TU_FEE_ZACK = 0; // Startgebühren (Münzen) gehen komplett an den Gastgeber
   function fmtLeft(ms) {
     const s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), hh = Math.floor((s % 86400) / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
     if (d) return d + tr(" T ", " d ") + hh + tr(" Std", " h");
@@ -4677,7 +4677,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const fe = $("tcFee"); fe.innerHTML = ""; FEES.forEach((v) => { const b = h("button", "chip" + (fee === v ? " on" : "")); b.type = "button"; b.textContent = v ? fmtN(v) + " 🪙" : tr("Kostenlos", "Free"); b.addEventListener("click", () => { fee = v; const fi = $("tcFeeIn"); if (fi) fi.value = v ? v : ""; draw(); }); fe.appendChild(b); });
       const paidT = fee > 0; [0, 1, 2].forEach((i) => { const x = $("tcP" + i); if (x) x.disabled = paidT; });
       $("tcPrzNote").textContent = paidT ? tr("Sachpreise gehen nur bei kostenlosen Turnieren. Mit Startgebühr wäre es rechtlich ein Glücksspiel.", "Real prizes only work in free tournaments. With an entry fee it would legally count as gambling.") : tr("Die Preise vergibst du selbst als Veranstalter, nicht ZACK!. Gewinner ist, wer am Ende vorne steht – keine Verlosung.", "You give out the prizes yourself as the organiser, not ZACK!. Winners are whoever is on top at the end – no raffle.");
-      $("tcFeeNote").textContent = fee ? tr("Pro Spieler ", "Per player ") + fmtN(fee) + tr(" Münzen: 70 % (", " coins: 70% (") + fmtN(Math.floor(fee * (1 - TU_FEE_ZACK))) + tr(") bekommst du, 30 % gehen an ZACK!.", ") goes to you, 30% to ZACK!.") : tr("Kostenlos: jeder kann ohne Münzen mitmachen.", "Free: anyone can join without coins.");
+      $("tcFeeNote").textContent = fee ? "" : tr("Kostenlos: jeder kann ohne Münzen mitmachen.", "Free: anyone can join without coins.");
       const t = $("tcTry"); t.innerHTML = ""; TRY.forEach(([v, l]) => { const b = h("button", "chip" + (tries === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { tries = v; draw(); }); t.appendChild(b); });
       const mx = $("tcMax"); mx.innerHTML = ""; [[0, "∞ " + tr("Unbegrenzt", "Unlimited")]].concat(MAXQ.map((v) => [v, String(v)])).forEach(([v, l]) => { const b = h("button", "chip" + (max === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { max = v; const mi = $("tcMaxIn"); if (mi) mi.value = v ? v : ""; draw(); }); mx.appendChild(b); });
     };
@@ -4750,7 +4750,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (host && t.fee) {
       const total = TU.entries.filter((e) => e.uid !== t.host).reduce((a, e) => a + (e.paid || 0), 0), mine = Math.floor(total * (1 - TU_FEE_ZACK)), open = Math.max(0, mine - (t.claimed || 0));
       const eb = h("div", "tu-earn");
-      eb.innerHTML = "<div><b>" + tr("Deine Einnahmen: ", "Your earnings: ") + fmtN(mine) + " 🪙</b><small>" + tr("70 % von ", "70% of ") + fmtN(total) + tr(" Münzen Startgebühren · 30 % gehen an ZACK!", " coins in entry fees · 30% goes to ZACK!") + "</small></div>" + (open ? '<button class="btn" id="tuClaim" type="button">' + tr("Abholen", "Collect") + " +" + fmtN(open) + "</button>" : "");
+      eb.innerHTML = "<div><b>" + tr("Deine Einnahmen: ", "Your earnings: ") + fmtN(mine) + " 🪙</b></div>" + (open ? '<button class="btn" id="tuClaim" type="button">' + tr("Abholen", "Collect") + " +" + fmtN(open) + "</button>" : "");
       body.appendChild(eb);
     }
     const ml = h("div", "slist");
