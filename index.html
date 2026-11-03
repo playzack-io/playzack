@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.7.1"></script>
-<script src="backend.js?v=2.7.1"></script>
+<script src="config.js?v=2.8.0"></script>
+<script src="backend.js?v=2.8.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -845,6 +845,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .tu-pick { display: flex; flex-wrap: wrap; gap: 6px; }
 .tu-maxin { margin-top: 8px; }
 #tuCodeIn::placeholder { letter-spacing: .04em; font-size: .78em; }
+.tu-lock { opacity: .45; pointer-events: none; } .tu-locknote { color: var(--volt); }
 #tuMine { display: flex; flex-direction: column; gap: 12px; } #tuMine:empty { display: none; }
 #tuHomeNote:empty, .note:empty, .msg-bad:empty { display: none; }
 .tu-ver { font-size: 12px; font-weight: 800; color: var(--go); white-space: nowrap; }
@@ -1202,11 +1203,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 
   // ---------- Sprachen ----------
   // Deutsch ist das Original, Englisch der Schlüssel. Alle anderen Sprachen kommen als lang/xx.json (Englisch -> Übersetzung).
-  const LANGS = [["de", "Deutsch"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["it", "Italiano"], ["pt", "Português"], ["tr", "Türkçe"], ["pl", "Polski"], ["nl", "Nederlands"], ["ru", "Русский"], ["ar", "العربية"], ["hi", "हिन्दी"], ["id", "Bahasa Indonesia"], ["ja", "日本語"], ["ko", "한국어"], ["zh", "中文"], ["vi", "Tiếng Việt"], ["th", "ไทย"], ["uk", "Українська"], ["fa", "فارسی"]];
-  const LOCALE = { de: "de-DE", en: "en-US", es: "es-ES", fr: "fr-FR", it: "it-IT", pt: "pt-BR", tr: "tr-TR", pl: "pl-PL", nl: "nl-NL", ru: "ru-RU", ar: "ar-AE-u-nu-latn", hi: "hi-IN-u-nu-latn", id: "id-ID", ja: "ja-JP", ko: "ko-KR", zh: "zh-CN", vi: "vi-VN", th: "th-TH-u-nu-latn", uk: "uk-UA", fa: "fa-IR-u-nu-latn" };
+  const LANGS = [["de", "Deutsch"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["it", "Italiano"], ["pt", "Português"], ["tr", "Türkçe"], ["pl", "Polski"], ["nl", "Nederlands"], ["ru", "Русский"], ["ar", "العربية"], ["hi", "हिन्दी"], ["id", "Bahasa Indonesia"], ["ja", "日本語"], ["ko", "한국어"], ["zh", "中文"], ["vi", "Tiếng Việt"], ["th", "ไทย"], ["uk", "Українська"], ["fa", "فارسی"]]; // KU_PENDING
+  const LOCALE = { de: "de-DE", en: "en-US", es: "es-ES", fr: "fr-FR", it: "it-IT", pt: "pt-BR", tr: "tr-TR", pl: "pl-PL", nl: "nl-NL", ru: "ru-RU", ar: "ar-AE-u-nu-latn", hi: "hi-IN-u-nu-latn", id: "id-ID", ja: "ja-JP", ko: "ko-KR", zh: "zh-CN", vi: "vi-VN", th: "th-TH-u-nu-latn", uk: "uk-UA", fa: "fa-IR-u-nu-latn", ku: "ku-TR" };
   function detectLang() {
     const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"]);
-    for (const l of list) { const c = String(l || "").slice(0, 2).toLowerCase(); if (LANGS.some((x) => x[0] === c)) return c; }
+    for (const l of list) { const raw = String(l || "").toLowerCase(), c = raw.startsWith("kmr") ? "ku" : raw.slice(0, 2); if (LANGS.some((x) => x[0] === c)) return c; }
     return "en";
   }
   const I18N = { lang: null, dict: null, tpl: [], memo: new Map(), loading: null };
@@ -1248,7 +1249,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "12";
+  const I18N_VER = "13";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -3007,7 +3008,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const tours = tq.docs.map((d) => Object.assign({ _id: d.id }, d.data())).filter(validTour).filter((t) => Date.now() < t.ends + 7 * 86400000);
     const ver = {}; vq.docs.forEach((d) => { ver[d.id] = d.data(); });
     const pcs = {}; await Promise.all(tours.map(async (t) => { try { const d = await NET.db.doc("prizecheck/" + t._id).get(); pcs[t._id] = d.exists ? d.data() : null; } catch (e) { pcs[t._id] = null; } }));
-    const open = tours.filter((t) => !pcs[t._id] && !(ver[t.host] && ver[t.host].status === "ok"));
+    const open = tours.filter((t) => (!pcs[t._id] || (pcs[t._id].status !== "hidden" && !pcFits(pcs[t._id], t))) && !(ver[t.host] && ver[t.host].status === "ok"));
     const done = tours.filter((t) => !open.includes(t));
     sum.textContent = reps.length + tr(" Meldungen · ", " reports · ") + open.length + tr(" Preise zu prüfen", " prizes to review");
     const vtag = (u) => (ver[u] ? (ver[u].status === "ok" ? " ✓" : ver[u].status === "banned" ? " ⛔" : "") : "");
@@ -3025,7 +3026,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     const again = () => openAdmin("tour");
     box.querySelectorAll("[data-pz]").forEach((b) => b.addEventListener("click", async () => {
       const it = b.closest("[data-t]"), w = it.querySelector("[data-w]"); b.disabled = true;
-      try { await NET.db.doc("prizecheck/" + it.dataset.t).set({ status: b.dataset.pz, why: b.dataset.pz === "no" && w ? w.value.trim().slice(0, 120) : "", at: Date.now() }); SFX.coin(); again(); } catch (e) { b.disabled = false; b.textContent = tr("Fehler – nochmal", "Error – retry"); }
+      const tt = tours.find((x) => x._id === it.dataset.t);
+      try { await NET.db.doc("prizecheck/" + it.dataset.t).set({ status: b.dataset.pz, why: b.dataset.pz === "no" && w ? w.value.trim().slice(0, 120) : "", key: tt ? prizeKey(tt) : null, at: Date.now() }); SFX.coin(); again(); } catch (e) { b.disabled = false; b.textContent = tr("Fehler – nochmal", "Error – retry"); }
     }));
     box.querySelectorAll("[data-ver]").forEach((b) => b.addEventListener("click", async () => {
       const it = b.closest("[data-h]"); b.disabled = true;
@@ -4546,7 +4548,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // Preise: sichtbar, wenn der Veranstalter verifiziert ist oder der Admin sie freigegeben hat
   const tuVerified = () => !!(TU.ver && TU.ver.status === "ok");
   const tuBlocked = () => !!(TU.pc && TU.pc.status === "hidden");
-  const tuPrizeState = () => (tuBlocked() ? "hidden" : TU.pc && TU.pc.status === "no" ? "no" : tuVerified() || (TU.pc && TU.pc.status === "ok") ? "ok" : "wait");
+  const prizeKey = (t) => ((t && t.prizes) || []).join("|");
+  const pcFits = (pc, t) => !!pc && (pc.key == null || pc.key === prizeKey(t));
+  const tuPrizeState = () => (tuBlocked() ? "hidden" : TU.pc && TU.pc.status === "no" && pcFits(TU.pc, TU.t) ? "no" : tuVerified() || (TU.pc && TU.pc.status === "ok" && pcFits(TU.pc, TU.t)) ? "ok" : "wait");
   function tuRemember(t) {
     const l = (store.get("tour:mine", []) || []).filter((x) => x && x.id !== tuDoc(t));
     l.unshift({ id: tuDoc(t), code: t.code, name: t.name || "ZACK!", starts: tuStart(t), ends: t.ends, host: t.host === NET.me });
@@ -4698,23 +4702,31 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       NET.ready.then(() => { if (!NET.ok || TU.pend !== code) return; TU.pend = null; openTour(); tuLoadByCode(code); });
     }, 500);
   }
-  function tuCreateSheet() {
+  function tuCreateSheet(ed) {
     if (TU.myBan == null && NET.ok) { TU.myBan = false; NET.db.doc("verified/" + NET.me).get().then((d) => { TU.myBan = !!(d.exists && d.data().status === "banned"); }).catch(() => {}); }
     const pr = profile() || {};
     let modes = ["ziele"], dur = 60, tries = 3, max = 0, plan = false, fee = 0, cdur = { n: 2, u: 1440 };
+    // Bearbeiten: Werte übernehmen; Spiele, Versuche und Gebühr sind gesperrt, sobald es läuft oder andere dabei sind
+    const started = !!ed && !tuNotYet(ed), others = !!ed && TU.entries.some((e) => e.uid !== ed.host), lockCore = started || others;
+    if (ed) {
+      modes = ed.modes.slice(); tries = ed.tries; max = ed.max || 0; fee = ed.fee || 0; plan = tuStart(ed) > ed.created + 60000;
+      const mins = Math.max(5, Math.round((ed.ends - tuStart(ed)) / 60000));
+      if ([15, 60, 180, 1440, 4320, 10080].includes(mins)) dur = mins; else { dur = -1; cdur = mins % 1440 === 0 ? { n: mins / 1440, u: 1440 } : mins % 60 === 0 ? { n: mins / 60, u: 60 } : { n: mins, u: 1 }; }
+    }
     const MAXQ = [2, 4, 8, 16, 32, 100], FEES = [0, 50, 100, 250, 500];
     const DUR = [[15, "15 Min"], [60, tr("1 Std", "1 hr")], [180, tr("3 Std", "3 hrs")], [1440, tr("24 Std", "24 hrs")], [4320, tr("3 Tage", "3 days")], [10080, tr("7 Tage", "7 days")], [-1, "✏️ " + tr("Manuell", "Manual")]];
     const UNITS = [[1, tr("Minuten", "Minutes")], [60, tr("Stunden", "Hours")], [1440, tr("Tage", "Days")]];
     const pad2 = (n) => String(n).padStart(2, "0"), dtl = (ms) => { const d = new Date(ms); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + "T" + pad2(d.getHours()) + ":" + pad2(d.getMinutes()); };
     const startDef = (() => { const d = new Date(Date.now() + 3600000); d.setMinutes(0, 0, 0); return d.getTime(); })();
     const TRY = [[1, tr("1 Versuch", "1 try")], [3, tr("3 Versuche", "3 tries")], [0, tr("Unbegrenzt", "Unlimited")]];
-    openLayer('<span class="eyebrow">' + tr("Neues Turnier", "New tournament") + "</span><h2>" + tr("Turnier erstellen", "Create tournament") + "</h2>" +
-      '<input class="flagq" id="tcName" maxlength="40" value="' + esc(tr("Turnier von @", "@") + (pr.uname || "") + tr("", "'s tournament")) + '">' +
+    openLayer('<span class="eyebrow">' + (ed ? tr("Turnier bearbeiten", "Edit tournament") + " · " + esc(ed.code) : tr("Neues Turnier", "New tournament")) + "</span><h2>" + (ed ? tr("Bearbeiten", "Edit") : tr("Turnier erstellen", "Create tournament")) + "</h2>" +
+      '<input class="flagq" id="tcName" maxlength="40" value="' + esc(ed ? ed.name || "" : tr("Turnier von @", "@") + (pr.uname || "") + tr("", "'s tournament")) + '">' +
+      (ed && lockCore ? '<p class="note tu-locknote">🔒 ' + tr("Spiele, Versuche und Startgebühr sind fest, weil das Turnier läuft oder schon Spieler dabei sind.", "Games, tries and entry fee are fixed because the tournament is running or players have joined.") + "</p>" : "") +
       '<p class="tu-lbl">' + tr("Spiele · 1 bis alle", "Games · 1 to all") + ' <button class="link tu-all" id="tcAll" type="button">' + tr("Alle wählen", "Select all") + "</button>" + '</p><div class="tu-pick" id="tcModes"></div>' +
       '<p class="tu-lbl">' + tr("Start", "Start") + '</p><div class="seg two"><button type="button" id="tcNow" class="on">' + tr("Sofort", "Now") + '</button><button type="button" id="tcPlan">📅 ' + tr("Planen", "Schedule") + "</button></div>" +
-      '<input class="flagq tu-maxin" id="tcStart" type="datetime-local" hidden value="' + dtl(startDef) + '" min="' + dtl(Date.now()) + '" max="' + dtl(Date.now() + 90 * 86400000) + '">' +
+      '<input class="flagq tu-maxin" id="tcStart" type="datetime-local" hidden value="' + dtl(ed && plan ? tuStart(ed) : startDef) + '" min="' + dtl(Date.now()) + '" max="' + dtl(Date.now() + 90 * 86400000) + '">' +
       '<p class="tu-lbl">' + tr("Dauer", "Duration") + '</p><div class="tu-pick" id="tcDur"></div>' +
-      '<div class="tu-cdur" id="tcCdur" hidden><input class="flagq" id="tcCn" type="number" inputmode="numeric" min="1" max="999" value="2"><div class="tu-pick" id="tcCu"></div></div>' +
+      '<div class="tu-cdur" id="tcCdur" hidden><input class="flagq" id="tcCn" type="number" inputmode="numeric" min="1" max="999" value="' + cdur.n + '"><div class="tu-pick" id="tcCu"></div></div>' +
       '<p class="tu-lbl">' + tr("Versuche pro Modus", "Tries per mode") + '</p><div class="tu-pick" id="tcTry"></div>' +
       '<p class="tu-lbl">' + tr("Max. Spieler", "Max. players") + '</p><div class="tu-pick" id="tcMax"></div><input class="flagq tu-maxin" id="tcMaxIn" type="number" inputmode="numeric" min="1" max="100000" placeholder="' + esc(tr("Eigene Zahl, z. B. 20", "Own number, e.g. 20")) + '">' +
       '<p class="tu-lbl">' + tr("Startgebühr", "Entry fee") + '</p><div class="tu-pick" id="tcFee"></div><input class="flagq tu-maxin" id="tcFeeIn" type="number" inputmode="numeric" min="1" max="100000" placeholder="' + esc(tr("Eigener Betrag in Münzen", "Own amount in coins")) + '">' +
@@ -4723,14 +4735,21 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<div class="tu-prz">' + ["🥇", "🥈", "🥉"].map((e, i) => '<label><span>' + e + '</span><input class="flagq" id="tcP' + i + '" maxlength="60" autocomplete="off" placeholder="' + esc(i === 0 ? tr("z. B. 100 €, iPhone, Gutschein", "e.g. €100, iPhone, voucher") : tr("optional", "optional")) + '"></label>').join("") + "</div>" +
       '<p class="note" id="tcPrzNote"></p>' +
       '<p class="note" id="tcNote"></p>' +
-      '<button class="btn" id="tcGo" type="button">' + tr("Starten und Code teilen", "Start and share code") + '</button><button class="link" id="tcX" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
+      '<button class="btn" id="tcGo" type="button">' + (ed ? tr("Speichern", "Save") : tr("Starten und Code teilen", "Start and share code")) + '</button><button class="link" id="tcX" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
+    if (ed) {
+      [0, 1, 2].forEach((i) => { const x = $("tcP" + i); if (x) x.value = (ed.prizes || [])[i] || ""; });
+      if (lockCore) ["tcModes", "tcTry", "tcFee", "tcFeeIn", "tcAll"].forEach((id) => { const x = $(id); if (x) x.classList.add("tu-lock"); });
+      if (started) { const sg = $("tcNow") && $("tcNow").parentNode; if (sg) { sg.hidden = true; if (sg.previousElementSibling) sg.previousElementSibling.hidden = true; } }
+      if ((ed.max || 0) && ![2, 4, 8, 16, 32, 100].includes(ed.max)) { const mi = $("tcMaxIn"); if (mi) mi.value = ed.max; }
+      if (fee && ![0, 50, 100, 250, 500].includes(fee)) { const fi = $("tcFeeIn"); if (fi) fi.value = fee; }
+    }
     const draw = () => {
       const m = $("tcModes"); m.innerHTML = "";
       ORDER.forEach((id) => { const b = h("button", "chip" + (modes.includes(id) ? " on" : "")); b.type = "button"; b.textContent = MODES[id].name; b.addEventListener("click", () => { if (modes.includes(id)) { if (modes.length > 1) modes = modes.filter((x) => x !== id); } else modes = modes.concat(id); $("tcNote").textContent = ""; draw(); }); m.appendChild(b); });
       const d = $("tcDur"); d.innerHTML = ""; DUR.forEach(([v, l]) => { const b = h("button", "chip" + (dur === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { dur = v; draw(); if (v === -1) { const ci = $("tcCn"); if (ci) ci.focus(); } }); d.appendChild(b); });
       $("tcCdur").hidden = dur !== -1;
       const cu = $("tcCu"); cu.innerHTML = ""; UNITS.forEach(([v, l]) => { const b = h("button", "chip" + (cdur.u === v ? " on" : "")); b.type = "button"; b.textContent = l; b.addEventListener("click", () => { cdur.u = v; draw(); }); cu.appendChild(b); });
-      $("tcNow").classList.toggle("on", !plan); $("tcPlan").classList.toggle("on", plan); $("tcStart").hidden = !plan;
+      $("tcNow").classList.toggle("on", !plan); $("tcPlan").classList.toggle("on", plan); $("tcStart").hidden = !plan || started;
       const fe = $("tcFee"); fe.innerHTML = ""; FEES.forEach((v) => { const b = h("button", "chip" + (fee === v ? " on" : "")); b.type = "button"; b.textContent = v ? fmtN(v) + " 🪙" : tr("Kostenlos", "Free"); b.addEventListener("click", () => { fee = v; const fi = $("tcFeeIn"); if (fi) fi.value = v ? v : ""; draw(); }); fe.appendChild(b); });
       const paidT = fee > 0 || TU.myBan; [0, 1, 2].forEach((i) => { const x = $("tcP" + i); if (x) x.disabled = paidT; });
       $("tcPrzNote").textContent = TU.myBan ? tr("Du darfst keine Preise mehr eintragen.", "You can no longer add prizes.") : fee > 0 ? tr("Sachpreise gehen nur bei kostenlosen Turnieren. Mit Startgebühr wäre es rechtlich ein Glücksspiel.", "Real prizes only work in free tournaments. With an entry fee it would legally count as gambling.") : tr("Die Preise vergibst du selbst als Veranstalter, nicht ZACK!. Gewinner ist, wer am Ende vorne steht – keine Verlosung.", "You give out the prizes yourself as the organiser, not ZACK!. Winners are whoever is on top at the end – no raffle.");
@@ -4753,9 +4772,20 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const mins = dur === -1 ? cdur.n * cdur.u : dur;
       if (!(mins >= 5 && mins <= 30 * 1440)) { btn.disabled = false; $("tcNote").textContent = tr("Die Dauer muss zwischen 5 Minuten und 30 Tagen liegen.", "Duration must be between 5 minutes and 30 days."); return; }
       let starts = now;
-      if (plan) { starts = new Date($("tcStart").value).getTime(); if (!Number.isFinite(starts) || starts < now + 60000 || starts > now + 90 * 86400000) { btn.disabled = false; $("tcNote").textContent = tr("Wähle einen Startzeitpunkt in der Zukunft (höchstens 90 Tage).", "Pick a start time in the future (max. 90 days)."); return; } }
+      if (ed && started) starts = tuStart(ed);
+      else if (ed && !plan) starts = Math.max(now, Math.min(tuStart(ed), now));
+      if (plan && !(ed && started)) { starts = new Date($("tcStart").value).getTime(); if (!Number.isFinite(starts) || starts < now + 60000 || starts > now + 90 * 86400000) { btn.disabled = false; $("tcNote").textContent = tr("Wähle einen Startzeitpunkt in der Zukunft (höchstens 90 Tage).", "Pick a start time in the future (max. 90 days)."); return; } }
       const prizes = fee || TU.myBan ? [] : [0, 1, 2].map((i) => ($("tcP" + i).value || "").replace(/\s+/g, " ").trim().slice(0, 60));
       while (prizes.length && !prizes[prizes.length - 1]) prizes.pop();
+      if (ed) {
+        const ends = starts + mins * 60000;
+        if (ends < now + 60000) { btn.disabled = false; $("tcNote").textContent = tr("Das Ende muss in der Zukunft liegen. Wähle eine längere Dauer.", "The end has to be in the future. Pick a longer duration."); return; }
+        if (max && max < TU.entries.length) { btn.disabled = false; $("tcNote").textContent = tr("Es sind schon ", "There are already ") + TU.entries.length + tr(" Spieler dabei. Max. Spieler darf nicht kleiner sein.", " players in. Max. players can't be lower."); return; }
+        const upd = Object.assign({}, ed, { name, max, prizes, hasPz: prizes.length > 0, starts, ends }, lockCore ? {} : { modes: ORDER.filter((x) => modes.includes(x)), tries, fee });
+        try { await NET.db.doc("tourneys/" + tuDoc(ed)).set(upd); } catch (e) { btn.disabled = false; $("tcNote").textContent = tr("Speichern ging nicht. Versuch es nochmal.", "Couldn't save. Try again."); return; }
+        closeLayer(); TU.t = upd; renderTour(); zToast(tr("Gespeichert ✓", "Saved ✓"));
+        return;
+      }
       const t = { v: 2, code: tuCode(), name, modes: ORDER.filter((x) => modes.includes(x)), seed: rand32(), tries, max, fee, prizes, hasPz: prizes.length > 0, claimed: 0, starts, ends: starts + mins * 60000, created: now, host: NET.me, hname: pr.uname || null };
       // Neue Speicherart (mehrere Turniere); solange die neuen Regeln nicht aktiv sind, alte Art (ein Turnier pro Gastgeber)
       try { try { await NET.db.doc("tourneys/" + tourId(t)).set(t); } catch (e1) { delete t.v; await NET.db.doc("tourneys/" + NET.me).set(t); } }
@@ -4847,7 +4877,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     body.appendChild(list);
     if (st.waiting.length) { const w = h("p", "note"); w.textContent = tr("Dabei, noch ohne Ergebnis: ", "In, no result yet: ") + st.waiting.slice(0, 30).map((x) => "@" + x.e.uname).join(", ") + (st.waiting.length > 30 ? " …" : ""); body.appendChild(w); }
     const foot = h("div", "row2");
-    if (host) foot.innerHTML = (ended ? "" : '<button class="btn ghost" id="tuEnd" type="button">' + tr("Turnier beenden", "End tournament") + "</button>") + '<button class="btn ghost" id="tuNew2" type="button">' + tr("Neues Turnier", "New tournament") + "</button>";
+    if (host) foot.innerHTML = ended ? '<button class="btn ghost" id="tuNew2" type="button">' + tr("Neues Turnier", "New tournament") + "</button>" : '<button class="btn ghost" id="tuEdit" type="button">✏️ ' + tr("Bearbeiten", "Edit") + '</button><button class="btn ghost" id="tuEnd" type="button">' + tr("Turnier beenden", "End tournament") + "</button>";
     if (host) { const back = h("button", "link"); back.type = "button"; back.id = "tuLeave"; back.textContent = "← " + tr("Meine Turniere", "My tournaments"); body.appendChild(foot); body.appendChild(back); }
     else foot.innerHTML = '<button class="btn ghost" id="tuLeave" type="button">' + tr("Anderes Turnier", "Other tournament") + '</button><button class="btn ghost" id="tuRep" type="button">⚑ ' + tr("Melden", "Report") + "</button>";
     if (!foot.parentNode) body.appendChild(foot);
@@ -4872,6 +4902,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       const ok = await tuWrite({}, fee); if (ok && fee) { W.coins = Math.max(0, W.coins - fee); renderWallet(); } if (!ok) note(tr("Beitreten ging nicht", "Couldn't join"), tr("Du brauchst Bearbeiten-Rechte für diese geteilte Version.", "You need edit access to this shared version.")); renderTour(); });
     on("tuEnd", async () => { try { await NET.db.doc("tourneys/" + tuDoc(t)).set(Object.assign({}, t, { ends: Date.now(), starts: Math.min(tuStart(t), Date.now()) })); } catch (e) {} });
     on("tuNew2", () => { if (!tuNeedName()) tuCreateSheet(); });
+    on("tuEdit", () => tuCreateSheet(t));
     on("tuLeave", () => { tuUnsub(); TU.t = null; TU.entries = []; store.set("tour:last", null); renderTourHome(); tuMineList(); });
   }
   function tuRow(t, st, x, i, big) {
