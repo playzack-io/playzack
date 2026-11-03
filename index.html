@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.4.2"></script>
-<script src="backend.js?v=2.4.2"></script>
+<script src="config.js?v=2.4.3"></script>
+<script src="backend.js?v=2.4.3"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -781,12 +781,12 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .sw-stamp { position: absolute; top: 22px; padding: 6px 12px; border: 3px solid; border-radius: 10px; font-family: var(--font-num); font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: .04em; opacity: 0; pointer-events: none; }
 .sw-stamp.yes { left: 18px; color: var(--go); border-color: var(--go); transform: rotate(-12deg); }
 .sw-stamp.no { right: 18px; color: var(--signal); border-color: var(--signal); transform: rotate(12deg); }
-.sw-btns { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; gap: 10px; }
+.sw-btns { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; align-items: end; gap: 10px; }
 .sw-bw { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .sw-bw small { font-size: 12.5px; font-weight: 700; color: var(--muted); }
 .sw-btn { width: 66px; height: 66px; border-radius: 50%; border: 2px solid var(--line); background: var(--asphalt-2); font-size: 28px; line-height: 1; display: grid; place-items: center; color: var(--chalk); }
 .sw-btn.fol { color: var(--go); border-color: var(--go); }
-.sw-btn.ch { color: var(--volt); border-color: var(--volt); }
+.sw-btn.ch { width: 84px; height: 84px; font-size: 38px; color: #17151b; background: var(--volt); border-color: var(--volt); box-shadow: 0 6px 18px color-mix(in srgb, var(--volt) 35%, transparent); }
 .sw-btn.no { color: var(--signal); border-color: var(--signal); }
 .sw-btn:active { transform: scale(.94); }
 .sw-empty { text-align: center; padding: 30px 10px; display: flex; flex-direction: column; gap: 14px; align-items: center; }
