@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.4.3"></script>
-<script src="backend.js?v=2.4.3"></script>
+<script src="config.js?v=2.5.0"></script>
+<script src="backend.js?v=2.5.0"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -752,6 +752,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 /* Konto */
 .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .soc-tabs { margin-bottom: 4px; }
+.pt-tasks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px; }
+.pt-task { display: flex; align-items: center; gap: 8px; padding: 10px 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--housing); color: var(--chalk); font-weight: 700; font-size: 14px; text-align: left; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pt-task i { font-style: normal; font-size: 18px; flex: none; }
+.pt-task.on { border-color: var(--volt); color: var(--volt); box-shadow: 0 0 0 1px var(--volt); }
+.pt-loser > span:last-child { overflow-wrap: anywhere; }
 .rlv { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
 .sw-bot { font-size: 11px; font-weight: 800; letter-spacing: .06em; padding: 2px 7px; border-radius: 99px; background: var(--housing); border: 1px solid var(--line); color: var(--muted); vertical-align: middle; margin-left: 6px; }
 #socMain:not([hidden]) { display: contents; }
@@ -1073,14 +1078,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         <span class="wide-sub" data-en="Gold, neon, galaxy and helmets in your country's colors.">Gold, Neon, Galaxie und Helme in deinen Landesfarben.</span>
       </button>
       <button class="wide tourcard" id="goTour" type="button">
-        <span class="eyebrow" data-en="Tournament · for groups & streams">Turnier · für Gruppen & Streams</span>
-        <span class="wide-title" data-en="Who is the fastest?">Wer ist am schnellsten?</span>
-        <span class="wide-sub" data-en="Create a code, everyone plays the same rounds, live leaderboard.">Code erstellen, alle spielen dieselben Runden, Live-Rangliste.</span>
+        <span class="eyebrow" data-en="For groups, classes & streams">Für Gruppen, Klassen & Streams</span>
+        <span class="wide-title" data-en="🏆 Your own tournament">🏆 Dein eigenes Turnier</span>
+        <span class="wide-sub" data-en="Start a tournament, share the code, everyone plays the same rounds – with a live leaderboard.">Turnier starten, Code teilen, alle spielen dieselben Runden – mit Live-Rangliste.</span>
       </button>
       <button class="wide partycard" id="goParty" type="button">
         <span class="eyebrow" data-en="Party mode · one phone">Partymodus · ein Handy</span>
-        <span class="wide-title" data-en="Loser pays">Verlierer zahlt</span>
-        <span class="wide-sub" data-en="Pass the phone around. Whoever is slowest pays the next round.">Handy reihum geben. Wer am langsamsten ist, zahlt die nächste Runde.</span>
+        <span class="wide-title" data-en="Loser has to …">Verlierer muss …</span>
+        <span class="wide-sub" data-en="Pass the phone around. Whoever loses pays, drives or cooks – you decide.">Handy reihum geben. Wer verliert, zahlt, fährt oder kocht – ihr entscheidet.</span>
       </button>
       <button class="wide clipcard" id="goClip" type="button">
         <span class="eyebrow" data-en="Clipper · TikTok &amp; Instagram">Clipper · TikTok &amp; Instagram</span>
@@ -1220,7 +1225,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "8";
+  const I18N_VER = "9";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -5709,18 +5714,38 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   // PARTY: Verlierer zahlt — Handy reihum, wer am schlechtesten ist, zahlt
   // =====================================================
   const PARTY = { names: [], game: "ampel", res: [], tb: {}, pool: [], tie: false, queue: [], qi: 0, i: 0, kd: null };
+  // Was der Verlierer machen muss: Vorlagen oder eigener Text
+  const PT_TASKS = [
+    ["pay", "💸", ["Zahlen", "Pay"], ["zahlt die nächste Runde!", "pays the next round!"]],
+    ["drive", "🚗", ["Fahren", "Drive"], ["fährt!", "drives!"]],
+    ["cook", "🍳", ["Kochen", "Cook"], ["kocht!", "cooks!"]],
+    ["dish", "🧽", ["Abwaschen", "Wash up"], ["wäscht ab!", "does the washing up!"]],
+    ["drinks", "🍻", ["Getränke holen", "Get drinks"], ["holt die Getränke!", "gets the drinks!"]],
+    ["tidy", "🧹", ["Aufräumen", "Tidy up"], ["räumt auf!", "tidies up!"]],
+    ["dog", "🐕", ["Gassi gehen", "Walk the dog"], ["geht Gassi!", "walks the dog!"]],
+    ["sing", "🎤", ["Ein Lied singen", "Sing a song"], ["singt ein Lied!", "sings a song!"]]
+  ];
+  // Ergebnis-Text für die gewählte Aufgabe; "rand" wird pro Runde einmal ausgelost
+  function ptTask() {
+    const id = PARTY.task || "pay";
+    if (id === "own") { const t = String(PARTY.own || "").trim(); return t ? { e: "✏️", say: tr("muss:", "has to:") + " " + t } : { e: "💸", say: L(PT_TASKS[0][3]) }; }
+    const k = PT_TASKS.find((x) => x[0] === (id === "rand" ? PARTY.rolled || "pay" : id)) || PT_TASKS[0];
+    return { e: k[1], say: L(k[3]) };
+  }
   function partyKeysOff() { if (PARTY.kd) { document.removeEventListener("keydown", PARTY.kd); PARTY.kd = null; } }
   function partySetup() {
     let names = store.get("party:names", null);
     if (!Array.isArray(names) || names.length < 2) { const pr = profile() || {}; names = [pr.uname ? pr.uname : tr("Spieler 1", "Player 1"), tr("Spieler 2", "Player 2"), tr("Spieler 3", "Player 3")]; }
-    let game = store.get("party:game", "ampel");
+    let game = store.get("party:game", "ampel"), task = store.get("party:task", "pay"), own = store.get("party:own", "") || "";
     const draw = () => {
-      openLayer('<span class="eyebrow">' + tr("Partymodus · ein Handy", "Party mode · one phone") + "</span><h2>" + tr("Verlierer zahlt", "Loser pays") + "</h2><p>" + tr("Alle spielen nacheinander. Wer am schlechtesten ist, zahlt die nächste Runde.", "Everyone plays in turn. Whoever does worst pays the next round.") + "</p>" +
+      openLayer('<span class="eyebrow">' + tr("Partymodus · ein Handy", "Party mode · one phone") + "</span><h2>" + tr("Verlierer muss …", "Loser has to …") + "</h2><p>" + tr("Alle spielen nacheinander. Wer am schlechtesten ist, muss die Aufgabe machen.", "Everyone plays in turn. Whoever does worst has to do the task.") + "</p>" +
         '<div class="pt-names" id="ptNames"></div>' + (names.length < 8 ? '<button class="btn ghost" id="ptAdd" type="button">+ ' + tr("Spieler", "Player") + "</button>" : "") +
         '<span class="eyebrow">' + tr("Spiel", "Game") + '</span><div class="seg two"><button type="button" id="ptG1" class="' + (game === "ampel" ? "on" : "") + '">' + tr("Startampel", "Start lights") + '</button><button type="button" id="ptG2" class="' + (game === "uhr" ? "on" : "") + '">' + tr("Genau 5 Sekunden", "Exactly 5 seconds") + "</button></div>" +
-        '<p class="note">' + (game === "ampel" ? tr("Wer am langsamsten reagiert, zahlt. Bei Fehlstart einfach nochmal.", "Slowest reaction pays. Jump start? Just go again.") : tr("Uhr starten und blind bei 5,00 s stoppen. Wer am weitesten daneben liegt, zahlt.", "Start the clock and stop blind at 5.00 s. Furthest off pays.")) + "</p>" +
+        '<p class="note">' + (game === "ampel" ? tr("Wer am langsamsten reagiert, verliert. Bei Fehlstart einfach nochmal.", "Slowest reaction loses. Jump start? Just go again.") : tr("Uhr starten und blind bei 5,00 s stoppen. Wer am weitesten daneben liegt, verliert.", "Start the clock and stop blind at 5.00 s. Furthest off loses.")) + "</p>" +
+        '<span class="eyebrow">' + tr("Der Verlierer muss …", "The loser has to …") + '</span><div class="pt-tasks">' + PT_TASKS.concat([["rand", "🎲", ["Zufall", "Random"]], ["own", "✏️", ["Eigenes", "Own idea"]]]).map((x) => '<button type="button" class="pt-task' + (task === x[0] ? " on" : "") + '" data-pt="' + x[0] + '"><i>' + x[1] + "</i>" + esc(L(x[2])) + "</button>").join("") + "</div>" +
+        (task === "own" ? '<input class="search" id="ptOwn" maxlength="40" autocomplete="off" placeholder="' + esc(tr("z. B. Pizza holen", "e.g. bring pizza")) + '" value="' + esc(own) + '">' : "") +
         '<button class="btn" id="ptGo" type="button">' + tr("Los geht's", "Let's go") + "</button>" +
-        '<p class="note">' + tr("ZACK! nimmt kein Geld. Die App entscheidet nur, wer die Runde zahlt.", "ZACK! takes no money. The app only decides who pays the round.") + '</p><button class="link" id="ptX" type="button">' + tr("Zurück", "Back") + "</button>", "party");
+        '<p class="note">' + tr("ZACK! nimmt kein Geld. Die App entscheidet nur, wer dran ist.", "ZACK! takes no money. The app only decides who has to do it.") + '</p><button class="link" id="ptX" type="button">' + tr("Zurück", "Back") + "</button>", "party");
       const box = $("ptNames");
       names.forEach((n, i) => {
         const row = h("div", "pt-name"), inp = h("input"); inp.value = n; inp.maxLength = 14; inp.placeholder = tr("Name", "Name"); inp.autocomplete = "off";
@@ -5730,19 +5755,22 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         box.appendChild(row);
       });
       on("ptAdd", () => { names.push(tr("Spieler ", "Player ") + (names.length + 1)); draw(); const ins = sheet.querySelectorAll(".pt-name input"); const last = ins[ins.length - 1]; if (last) { last.focus(); last.select(); } });
+      sheet.querySelectorAll("[data-pt]").forEach((b) => b.addEventListener("click", () => { task = b.dataset.pt; draw(); if (task === "own") { const o = $("ptOwn"); if (o) o.focus(); } }));
+      const ownIn = $("ptOwn"); if (ownIn) ownIn.addEventListener("input", () => { own = ownIn.value; });
       on("ptG1", () => { game = "ampel"; draw(); });
       on("ptG2", () => { game = "uhr"; draw(); });
       on("ptX", closeLayer);
       on("ptGo", () => {
         const list = names.map((n) => String(n || "").trim().slice(0, 14)).filter(Boolean);
         if (list.length < 2) return;
-        store.set("party:names", list); store.set("party:game", game);
-        PARTY.names = list; PARTY.game = game; PARTY.tie = false; partyStart(list.map((_, i) => i));
+        if (task === "own" && !String(own).trim()) { const o = $("ptOwn"); if (o) { o.focus(); o.classList.add("shake"); setTimeout(() => o.classList.remove("shake"), 400); } return; }
+        store.set("party:names", list); store.set("party:game", game); store.set("party:task", task); store.set("party:own", String(own).trim().slice(0, 40));
+        PARTY.names = list; PARTY.game = game; PARTY.task = task; PARTY.own = String(own).trim().slice(0, 40); PARTY.tie = false; partyStart(list.map((_, i) => i));
       });
     };
     draw();
   }
-  function partyStart(queue) { if (!PARTY.tie && !offlineOk()) { offlineBlock(() => { closeLayer(); PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; PARTY.res = []; partyTurn(); }); return; } PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; if (!PARTY.tie) PARTY.res = []; partyTurn(); }
+  function partyStart(queue) { if (!PARTY.tie) PARTY.rolled = PT_TASKS[Math.floor(Math.random() * PT_TASKS.length)][0]; if (!PARTY.tie && !offlineOk()) { offlineBlock(() => { closeLayer(); PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; PARTY.res = []; partyTurn(); }); return; } PARTY.queue = queue; PARTY.qi = 0; PARTY.i = queue[0]; if (!PARTY.tie) PARTY.res = []; partyTurn(); }
   function partyTurn() {
     partyKeysOff();
     const n = PARTY.names[PARTY.i];
@@ -5801,7 +5829,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     }
     PARTY.tie = false;
     const losers = [tied[0].n], loserI = tied[0].i;
-    openLayer('<span class="eyebrow">' + tr("Und zahlen muss …", "And the one paying is …") + '</span><div class="pt-roll" id="ptRoll">?</div>', "party");
+    openLayer('<span class="eyebrow">' + tr("Und dran ist …", "And the one who has to do it is …") + '</span><div class="pt-roll" id="ptRoll">?</div>', "party");
     const roll = $("ptRoll");
     let k = 0, delay = 70;
     const step = () => {
@@ -5811,7 +5839,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     };
     const show_ = () => {
       const unit = PARTY.game === "ampel" ? " ms" : tr(" ms daneben", " ms off");
-      openLayer('<span class="eyebrow">' + tr("Verlierer zahlt", "Loser pays") + '</span><div class="pt-loser"><span class="pt-money">💸</span><b></b><span>' + (losers.length > 1 ? tr("zahlen zusammen!", "pay together!") : tr("zahlt!", "pays!")) + "</span></div>" +
+      const tk = ptTask();
+      openLayer('<span class="eyebrow">' + tr("Verlierer muss …", "Loser has to …") + '</span><div class="pt-loser"><span class="pt-money">' + tk.e + "</span><b></b><span>" + esc(tk.say) + "</span></div>" +
         '<div class="pt-rank">' + R.map((x, i) => '<div class="pt-r' + (x.i === loserI ? " lose" : i === 0 ? " win" : "") + '"><i>' + (i + 1) + "</i><span>" + esc(x.n) + "</span><b>" + fmtN(x.v) + esc(unit) + "</b></div>").join("") + "</div>" + tbLine +
         '<button class="btn" id="ptAgain" type="button">' + tr("Revanche", "Rematch") + '</button><div class="row2"><button class="btn ghost" id="ptEdit" type="button">' + tr("Spieler ändern", "Change players") + '</button><button class="btn ghost" id="ptShare" type="button">' + tr("Teilen", "Share") + '</button></div><button class="link" id="ptMenu" type="button">' + tr("Menü", "Menu") + "</button>", "party");
       sheet.querySelector(".pt-loser b").textContent = losers.join(" & ");
@@ -5819,7 +5848,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       on("ptAgain", () => { PARTY.tie = false; partyStart(PARTY.names.map((_, i) => i)); });
       on("ptEdit", partySetup);
       on("ptMenu", closeLayer);
-      on("ptShare", () => shareOut(tr("Bei ZACK! hat ", "At ZACK! ") + losers.join(" & ") + tr(" verloren und zahlt die Runde 😂", " lost and pays the round 😂"), appLink(), partyReveal));
+      on("ptShare", () => shareOut(tr("Bei ZACK! hat ", "At ZACK! ") + losers.join(" & ") + tr(" verloren und ", " lost and ") + tk.say.replace(/[\s\u00a0]*[!！]$/, "") + " 😂", appLink(), partyReveal));
     };
     step();
   }
