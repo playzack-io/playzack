@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.7.0"></script>
-<script src="backend.js?v=2.7.0"></script>
+<script src="config.js?v=2.7.1"></script>
+<script src="backend.js?v=2.7.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -844,6 +844,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .tu-lbl { margin: 6px 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); text-align: left; }
 .tu-pick { display: flex; flex-wrap: wrap; gap: 6px; }
 .tu-maxin { margin-top: 8px; }
+#tuCodeIn::placeholder { letter-spacing: .04em; font-size: .78em; }
+#tuMine { display: flex; flex-direction: column; gap: 12px; } #tuMine:empty { display: none; }
+#tuHomeNote:empty, .note:empty, .msg-bad:empty { display: none; }
 .tu-ver { font-size: 12px; font-weight: 800; color: var(--go); white-space: nowrap; }
 .tu-pzst { font-weight: 700; } .tu-pzst.ok { color: var(--go) !important; } .tu-pzst.no, .tu-pzst.hidden { color: var(--signal) !important; } .tu-pzst.wait { color: var(--volt) !important; }
 .tu-rtxt { min-height: 80px; resize: vertical; font-family: inherit; margin: 8px 0; }
@@ -4845,8 +4848,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (st.waiting.length) { const w = h("p", "note"); w.textContent = tr("Dabei, noch ohne Ergebnis: ", "In, no result yet: ") + st.waiting.slice(0, 30).map((x) => "@" + x.e.uname).join(", ") + (st.waiting.length > 30 ? " …" : ""); body.appendChild(w); }
     const foot = h("div", "row2");
     if (host) foot.innerHTML = (ended ? "" : '<button class="btn ghost" id="tuEnd" type="button">' + tr("Turnier beenden", "End tournament") + "</button>") + '<button class="btn ghost" id="tuNew2" type="button">' + tr("Neues Turnier", "New tournament") + "</button>";
+    if (host) { const back = h("button", "link"); back.type = "button"; back.id = "tuLeave"; back.textContent = "← " + tr("Meine Turniere", "My tournaments"); body.appendChild(foot); body.appendChild(back); }
     else foot.innerHTML = '<button class="btn ghost" id="tuLeave" type="button">' + tr("Anderes Turnier", "Other tournament") + '</button><button class="btn ghost" id="tuRep" type="button">⚑ ' + tr("Melden", "Report") + "</button>";
-    body.appendChild(foot);
+    if (!foot.parentNode) body.appendChild(foot);
     on("tuInv", tuInvite);
     on("tuTV", () => { TU.tv = true; renderTV(); });
     on("tuClaim", async () => {
