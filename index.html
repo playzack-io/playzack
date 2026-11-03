@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.4.0"></script>
-<script src="backend.js?v=2.4.0"></script>
+<script src="config.js?v=2.4.1"></script>
+<script src="backend.js?v=2.4.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -779,13 +779,15 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .sw-bests { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 4px; }
 .sw-bests span { font-size: 12.5px; padding: 5px 9px; border-radius: 99px; background: var(--housing); border: 1px solid var(--line); color: var(--chalk); }
 .sw-stamp { position: absolute; top: 22px; padding: 6px 12px; border: 3px solid; border-radius: 10px; font-family: var(--font-num); font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: .04em; opacity: 0; pointer-events: none; }
-.sw-stamp.yes { left: 18px; color: var(--go); border-color: var(--go); transform: rotate(-12deg); }
-.sw-stamp.no { right: 18px; color: var(--signal); border-color: var(--signal); transform: rotate(12deg); }
-.sw-btns { display: flex; justify-content: center; align-items: center; gap: 18px; }
-.sw-btn { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--line); background: var(--asphalt-2); color: var(--chalk); font-size: 26px; display: grid; place-items: center; }
-.sw-btn.no { color: var(--signal); border-color: color-mix(in srgb, var(--signal) 60%, transparent); }
-.sw-btn.yes { width: 76px; height: 76px; font-size: 32px; color: #111; background: var(--go); border-color: var(--go); }
-.sw-btn.fol { font-size: 13px; font-weight: 800; width: auto; height: 44px; padding: 0 14px; border-radius: 99px; }
+.sw-stamp.yes { right: 18px; color: var(--go); border-color: var(--go); transform: rotate(12deg); }
+.sw-stamp.no { left: 18px; color: var(--signal); border-color: var(--signal); transform: rotate(-12deg); }
+.sw-btns { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; gap: 10px; }
+.sw-bw { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.sw-bw small { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.sw-btn { width: 66px; height: 66px; border-radius: 50%; border: 2px solid var(--line); background: var(--asphalt-2); font-size: 28px; line-height: 1; display: grid; place-items: center; color: var(--chalk); }
+.sw-btn.fol { color: var(--go); border-color: var(--go); }
+.sw-btn.ch { color: var(--volt); border-color: var(--volt); }
+.sw-btn.no { color: var(--signal); border-color: var(--signal); }
 .sw-btn:active { transform: scale(.94); }
 .sw-empty { text-align: center; padding: 30px 10px; display: flex; flex-direction: column; gap: 14px; align-items: center; }
 .sso { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 2px; }
@@ -1218,7 +1220,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "6";
+  const I18N_VER = "7";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -4977,16 +4979,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       on("swRandom", () => $("socRandom").click());
       return;
     }
-    const hint = h("p", "sw-hint"); hint.textContent = tr("Nach rechts wischen = folgen, nach links = nächster Spieler. Herausfordern mit dem grünen Knopf.", "Swipe right to follow, left for the next player. Challenge with the green button.");
+    const hint = h("p", "sw-hint"); hint.textContent = tr("Nach links wischen = folgen, nach rechts = nächster Spieler. Herausfordern mit dem gelben Knopf.", "Swipe left to follow, right for the next player. Challenge with the yellow button.");
     const stack = h("div", "sw-stack");
     const p = SW.pool[0], nx = SW.pool[1];
     if (nx) stack.appendChild(swCard(nx, true));
     const card = swCard(p, false); stack.appendChild(card);
     const btns = h("div", "sw-btns");
-    const bNo = h("button", "sw-btn no"); bNo.type = "button"; bNo.textContent = "✕"; bNo.setAttribute("aria-label", tr("Weiter", "Next"));
-    const bYes = h("button", "sw-btn yes"); bYes.type = "button"; bYes.textContent = "⚔"; bYes.setAttribute("aria-label", tr("Herausfordern", "Challenge"));
-    const bFol = h("button", "sw-btn fol"); bFol.type = "button"; bFol.textContent = "+ " + tr("Folgen", "Follow");
-    btns.append(bNo, bYes, bFol);
+    const mk = (cls, icon, label) => { const w = h("div", "sw-bw"), b = h("button", "sw-btn " + cls), t = h("small"); b.type = "button"; b.textContent = icon; b.setAttribute("aria-label", label); t.textContent = label; w.append(b, t); btns.appendChild(w); return b; };
+    const bFol = mk("fol", "＋", tr("Folgen", "Follow")), bYes = mk("ch", "⚔", tr("Herausfordern", "Challenge")), bNo = mk("no", "✕", tr("Weiter", "Next"));
     box.append(hint, stack, btns);
     bNo.addEventListener("click", () => swipeOut(card, -1, p));
     bFol.addEventListener("click", () => swipeOut(card, 1, p));
@@ -4994,17 +4994,17 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     // Wischen mit Finger oder Maus
     let x0 = null, y0 = 0, dx = 0, pid = null;
     const yes = card.querySelector(".sw-stamp.yes"), no = card.querySelector(".sw-stamp.no");
-    const paint = () => { card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 18 + "deg)"; yes.style.opacity = Math.max(0, Math.min(1, dx / 90)); no.style.opacity = Math.max(0, Math.min(1, -dx / 90)); };
+    const paint = () => { card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 18 + "deg)"; yes.style.opacity = Math.max(0, Math.min(1, -dx / 90)); no.style.opacity = Math.max(0, Math.min(1, dx / 90)); };
     card.addEventListener("pointerdown", (e) => { x0 = e.clientX; y0 = e.clientY; dx = 0; pid = e.pointerId; card.classList.remove("snap"); try { card.setPointerCapture(pid); } catch (er) {} });
     card.addEventListener("pointermove", (e) => { if (x0 == null || e.pointerId !== pid) return; dx = e.clientX - x0; if (Math.abs(e.clientY - y0) > 60 && Math.abs(dx) < 30) { x0 = null; dx = 0; paint(); return; } paint(); });
-    const end = () => { if (x0 == null) return; x0 = null; if (Math.abs(dx) > 90) swipeOut(card, dx > 0 ? 1 : -1, p); else { card.classList.add("snap"); dx = 0; paint(); } };
+    const end = () => { if (x0 == null) return; x0 = null; if (Math.abs(dx) > 90) swipeOut(card, dx < 0 ? 1 : -1, p); else { card.classList.add("snap"); dx = 0; paint(); } };
     card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
   }
   function swipeOut(card, dir, p) {
     if (card.dataset.gone) return; card.dataset.gone = "1";
     card.classList.remove("snap"); card.classList.add("fly");
     const st = card.querySelector(dir > 0 ? ".sw-stamp.yes" : ".sw-stamp.no"); if (st) st.style.opacity = 1;
-    card.style.transform = "translateX(" + dir * 520 + "px) rotate(" + dir * 26 + "deg)"; card.style.opacity = "0";
+    card.style.transform = "translateX(" + -dir * 520 + "px) rotate(" + -dir * 26 + "deg)"; card.style.opacity = "0";
     buzz(dir > 0 ? [15, 30, 15] : 12);
     const skip = store.get("swSkip", {}) || {}; skip[p.id] = Date.now(); store.set("swSkip", skip);
     SW.pool = SW.pool.filter((x) => x.id !== p.id);
