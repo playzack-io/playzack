@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.9.1"></script>
-<script src="backend.js?v=2.9.1"></script>
+<script src="config.js?v=2.9.2"></script>
+<script src="backend.js?v=2.9.2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -771,8 +771,9 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .sw-wrap { display: flex; flex-direction: column; gap: 12px; }
 .sw-hint { margin: 0; text-align: center; color: var(--muted); font-size: 14px; }
 .sw-stack { position: relative; height: min(58vh, 430px); }
-.sw-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px 16px; border-radius: 22px; background: radial-gradient(circle at 50% 28%, rgba(255, 210, 63, .14), transparent 62%), var(--asphalt-2); border: 1px solid var(--line); box-shadow: 0 14px 30px rgba(0, 0, 0, .35); touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; will-change: transform; }
+.sw-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px 16px; border-radius: 22px; background: radial-gradient(circle at 50% 28%, rgba(255, 210, 63, .14), transparent 62%), var(--asphalt-2); border: 1px solid var(--line); box-shadow: 0 14px 30px rgba(0, 0, 0, .35); touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; will-change: transform; }
 .sw-card.back { transform: scale(.94) translateY(12px); opacity: .55; pointer-events: none; }
+.sw-card.back.up { transform: none; opacity: 1; transition: transform .26s ease-out, opacity .26s ease-out; }
 .sw-card.fly { transition: transform .32s ease-in, opacity .32s ease-in; }
 .sw-card.snap { transition: transform .22s ease-out; }
 .sw-card img { width: 46%; max-width: 170px; aspect-ratio: 1; border-radius: 50%; object-fit: cover; pointer-events: none; }
@@ -5260,18 +5261,38 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     bNo.addEventListener("click", () => swipeOut(card, -1, p));
     bFol.addEventListener("click", () => swipeOut(card, 1, p));
     bYes.addEventListener("click", () => (p.bot ? chooseBotMode(p) : chooseModeFor(p.id, nameOf(p))));
-    // Wischen mit Finger oder Maus
-    let x0 = null, y0 = 0, dx = 0, pid = null;
+    // Wischen mit Finger oder Maus: Richtung nach ein paar Pixeln festlegen, schneller Schwung zählt auch
+    let x0 = null, y0 = 0, dx = 0, pid = null, lock = "", lastX = 0, lastT = 0, vx = 0, raf = 0, sy = 0;
     const yes = card.querySelector(".sw-stamp.yes"), no = card.querySelector(".sw-stamp.no");
-    const paint = () => { card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 18 + "deg)"; yes.style.opacity = Math.max(0, Math.min(1, dx / 90)); no.style.opacity = Math.max(0, Math.min(1, -dx / 90)); };
-    card.addEventListener("pointerdown", (e) => { x0 = e.clientX; y0 = e.clientY; dx = 0; pid = e.pointerId; card.classList.remove("snap"); try { card.setPointerCapture(pid); } catch (er) {} });
-    card.addEventListener("pointermove", (e) => { if (x0 == null || e.pointerId !== pid) return; dx = e.clientX - x0; if (Math.abs(e.clientY - y0) > 60 && Math.abs(dx) < 30) { x0 = null; dx = 0; paint(); return; } paint(); });
-    const end = () => { if (x0 == null) return; x0 = null; if (Math.abs(dx) > 90) swipeOut(card, dx > 0 ? 1 : -1, p); else { card.classList.add("snap"); dx = 0; paint(); } };
-    card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+    const scroller = (() => { let e = box.parentElement; while (e && e !== document.body) { const o = getComputedStyle(e).overflowY; if ((o === "auto" || o === "scroll") && e.scrollHeight > e.clientHeight) return e; e = e.parentElement; } return document.scrollingElement; })();
+    const paint = () => { raf = 0; if (card.dataset.gone) return; card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 18 + "deg)"; yes.style.opacity = Math.max(0, Math.min(1, dx / 90)); no.style.opacity = Math.max(0, Math.min(1, -dx / 90)); };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    card.addEventListener("pointerdown", (e) => {
+      if (card.dataset.gone || (e.pointerType === "mouse" && e.button !== 0)) return;
+      x0 = e.clientX; y0 = e.clientY; dx = 0; vx = 0; lock = ""; pid = e.pointerId; lastX = e.clientX; lastT = e.timeStamp; card.classList.remove("snap");
+      try { card.setPointerCapture(pid); } catch (er) {}
+    });
+    card.addEventListener("pointermove", (e) => {
+      if (x0 == null || e.pointerId !== pid) return;
+      const mx = e.clientX - x0, my = e.clientY - y0;
+      if (!lock) { if (Math.abs(mx) < 8 && Math.abs(my) < 8) return; lock = Math.abs(mx) >= Math.abs(my) * 0.8 ? "x" : "y"; sy = e.clientY; }
+      if (lock === "y") { if (scroller) scroller.scrollTop -= e.clientY - sy; sy = e.clientY; return; }
+      const dt = e.timeStamp - lastT; if (dt > 0) vx = 0.7 * ((e.clientX - lastX) / dt) + 0.3 * vx; lastX = e.clientX; lastT = e.timeStamp;
+      dx = mx; schedule();
+    });
+    const end = (e) => {
+      if (x0 == null || (e && e.pointerId != null && e.pointerId !== pid)) return;
+      x0 = null; if (lock !== "x") return;
+      if (e && e.timeStamp - lastT > 120) vx = 0;
+      const far = Math.abs(dx) > Math.min(90, (card.offsetWidth || 320) * 0.28), fling = Math.abs(dx) > 30 && Math.abs(vx) > 0.45 && Math.sign(vx) === Math.sign(dx);
+      if (far || fling) swipeOut(card, dx > 0 ? 1 : -1, p); else { card.classList.add("snap"); dx = 0; schedule(); }
+    };
+    card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end); card.addEventListener("lostpointercapture", end);
   }
   function swipeOut(card, dir, p) {
     if (card.dataset.gone) return; card.dataset.gone = "1";
     card.classList.remove("snap"); card.classList.add("fly");
+    const bk = card.parentElement && card.parentElement.querySelector(".sw-card.back"); if (bk) bk.classList.add("up");
     const st = card.querySelector(dir > 0 ? ".sw-stamp.yes" : ".sw-stamp.no"); if (st) st.style.opacity = 1;
     card.style.transform = "translateX(" + dir * 520 + "px) rotate(" + dir * 26 + "deg)"; card.style.opacity = "0";
     buzz(dir > 0 ? [15, 30, 15] : 12);
@@ -5283,7 +5304,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       renderFind();
       // Nach jedem 8. Wisch ein Werbevideo – außer mit Werbefrei
       if (n % SW_AD_EVERY === 0 && !S.premium) showInterstitial(() => {});
-    }, 300);
+    }, 280);
   }
   function row(id, p, sub, buttons, online) {
     const r = h("div", "srow");
