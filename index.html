@@ -20,8 +20,8 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.9.0"></script>
-<script src="backend.js?v=2.9.0"></script>
+<script src="config.js?v=2.9.1"></script>
+<script src="backend.js?v=2.9.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
@@ -814,6 +814,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
 .acct-form .btn { margin-top: 8px; }
 .acct-mail { font-weight: 700; font-size: 17px; overflow-wrap: anywhere; color: var(--chalk) !important; }
 .acct-test { border: 1px dashed var(--line); border-radius: 12px; padding: 8px 10px; }
+.acct-stat { margin: 2px 0 14px; }
+.acct-bad { display: block; color: #ffb4a8; margin-bottom: 2px; }
+.tu-admin { border: 1px dashed var(--line); border-radius: 14px; padding: 10px 12px; margin: 10px 0; display: grid; gap: 8px; }
+.tu-admin > small:first-child { letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+.tu-admin .ad-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 /* Turnier */
 .wide.tourcard { border-color: rgba(168, 85, 247, .55); background: linear-gradient(120deg, rgba(168, 85, 247, .16), var(--asphalt-2) 70%); }
 .wide.tourcard .eyebrow { color: #c99bff; }
@@ -1245,11 +1250,11 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     fetchLang(lang, 0).then((d) => {
       if (!d) { if (I18N.lang !== lang) fail && fail(); return; }
       const fresh = I18N.lang !== lang; setDict(lang, d);
-      try { localStorage.setItem("zack.i18n." + lang, JSON.stringify({ v: I18N_VER, d })); } catch (e) {}
+      try { for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k && k.startsWith("zack.i18n.") && k !== "zack.i18n." + lang) localStorage.removeItem(k); } localStorage.setItem("zack.i18n." + lang, JSON.stringify({ v: I18N_VER, d })); } catch (e) {}
       if (fresh) done && done();
     });
   }
-  const I18N_VER = "13";
+  const I18N_VER = "14";
   const loc = () => LOCALE[S.lang] || "en-US";
   const decSep = () => { try { return (1.5).toLocaleString(loc()).replace(/\d/g, "").charAt(0) || "."; } catch (e) { return "."; } };
 
@@ -2376,7 +2381,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
   }
   const lget = (k, d) => { try { const v = localStorage.getItem(ACCT_KEY + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
   const lset = (k, v) => { try { localStorage.setItem(ACCT_KEY + k, JSON.stringify(v)); } catch (e) {} };
-  const DEVICE_KEY = /^zack\.(premium|plan|sound|music|haptics|lang|ads|mig:)/;
+  const DEVICE_KEY = /^zack\.(premium|plan|sound|music|haptics|lang|ads|mig:|i18n\.)/;
   function snapshot(all) {
     const o = {};
     try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith("zack.") && (all || !DEVICE_KEY.test(k))) o[k] = localStorage.getItem(k); } } catch (e) {}
@@ -2408,13 +2413,37 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     async reset() { throw { code: "no-reset" }; }
   };
   const AUTH = () => (window.ZACK_AUTH && typeof window.ZACK_AUTH.signIn === "function" ? window.ZACK_AUTH : LOCAL_AUTH);
-  let acctSaveT = 0;
-  function acctAutosave() {
-    const A = AUTH(); if (!A.current()) return;
-    clearTimeout(acctSaveT); acctSaveT = setTimeout(() => { acctSaveT = 0; A.save(snapshot()).catch(() => {}); }, 1500);
+  let acctSaveT = 0, acctRetryT = 0;
+  const ACCT = { fail: false, busy: false, wait: 15000 };
+  // Was ins Konto kommt: ohne Geräte-Einstellungen und Sprach-Cache. Firestore erlaubt max. 1 MB pro Dokument,
+  // deshalb fallen notfalls die größten Geister-Aufnahmen weg (Münzen, Skins, Stufe und Rekorde bleiben immer).
+  function cloudSnap() {
+    const s = snapshot(); let n = JSON.stringify(s).length;
+    if (n > 800000) Object.keys(s).filter((k) => /^zack\.ghost:/.test(k)).sort((a, b) => s[b].length - s[a].length).forEach((k) => { if (n > 800000) { n -= s[k].length + k.length + 8; delete s[k]; } });
+    return s;
   }
-  // beim Verlassen der App sofort sichern
-  const acctFlush = () => { if (!acctSaveT) return; clearTimeout(acctSaveT); acctSaveT = 0; try { const A = AUTH(); if (A.current()) A.save(snapshot()).catch(() => {}); } catch (e) {} };
+  function acctSaveNow() {
+    let A; try { A = AUTH(); if (!A.current()) return Promise.resolve(); } catch (e) { return Promise.resolve(); }
+    clearTimeout(acctSaveT); acctSaveT = 0; clearTimeout(acctRetryT); acctRetryT = 0; ACCT.busy = true; acctUi();
+    return A.save(cloudSnap()).then(() => { ACCT.busy = false; ACCT.fail = false; ACCT.wait = 15000; acctUi(); }, (e) => {
+      ACCT.busy = false; ACCT.fail = true; acctUi();
+      acctRetryT = setTimeout(() => acctSaveNow().catch(() => {}), ACCT.wait); ACCT.wait = Math.min(ACCT.wait * 2, 300000); throw e;
+    });
+  }
+  function acctAutosave() {
+    try { if (!AUTH().current()) return; } catch (e) { return; }
+    clearTimeout(acctSaveT); acctSaveT = setTimeout(() => { acctSaveNow().catch(() => {}); }, 1500);
+  }
+  function acctUi() {
+    const el = document.getElementById("acStat"); if (!el) return;
+    const c = AUTH().current(); if (!c) return;
+    el.innerHTML = ACCT.fail ? '<span class="acct-bad">' + tr("Sicherung klappt gerade nicht. Die App versucht es automatisch weiter.", "Saving isn't working right now. The app keeps retrying automatically.") + '</span><button class="link" id="acRetry" type="button">' + tr("Jetzt nochmal versuchen", "Try again now") + "</button>"
+      : ACCT.busy && !c.savedAt ? tr("Wird gesichert …", "Saving …") : "✓ " + tr("Automatisch gesichert: ", "Saved automatically: ") + "<strong>" + fmtAgo(c.savedAt) + "</strong>";
+    const r = document.getElementById("acRetry"); if (r) r.addEventListener("click", () => { r.disabled = true; acctSaveNow().catch(() => {}); });
+  }
+  // beim Verlassen der App sofort sichern, und sobald das Internet wieder da ist
+  const acctFlush = () => { if (!acctSaveT && !ACCT.fail) return; acctSaveNow().catch(() => {}); };
+  addEventListener("online", () => { if (ACCT.fail) acctSaveNow().catch(() => {}); });
   addEventListener("pagehide", acctFlush);
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") acctFlush(); });
   // Spielstand vom Konto mit dem auf diesem Gerät zusammenführen: nichts Gekauftes oder Erspieltes geht verloren
@@ -2456,17 +2485,16 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
     if (cur) {
       openLayer('<span class="eyebrow">' + tr("Konto", "Account") + "</span><h2>" + tr("Du bist angemeldet", "You're signed in") + '</h2><p class="acct-mail">' + (cur.provider === "apple" ? " Apple · " : cur.provider === "google" ? "Google · " : "") + esc(cur.email || "") + "</p>" +
         '<p class="note">' + tr("Alles wird automatisch gesichert: Skins, Münzen, Stufe, Rekorde und dein Benutzername.", "Everything is saved automatically: skins, coins, rank, records and your username.") + "</p>" +
-        "<p>" + tr("Spielstand gesichert: ", "Progress saved: ") + "<strong>" + fmtAgo(cur.savedAt) + "</strong></p>" +
-        '<button class="btn" id="acSave" type="button">' + tr("Spielstand jetzt sichern", "Save progress now") + "</button>" +
+        '<p class="acct-stat" id="acStat"></p>' +
         '<button class="btn ghost" id="acOut" type="button">' + tr("Abmelden", "Sign out") + "</button>" + testNote +
         '<button class="link danger-link" id="acDel" type="button">' + tr("Konto löschen", "Delete account") + "</button>" +
         '<button class="link" id="acBack" type="button">' + tr("Zurück", "Back") + "</button>");
-      on("acSave", async () => { const b = $("acSave"); b.disabled = true; try { await A.save(snapshot()); b.textContent = tr("Gesichert ✓", "Saved ✓"); SFX.coin(); } catch (e) { b.disabled = false; b.textContent = tr("Ging nicht, nochmal", "Failed, retry"); } });
+      acctUi(); acctSaveNow().catch(() => {});
       on("acOut", () => {
         openLayer("<h2>" + tr("Abmelden?", "Sign out?") + "</h2><p>" + tr("Dein Spielstand wird im Konto gesichert und von diesem Gerät entfernt. Mit E-Mail und Passwort holst du ihn jederzeit zurück.", "Your progress is saved to the account and removed from this device. Sign in with email and password to get it back any time.") + "</p>" +
           '<button class="btn" id="acOutY" type="button">' + tr("Ja, abmelden", "Yes, sign out") + '</button><button class="link" id="acOutN" type="button">' + tr("Abbrechen", "Cancel") + "</button>");
         on("acOutN", () => showAccount(null, back));
-        on("acOutY", async () => { const b = $("acOutY"); b.disabled = true; try { await A.save(snapshot()); await A.signOut(); wipeLocal(); location.reload(); } catch (e) { b.disabled = false; note(tr("Abmelden ging nicht", "Couldn't sign out"), acctErr(e)); } });
+        on("acOutY", async () => { const b = $("acOutY"); b.disabled = true; try { await A.save(cloudSnap()); await A.signOut(); wipeLocal(); location.reload(); } catch (e) { b.disabled = false; note(tr("Abmelden ging nicht", "Couldn't sign out"), acctErr(e)); } });
       });
       on("acBack", done);
       on("acDel", () => deleteAccountFlow(() => showAccount(null, back)));
@@ -2511,14 +2539,14 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       try {
         if (reg) {
           await A.signUp(m, pw);
-          await A.save(snapshot()).catch(() => {});
+          await A.save(cloudSnap()).catch(() => {});
           SFX.record(); buzz([20, 40, 20]);
           openLayer("<h2>" + tr("Konto erstellt", "Account created") + "</h2><p>" + tr("Dein Spielstand ist jetzt gesichert. Melde dich auf einem anderen Gerät mit derselben E-Mail an, dann spielst du dort weiter.", "Your progress is now saved. Sign in on another device with the same email to continue there.") + "</p>" + testNote + '<button class="btn" id="acOk" type="button">' + tr("Weiter", "Continue") + "</button>");
           on("acOk", done);
         } else {
           const snap = await A.signIn(m, pw);
-          if (snap && Object.keys(snap).length) { const mg = mergeSnap(snap, snapshot()); restore(mg); await A.save(mg).catch(() => {}); location.reload(); return; }
-          await A.save(snapshot()).catch(() => {});
+          if (snap && Object.keys(snap).length) { const mg = mergeSnap(snap, snapshot()); restore(mg); await A.save(cloudSnap()).catch(() => {}); location.reload(); return; }
+          await A.save(cloudSnap()).catch(() => {});
           if (A.kind !== "local") { location.reload(); return; } // neue Konto-ID: Online-Teil neu starten
           SFX.coin(); done();
         }
@@ -2529,8 +2557,8 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       sheet.querySelectorAll("[data-sso]").forEach((x) => { x.disabled = true; });
       try {
         const r = await A.signInWith(which);
-        if (r && r.snap && Object.keys(r.snap).length) { const mg = mergeSnap(r.snap, snapshot()); restore(mg); await A.save(mg).catch(() => {}); location.reload(); return; }
-        await A.save(snapshot()).catch(() => {});
+        if (r && r.snap && Object.keys(r.snap).length) { const mg = mergeSnap(r.snap, snapshot()); restore(mg); await A.save(cloudSnap()).catch(() => {}); location.reload(); return; }
+        await A.save(cloudSnap()).catch(() => {});
         if (!r || !r.created) { location.reload(); return; } // bestehendes Konto ohne Spielstand: Online-Teil neu starten
         SFX.record(); buzz([20, 40, 20]);
         openLayer("<h2>" + tr("Konto verbunden", "Account connected") + "</h2><p>" + tr("Dein Spielstand ist jetzt mit " + (which === "apple" ? "Apple" : "Google") + " gesichert. Melde dich auf einem anderen Gerät genauso an, dann spielst du dort weiter.", "Your progress is now saved with " + (which === "apple" ? "Apple" : "Google") + ". Sign in the same way on another device to continue there.") + '</p><button class="btn" id="acOk" type="button">' + tr("Weiter", "Continue") + "</button>");
@@ -3993,7 +4021,7 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
       '<button class="btn ghost" id="stPrem" type="button">' + (S.premium ? tr("Werbefrei aktiv", "Ad-free active") : tr("Werbefrei spielen", "Play ad-free")) + "</button>" +
       '<button class="btn ghost" id="stProf" type="button">' + tr("Profil bearbeiten", "Edit profile") + "</button>" +
       '<button class="btn ghost" id="stAcct" type="button">' + (AUTH().current() ? tr("Konto · ", "Account · ") + esc(AUTH().current().email) : tr("Konto & Passwort", "Account & password")) + "</button>" +
-      (isAdminUser() ? '<button class="btn ghost" id="stAdmin" type="button">Admin · Clipper</button>' : "") +
+      (isAdminUser() ? '<button class="btn ghost" id="stAdmin" type="button">Admin · Turniere & Clipper</button>' : "") +
       '<button class="btn ghost" id="stConsent" type="button">' + tr("Datenschutz & Werbung", "Privacy & ads") + "<small>" + (S.consent === "all" ? tr("Personalisierte Werbung: an", "Personalised ads: on") : S.consent === "min" ? tr("Personalisierte Werbung: aus", "Personalised ads: off") : tr("Noch nicht festgelegt", "Not set yet")) + "</small></button>" +
       '<button class="link danger-link" id="stDel" type="button">' + tr("Konto & Daten löschen", "Delete account & data") + "</button>" +
       '<button class="btn" id="stClose" type="button">' + tr("Fertig", "Done") + "</button>");
@@ -4844,6 +4872,17 @@ img.flag-img { display: inline-block !important; width: 1.33em !important; heigh
         "<small>" + tr("Preise vergibt der Veranstalter", "Prizes are given by the organiser") + (t.hname ? " @" + esc(t.hname) : "") + tr(", nicht ZACK!.", ", not ZACK!.") + "</small>" +
         (host ? '<small class="tu-pzst ' + pst + '">' + (pst === "ok" ? tr("Freigegeben ✓ – alle sehen die Preise.", "Approved ✓ – everyone sees the prizes.") : pst === "no" ? tr("Abgelehnt: ", "Rejected: ") + esc((TU.pc && TU.pc.why) || "–") : pst === "hidden" ? tr("Dieses Turnier wurde gesperrt.", "This tournament was blocked.") : tr("Wartet auf Prüfung – erst danach sehen andere die Preise.", "Waiting for review – others see the prizes after that.")) + "</small>" : "");
       body.appendChild(box);
+    }
+    // Admin (playzack@outlook.de): direkt hier freigeben, verifizieren oder sperren
+    if (pz.length && isAdminUser()) {
+      const okNow = TU.pc && TU.pc.status === "ok" && pcFits(TU.pc, t), ver = tuVerified(), ad = h("div", "tu-admin");
+      ad.innerHTML = "<small>Admin</small><div class=\"ad-btns\">" + (okNow || ver ? "" : '<button class="sbtn" type="button" data-apz="ok">Preise freigeben</button>') +
+        '<button class="sbtn' + (ver ? " quiet" : "") + '" type="button" data-aver="' + (ver ? "off" : "ok") + '">' + (ver ? "Verifizierung entfernen" : "Veranstalter verifizieren ✓") + "</button>" +
+        (pst === "hidden" ? "" : '<button class="sbtn quiet" type="button" data-apz="hidden">Turnier sperren</button>') + "</div>" +
+        "<small>" + (ver ? "Verifiziert: Preise dieses Veranstalters sind immer sofort sichtbar, auch bei neuen Turnieren." : "Verifizieren = dieser Veranstalter braucht nie mehr eine Freigabe.") + "</small>";
+      ad.querySelectorAll("[data-apz]").forEach((b) => b.addEventListener("click", async () => { b.disabled = true; try { await NET.db.doc("prizecheck/" + tuDoc(t)).set({ status: b.dataset.apz, why: "", key: prizeKey(t), at: Date.now() }); SFX.coin(); } catch (e) { b.disabled = false; b.textContent = "Fehler – nochmal"; } }));
+      ad.querySelectorAll("[data-aver]").forEach((b) => b.addEventListener("click", async () => { b.disabled = true; try { await NET.db.doc("verified/" + t.host).set({ status: b.dataset.aver, at: Date.now() }); SFX.coin(); } catch (e) { b.disabled = false; b.textContent = "Fehler – nochmal"; } }));
+      body.appendChild(ad);
     }
     if (ended) { const en = h("p", "tu-ended"); en.textContent = tr("Die Zeit ist abgelaufen, das Turnier ist vorbei. Die Rangliste unten ist das Endergebnis. Für eine neue Runde: „Neues Turnier“.", "Time's up, the tournament is over. The leaderboard below is the final result. For a new round: \"New tournament\"."); body.appendChild(en); }
     const full = (!!t.max && TU.entries.length >= t.max) || tuBlocked();
