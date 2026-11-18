@@ -20,12 +20,15 @@ body { margin: 0; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 </style>
-<script src="config.js?v=2.9.5"></script>
-<script src="backend.js?v=2.9.5"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap">
+<script src="config.js?v=2.9.6"></script>
+<script src="backend.js?v=2.9.6"></script>
 <style>
+/* Schriften liegen selbst auf playzack.io (keine Verbindung zu Google Fonts, DSGVO) */
+@font-face { font-family: "Bungee"; font-weight: 400; font-display: swap; src: url("fonts/Bungee-Regular.woff") format("woff"); }
+@font-face { font-family: "Barlow"; font-weight: 400; font-display: swap; src: url("fonts/Barlow-Regular.woff") format("woff"); }
+@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url("fonts/Barlow-SemiBold.woff") format("woff"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 600; font-display: swap; src: url("fonts/BarlowCondensed-SemiBold.woff") format("woff"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 800; font-display: swap; src: url("fonts/BarlowCondensed-ExtraBold.woff") format("woff"); }
 /* Layout: one-screen phone app. Menu scrolls; play screen = HUD on top, play field fills the rest. Motorsport timing-tower look. */
 [hidden] { display: none !important; }
 :root {
